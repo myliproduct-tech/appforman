@@ -35,10 +35,7 @@ export default defineConfig(({ mode }) => {
             ],
             'components-secondary': [
               './components/Recon.tsx',
-              './components/Budget.tsx'
-            ],
-            'components-other': [
-              './components/Quiz.tsx',
+              './components/Budget.tsx',
               './components/Achievements.tsx'
             ]
           }
