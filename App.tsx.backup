@@ -1,0 +1,959 @@
+
+import React, { useState, useEffect } from 'react';
+import { Dashboard } from './components/Dashboard';
+import { Missions } from './components/Missions';
+import { Quiz } from './components/Quiz';
+import { Journal } from './components/Journal';
+import { Recon } from './components/Recon';
+import { Budget } from './components/Budget';
+import { Onboarding } from './components/Onboarding';
+import { AuthScreen } from './components/AuthScreen';
+import { OnboardingTour } from './components/OnboardingTour';
+import { Navigation } from './components/Navigation';
+import { UserStats, Tab, Task, Achievement, ConsumableItem } from './types';
+import { GEAR_CHECKLIST, HOSPITAL_BAG_CHECKLIST, ACHIEVEMENTS, DEFAULT_CONSUMABLES } from './constants';
+import { getDailyMissions } from './data/dailyMissions';
+import { getRankBasedOnPoints, localizeText } from './utils';
+import { RANKS } from './constants';
+import { Achievements, AchievementModal } from './components/Achievements';
+import { Trash2, Eye, EyeOff, Trophy, RotateCcw, Settings, LogOut } from 'lucide-react';
+import { ONBOARDING_STEPS } from './onboardingSteps';
+
+// Custom hooks
+import { useUserStats } from './hooks/useUserStats';
+import { useDevMode } from './hooks/useDevMode';
+import { useConsumables } from './hooks/useConsumables';
+import { useMissions } from './hooks/useMissions';
+
+const App: React.FC = () => {
+  // AUTO-LOGIN LOGIC: Default to admin if no user is saved
+  const [currentUser, setCurrentUser] = useState<string | null>(() => {
+    const saved = localStorage.getItem('currentUser');
+    if (!saved) {
+      const adminEmail = 'ja@ja.cz';
+      localStorage.setItem('currentUser', adminEmail);
+      return adminEmail;
+    }
+    return saved;
+  });
+
+  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+  const [dayOffset, setDayOffset] = useState(0);
+  const [nightMode, setNightMode] = useState(false);
+  const [showRankModal, setShowRankModal] = useState<{ show: boolean, rank: typeof RANKS[0] | null }>({ show: false, rank: null });
+  const [showAchievementModal, setShowAchievementModal] = useState<Achievement | null>(null);
+  const [showFailureModal, setShowFailureModal] = useState<Task | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Default initial stats structure
+  const initialStats: UserStats = {
+    email: '',
+    partnerName: 'Velitelka', // Default
+    points: 0,
+    level: 1,
+    completedTasks: [],
+    badges: [],
+    logs: [],
+    timeCapsule: [],
+    streak: 0,
+    lastEngagementDate: null,
+    userName: null,
+    dueDate: null,
+
+    gearChecklist: [],
+    hospitalBagChecklist: [],
+    completedDailyMissionIds: [],
+    dailyMissions: [],
+    dailyMissionsDate: null,
+
+    // New fields for mission management
+    customMissions: [],
+    postponedMissions: [],
+    missionHistory: [],
+
+    hospitalTarget: '',
+    backupContacts: [],
+    partnerPhone: '',
+    pediatricianContact: { name: '', phone: '', address: '' },
+    visitorStatus: 'bunker',
+    musicPreference: '',
+    parkingInfo: '',
+    gbsStatus: 'unknown',
+    bloodPressureLog: [],
+    amnioticFluidLog: null,
+    babyNames: [],
+
+    budgetPlan: {
+      totalBudget: 50000,
+      stroller: 0,
+      carSeat: 0,
+      furniture: 0,
+      clothes: 0,
+      cosmetics: 0,
+      other: 0
+    },
+    accountCreated: new Date().toISOString(),
+    customGear: [],
+    onboardingCompleted: false
+  };
+
+  const [stats, setStats] = useState<UserStats>(initialStats);
+
+  // LOAD DATA ON AUTH
+  useEffect(() => {
+    if (currentUser) {
+      const storageKey = `partner_app_data_${currentUser}`;
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+
+        // Migration logic for old single backupContact
+        let migratedContacts = parsed.backupContacts || [];
+        if (!migratedContacts.length && parsed.backupContact && parsed.backupContact.name) {
+          migratedContacts = [{
+            id: 'legacy_1',
+            name: parsed.backupContact.name,
+            phone: parsed.backupContact.phone
+          }];
+        }
+
+        // Initialize new array fields if they don't exist in saved data
+        setStats({
+          ...initialStats,
+          ...parsed,
+          backupContacts: migratedContacts,
+          email: currentUser,
+          customMissions: parsed.customMissions || [],
+          postponedMissions: parsed.postponedMissions || [],
+          missionHistory: parsed.missionHistory || [],
+          babyNames: parsed.babyNames || [],
+          timeCapsule: parsed.timeCapsule || [],
+          budgetPlan: parsed.budgetPlan || initialStats.budgetPlan,
+          accountCreated: parsed.accountCreated || new Date().toISOString(),
+          customGear: parsed.customGear || [],
+          vehicleModel: parsed.vehicleModel || '',
+          firstKickDetected: parsed.firstKickDetected || false
+        });
+      } else {
+        setStats({ ...initialStats, email: currentUser });
+      }
+    }
+  }, [currentUser]);
+
+  // SAVE DATA ON CHANGE
+  useEffect(() => {
+    if (currentUser && stats.email) {
+      const storageKey = `partner_app_data_${currentUser}`;
+      localStorage.setItem(storageKey, JSON.stringify(stats));
+    }
+  }, [stats, currentUser]);
+
+  const isAdmin = currentUser === 'ja@ja.cz';
+  const isDevMode = stats.userName?.toLowerCase() === 'já' || isAdmin;
+
+  // Calculate Time Variables
+  const [currentWeek, setCurrentWeek] = useState(4);
+  const [currentDayIndex, setCurrentDayIndex] = useState(0);
+
+  const getEffectiveDate = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + dayOffset);
+    return d.toISOString().split('T')[0];
+  };
+
+  // PROCESS CONSUMABLE DEDUCTION BASED ON EFFECTIVE DATE
+  useEffect(() => {
+    if (stats.budgetPlan?.consumables && stats.budgetPlan.consumables.length > 0 && stats.email) {
+      const effectiveToday = getEffectiveDate();
+
+      // Check if any item needs deduction
+      const needsUpdate = stats.budgetPlan.consumables.some(item => {
+        const lastUpdated = item.lastUpdated.split('T')[0];
+        const daysDiff = Math.floor((new Date(effectiveToday).getTime() - new Date(lastUpdated).getTime()) / (1000 * 60 * 60 * 24));
+        return daysDiff >= 1;
+      });
+
+      if (needsUpdate) {
+        setStats(prev => {
+          if (!prev.budgetPlan?.consumables || prev.budgetPlan.consumables.length === 0) {
+            return prev;
+          }
+
+          const updatedConsumables = prev.budgetPlan.consumables.map(item => {
+            const lastUpdated = item.lastUpdated.split('T')[0];
+            const daysDiff = Math.floor((new Date(effectiveToday).getTime() - new Date(lastUpdated).getTime()) / (1000 * 60 * 60 * 24));
+
+            if (daysDiff >= 1) {
+              const newQuantity = Math.max(0, item.quantity - daysDiff);
+              return { ...item, quantity: newQuantity, lastUpdated: effectiveToday };
+            }
+            return item;
+          });
+
+          // Check for low stock and auto-uncheck in inventory
+          let newGearChecklist = prev.gearChecklist;
+
+          // For teas (g51, g23): uncheck if low stock
+          const lowStockTeas = updatedConsumables.filter(c =>
+            (c.id === 'g51' || c.id === 'g23') && c.quantity < 5
+          );
+          lowStockTeas.forEach(item => {
+            if (newGearChecklist.includes(item.id)) {
+              newGearChecklist = newGearChecklist.filter(id => id !== item.id);
+            }
+          });
+
+          // For vitamins (custom only): uncheck g54 if ANY custom vitamin is low stock
+          const lowStockVitamins = updatedConsumables.filter(c =>
+            c.isCustom && c.quantity < 5
+          );
+          if (lowStockVitamins.length > 0 && newGearChecklist.includes('g54')) {
+            newGearChecklist = newGearChecklist.filter(id => id !== 'g54');
+          }
+
+          return {
+            ...prev,
+            budgetPlan: { ...prev.budgetPlan, consumables: updatedConsumables },
+            gearChecklist: newGearChecklist
+          };
+        });
+      }
+    }
+  }, [stats.email, dayOffset]); // Run when user changes or dayOffset changes
+
+  useEffect(() => {
+    if (isDevMode) {
+      const calculatedWeek = Math.min(40, 1 + Math.floor(dayOffset / 7));
+      setCurrentWeek(calculatedWeek);
+      setCurrentDayIndex(dayOffset);
+    } else if (stats.dueDate) {
+      const today = new Date();
+      today.setDate(today.getDate() + dayOffset);
+      const due = new Date(stats.dueDate);
+
+      const conceptionDate = new Date(due);
+      conceptionDate.setDate(due.getDate() - 280);
+
+      const diffTime = today.getTime() - conceptionDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      setCurrentDayIndex(Math.max(0, diffDays));
+      setCurrentWeek(Math.max(1, Math.min(40, Math.floor(diffDays / 7))));
+    }
+  }, [stats.dueDate, dayOffset, isDevMode]);
+
+  const getCurrentMonth = (week: number) => {
+    const m = Math.ceil(week / 4);
+    return Math.min(10, Math.max(1, m));
+  };
+
+  const currentMonth = getCurrentMonth(currentWeek);
+
+  const handleLogin = (email: string) => {
+    localStorage.setItem('currentUser', email);
+    setCurrentUser(email);
+  };
+
+  // --- MISSION MANAGEMENT PREP ---
+  const todaysMissionsRaw = getDailyMissions(currentDayIndex);
+  const effectiveDate = getEffectiveDate();
+
+
+  // Consumable management callbacks
+  const handleUpdateConsumable = (id: string, quantity: number) => {
+    setStats(prev => {
+      const consumables = prev.budgetPlan?.consumables || [];
+      const existingIndex = consumables.findIndex(c => c.id === id);
+
+      let updated: ConsumableItem[];
+      if (existingIndex >= 0) {
+        // Update existing item
+        updated = consumables.map(c =>
+          c.id === id ? { ...c, quantity, lastUpdated: new Date().toISOString() } : c
+        );
+      } else {
+        // Add new item (from DEFAULT_CONSUMABLES)
+        const defaultItem = DEFAULT_CONSUMABLES.find(d => d.id === id);
+        if (defaultItem) {
+          updated = [...consumables, {
+            ...defaultItem,
+            quantity,
+            lastUpdated: new Date().toISOString()
+          }];
+        } else {
+          updated = consumables;
+        }
+      }
+
+      return { ...prev, budgetPlan: { ...prev.budgetPlan!, consumables: updated } };
+    });
+  };
+
+  const handleAddCustomConsumable = (name: string, quantity: number) => {
+    setStats(prev => {
+      const consumables = prev.budgetPlan?.consumables || [];
+      const newItem: ConsumableItem = {
+        id: `custom_${Date.now()}`,
+        name,
+        quantity,
+        lastUpdated: new Date().toISOString(),
+        isCustom: true
+      };
+
+      const updatedConsumables = [...consumables, newItem];
+
+      // Auto-check g54 (Vitamíny pro partnerku) if adding first custom vitamin
+      const hasCustomVitamins = updatedConsumables.some(c => c.isCustom);
+      let newGearChecklist = prev.gearChecklist;
+
+      if (hasCustomVitamins && !newGearChecklist.includes('g54')) {
+        newGearChecklist = [...newGearChecklist, 'g54'];
+      }
+
+      return {
+        ...prev,
+        budgetPlan: { ...prev.budgetPlan!, consumables: updatedConsumables },
+        gearChecklist: newGearChecklist
+      };
+    });
+  };
+
+  const handleDeleteConsumable = (id: string) => {
+    setStats(prev => {
+      const consumables = prev.budgetPlan?.consumables || [];
+      const updatedConsumables = consumables.filter(c => c.id !== id);
+
+      // Auto-uncheck g54 if no custom vitamins remain
+      const hasCustomVitamins = updatedConsumables.some(c => c.isCustom);
+      let newGearChecklist = prev.gearChecklist;
+
+      if (!hasCustomVitamins && newGearChecklist.includes('g54')) {
+        newGearChecklist = newGearChecklist.filter(id => id !== 'g54');
+      }
+
+      return {
+        ...prev,
+        budgetPlan: { ...prev.budgetPlan!, consumables: updatedConsumables },
+        gearChecklist: newGearChecklist
+      };
+    });
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    setCurrentUser(null);
+    setStats(initialStats);
+  };
+
+  const handleFactoryReset = () => {
+    if (window.confirm('⚠️ KRITICKÁ AKCE: Opravdu chceš smazat veškerý postup? Tato akce je nevratná.')) {
+      if (currentUser) {
+        localStorage.removeItem(`partner_app_data_${currentUser}`);
+        window.location.reload();
+      }
+    }
+  };
+
+  // --- FAILURE DETECTION FOR RESTORED MISSIONS ---
+  useEffect(() => {
+    if (!effectiveDate) return;
+
+    setStats(prev => {
+      const overdueRestored = prev.customMissions.filter(m =>
+        m.restoredCount && m.restoredCount >= 1 &&
+        !m.failed &&
+        m.scheduledDate && m.scheduledDate < effectiveDate
+      );
+
+      if (overdueRestored.length === 0) return prev;
+
+      // Penalize for the first detected overdue restored mission
+      const failedTask = overdueRestored[0];
+      setShowFailureModal(failedTask);
+
+      return {
+        ...prev,
+        points: Math.max(0, prev.points - 50),
+        customMissions: prev.customMissions.map(m =>
+          m.id === failedTask.id ? { ...m, failed: true } : m
+        )
+      };
+    });
+  }, [effectiveDate]);
+
+  // --- DAILY MISSIONS DATE SYNC ---
+  useEffect(() => {
+    if (effectiveDate && stats.dailyMissionsDate !== effectiveDate) {
+      setStats(prev => ({
+        ...prev,
+        dailyMissionsDate: effectiveDate
+      }));
+    }
+  }, [effectiveDate, stats.dailyMissionsDate]);
+
+  // --- ONBOARDING TOUR DETECTION ---
+  useEffect(() => {
+    // Show tour only if user has completed onboarding but not the tour
+    if (stats.email && !stats.onboardingCompleted) {
+      // Small delay to ensure UI is rendered
+      const timer = setTimeout(() => setShowOnboarding(true), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [stats.email, stats.onboardingCompleted]);
+
+  const handleCompleteTour = () => {
+    setShowOnboarding(false);
+    setStats(prev => ({ ...prev, onboardingCompleted: true }));
+  };
+
+  const handleSkipTour = () => {
+    setShowOnboarding(false);
+    setStats(prev => ({ ...prev, onboardingCompleted: true }));
+  };
+
+  // --- DEV TOOLS: COMPLETE ALL ---
+  const handleCompleteAllGear = () => {
+    const allIds = GEAR_CHECKLIST.flatMap(c => c.items.map(i => i.id));
+    setStats(prev => ({ ...prev, gearChecklist: allIds }));
+  };
+
+  const handleCompleteAllHospitalBag = () => {
+    const allIds = HOSPITAL_BAG_CHECKLIST.flatMap(c => c.items.map(i => i.id));
+    setStats(prev => {
+      const newStats = { ...prev, hospitalBagChecklist: allIds };
+      const { updatedStats, newUnlock } = checkAchievements(newStats);
+      if (newUnlock) setShowAchievementModal(newUnlock);
+      return updatedStats;
+    });
+  };
+
+  // --- ACHIEVEMENT LOGIC ---
+  const checkAchievements = (currentStats: UserStats): { updatedStats: UserStats, newUnlock: Achievement | null } => {
+    let newUnlock: Achievement | null = null;
+    let newBadges = [...currentStats.badges];
+    let xpGain = 0;
+
+    ACHIEVEMENTS.forEach(ach => {
+      // Check if already unlocked
+      if (newBadges.some(b => b.id === ach.id)) return;
+
+      // Check condition
+      if (ach.condition(currentStats)) {
+        newUnlock = ach; // Only show one modal at a time (the latest)
+        newBadges.push({ id: ach.id, unlockedDate: new Date().toISOString() });
+        xpGain += ach.xpReward;
+      }
+    });
+
+    if (xpGain > 0) {
+      return {
+        updatedStats: { ...currentStats, badges: newBadges, points: currentStats.points + xpGain },
+        newUnlock
+      };
+    }
+
+    return { updatedStats: currentStats, newUnlock: null };
+  };
+
+  // --- MISSION MANAGEMENT LOGIC ---
+
+  // 1. Get Daily Missions (Raw) - Already prep'd above
+  // 2. Prepare Active Missions List
+  const dailyMissionsFiltered = todaysMissionsRaw
+    .filter(task => !stats.completedDailyMissionIds.includes(task.id))
+    .filter(task => !stats.postponedMissions.some(pm => pm.id === task.id))
+    // Filter out daily missions that have been converted to scheduled custom missions to avoid duplicates
+    .filter(task => !stats.customMissions.some(cm => cm.id === task.id))
+    .map(task => ({
+      ...task,
+      title: localizeText(task.title, stats.partnerName),
+      description: localizeText(task.description, stats.partnerName),
+      completed: false
+    }));
+
+  // Add Custom Missions
+  const activeCustomMissions = (stats.customMissions || [])
+    .filter(cm => {
+      if (cm.failed) return false;
+      if (!cm.scheduledDate) return true;
+      if (cm.scheduledDate === effectiveDate) return true;
+
+      // If overdue
+      if (cm.scheduledDate < (effectiveDate || '')) {
+        // If it was a restored mission, it expires (fails)
+        if (cm.restoredCount && cm.restoredCount >= 1) return false;
+        // Normal custom missions stay active as overdue
+        return true;
+      }
+      return false;
+    })
+    .map(task => ({
+      ...task,
+      title: localizeText(task.title, stats.partnerName),
+      description: localizeText(task.description, stats.partnerName)
+    }));
+
+  // Combine
+  const activeMissions = [...dailyMissionsFiltered, ...activeCustomMissions];
+
+  // 3. Handle Completion
+  const handleCompleteMission = (task: Task) => {
+    // Generate completion timestamp based on SIMULATED date (effectiveDate) to align with pregnancy week calculation
+    // We combine the simulated YYYY-MM-DD with the actual current time to preserve order/time
+    const timePart = new Date().toISOString().split('T')[1];
+    const now = effectiveDate ? `${effectiveDate}T${timePart}` : new Date().toISOString();
+
+    const completedTask = { ...task, completed: true, completedDate: now };
+    const isDailyId = task.id.startsWith('daily_');
+
+    setStats(prev => {
+      const newCustomMissions = prev.customMissions.filter(m => m.id !== task.id);
+      const newPostponedMissions = prev.postponedMissions.filter(m => m.id !== task.id);
+
+      const newPoints = prev.points + task.points;
+
+      // Base Update
+      let nextStats: UserStats = {
+        ...prev,
+        points: newPoints,
+        completedTasks: [...prev.completedTasks, task.id],
+        completedDailyMissionIds: (task.isDaily || isDailyId) ? [...prev.completedDailyMissionIds, task.id] : prev.completedDailyMissionIds,
+        customMissions: newCustomMissions,
+        postponedMissions: newPostponedMissions,
+        missionHistory: [completedTask, ...prev.missionHistory]
+      };
+
+      // Check Rank Up
+      const oldRank = getRankBasedOnPoints(prev.points);
+      const newRank = getRankBasedOnPoints(nextStats.points);
+
+      if (newRank.level > oldRank.level) {
+        setShowRankModal({ show: true, rank: newRank });
+      }
+
+      // Check Achievements
+      const { updatedStats, newUnlock } = checkAchievements(nextStats);
+      if (newUnlock) setShowAchievementModal(newUnlock);
+
+      return updatedStats;
+    });
+  };
+
+  // 4. Handle Postpone (Move to Backlog without date)
+  const handlePostponeMission = (task: Task) => {
+    setStats(prev => {
+      const newCustomMissions = prev.customMissions.filter(m => m.id !== task.id);
+      // Ensure we don't duplicate if it's already in postponed (shouldn't happen but safe)
+      const others = prev.postponedMissions.filter(p => p.id !== task.id);
+
+      // Clear scheduled date when moving to backlog
+      const taskToPostpone = { ...task, scheduledDate: undefined };
+
+      return {
+        ...prev,
+        customMissions: newCustomMissions,
+        postponedMissions: [...others, taskToPostpone]
+      };
+    });
+  };
+
+  // 5. Handle Schedule (Assign specific date)
+  // Used for: "Tomorrow", "Next Week", "Pick Date" from ANY source (Active or Postponed)
+  const handleScheduleMission = (task: Task, date: string) => {
+    setStats(prev => {
+      // Remove from postponed if it was there
+      const newPostponed = prev.postponedMissions.filter(m => m.id !== task.id);
+
+      // Determine logic for Custom Missions list
+      const isNaturallyToday = todaysMissionsRaw.some(t => t.id === task.id);
+
+      // FIX: isRestore should be true if it's NOT in active daily, NOT in postponed, AND NOT in custom list
+      const isRestore = !isNaturallyToday &&
+        !prev.postponedMissions.some(m => m.id === task.id) &&
+        !prev.customMissions.some(m => m.id === task.id);
+
+      let newCustomMissions = prev.customMissions;
+
+      // If it's today's daily mission AND we are scheduling it for TODAY,
+      if (isNaturallyToday && date === effectiveDate) {
+        // Remove from custom if it was there (it will reappear in dailyMissionsFiltered)
+        newCustomMissions = prev.customMissions.filter(c => c.id !== task.id);
+      } else {
+        // It is for future, or it's a custom task.
+        // Remove existing instance to update it
+        const others = prev.customMissions.filter(c => c.id !== task.id);
+
+        const scheduledTask: Task = {
+          ...task,
+          isDaily: false, // Convert to persistent so it sticks
+          scheduledDate: date,
+          restoredCount: isRestore ? (task.restoredCount || 0) + 1 : task.restoredCount,
+          priority: isRestore ? 'highest' : task.priority
+        };
+
+        newCustomMissions = [...others, scheduledTask];
+      }
+
+      return {
+        ...prev,
+        postponedMissions: newPostponed,
+        customMissions: newCustomMissions
+      };
+    });
+  };
+
+  // 6. Handle Add Custom
+  const handleAddCustomMission = (title: string, desc: string, date: string) => {
+    const newTask: Task = {
+      id: `custom_${Date.now()}`,
+      title: title,
+      description: desc,
+      points: 10,
+      category: 'vlastní_rozkaz',
+      completed: false,
+      isDaily: false,
+      scheduledDate: date || effectiveDate // Defaults to today if no date provided
+    };
+    setStats(prev => ({
+      ...prev,
+      customMissions: [...prev.customMissions, newTask]
+    }));
+  };
+
+  // 7. Handle Delete Custom (Cancel)
+  const handleDeleteMission = (id: string) => {
+    setStats(prev => ({
+      ...prev,
+      customMissions: prev.customMissions.filter(m => m.id !== id),
+      postponedMissions: prev.postponedMissions.filter(m => m.id !== id)
+    }));
+  };
+
+
+  if (!currentUser) {
+    return <AuthScreen onLogin={handleLogin} />;
+  }
+
+  if (!stats.userName || !stats.dueDate) {
+    return <Onboarding onComplete={(name, date, partnerName) => setStats(s => ({ ...s, userName: name, dueDate: date, partnerName: partnerName }))} />;
+  }
+
+  return (
+    <div className={`max-w-md mx-auto min-h-screen bg-[#1f2933] flex flex-col relative transition-all duration-500 ${nightMode ? 'night-vision-mode' : ''}`}>
+
+      {/* NEW: Achievement Unlock Modal */}
+      {showAchievementModal && (
+        <AchievementModal
+          data={{ achievement: showAchievementModal, unlockedDate: new Date().toISOString() }}
+          userName={stats.userName || 'Voják'}
+          onClose={() => setShowAchievementModal(null)}
+        />
+      )}
+
+      {/* Rank Up Modal */}
+      {showRankModal.show && showRankModal.rank && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-[#1f2933] w-full max-w-sm rounded-[2rem] p-8 border-2 border-[#f6c453] relative overflow-hidden shadow-2xl scale-100 animate-in zoom-in-95 duration-300">
+            <div className="absolute top-0 left-0 w-full h-1 bg-[#f6c453]"></div>
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-[#f6c453]"></div>
+
+            <div className="text-center space-y-6 relative z-10">
+              <div className="w-20 h-20 bg-[#f6c453]/10 rounded-full flex items-center justify-center mx-auto border-2 border-[#f6c453] shadow-[0_0_30px_rgba(246,196,83,0.3)]">
+                <Trophy className="w-10 h-10 text-[#f6c453] fill-[#f6c453]" />
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-[#f6c453] text-xs font-black uppercase tracking-[0.3em] animate-pulse">Povýšení Schváleno!</h3>
+                <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">
+                  {showRankModal.rank.title}
+                </h2>
+                <div className="inline-block bg-[#f6c453] text-[#1f2933] text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider mt-2">
+                  Nový Status: Level {showRankModal.rank.level}
+                </div>
+              </div>
+
+              <p className="text-white/80 text-sm font-medium leading-relaxed border-t border-white/10 pt-4 mt-4">
+                "{showRankModal.rank.message}"
+              </p>
+
+              <button
+                onClick={() => setShowRankModal({ show: false, rank: null })}
+                className="w-full bg-[#f6c453] text-[#1f2933] py-4 rounded-xl text-sm font-black uppercase tracking-widest hover:bg-[#ffcf60] active:scale-95 transition-all shadow-lg"
+              >
+                Rozumím, Pane!
+              </button>
+            </div>
+
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#f6c453] opacity-5 blur-3xl rounded-full pointer-events-none"></div>
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#f6c453] opacity-5 blur-3xl rounded-full pointer-events-none"></div>
+          </div>
+        </div>
+      )}
+
+      {/* Failure Modal */}
+      {showFailureModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md animate-in fade-in duration-700">
+          <div className="bg-[#1a1a1a] w-full max-w-sm rounded-[2rem] p-8 border-2 border-red-600 relative overflow-hidden shadow-[0_0_50px_rgba(220,38,38,0.3)] scale-100 animate-in zoom-in-95 duration-500">
+            <div className="absolute top-0 left-0 w-full h-1 bg-red-600"></div>
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-red-600"></div>
+
+            <div className="text-center space-y-6 relative z-10">
+              <div className="w-20 h-20 bg-red-600/10 rounded-full flex items-center justify-center mx-auto border-2 border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.5)]">
+                <RotateCcw className="w-10 h-10 text-red-600" />
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-red-500 text-xs font-black uppercase tracking-[0.3em]">Mise Selhala</h3>
+                <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none">
+                  PROMARNĚNÁ ŠANCE
+                </h2>
+                <p className="text-red-400 text-[10px] font-black uppercase tracking-widest mt-2 px-3 py-1 bg-red-500/10 rounded-full inline-block">
+                  Penalizace: -50 XP
+                </p>
+              </div>
+
+              <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                <p className="text-white/60 text-[10px] font-black uppercase tracking-widest mb-1">Selhání v rozkazu:</p>
+                <p className="text-white font-bold text-sm italic">"{showFailureModal.title}"</p>
+              </div>
+
+              <p className="text-red-300/80 text-xs font-medium leading-relaxed italic">
+                "Zklamal jsi svou partnerku v té nejméně vhodné chvíli. Tato příležitost už se nikdy nevrátí. Musíš se víc snažit, veliteli."
+              </p>
+
+              <button
+                onClick={() => setShowFailureModal(null)}
+                className="w-full py-4 bg-red-600 text-white font-black uppercase tracking-widest text-xs rounded-xl shadow-lg active:scale-95 transition-all hover:bg-red-700"
+              >
+                Příjímám vinu
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Night Mode Toggle Overlay */}
+      <button
+        onClick={() => setNightMode(!nightMode)}
+        className="fixed top-4 right-4 z-[60] bg-[#1f2933]/50 p-2 rounded-full border border-white/10 backdrop-blur-md text-[#f6c453] active:scale-95 transition-all shadow-lg"
+      >
+        {nightMode ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+      </button>
+
+      {isDevMode && (
+        <div className="sticky top-0 z-50 p-4 bg-[#f6c453] shadow-lg border-b border-[#1f2933]/10 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Settings className="w-4 h-4 text-[#1f2933] animate-spin-slow" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#1f2933]">
+                {isAdmin ? 'Admin Console' : 'Simulátor Operace'}
+              </span>
+            </div>
+            <div className="bg-[#1f2933] px-3 py-1 rounded-full text-[11px] font-black text-[#f6c453] shadow-md border border-[#f6c453]/20">
+              {currentMonth}. MĚSÍC | {currentWeek}. TÝDEN | DEN {currentDayIndex + 1}
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex justify-between items-center px-1">
+              <label className="text-[8px] font-black uppercase text-[#1f2933]/60">Časový posun (Dny: {dayOffset + 1})</label>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="279"
+              value={dayOffset}
+              onChange={(e) => setDayOffset(parseInt(e.target.value))}
+              className="w-full accent-[#1f2933] h-1"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={handleFactoryReset}
+              className="bg-rose-500 text-white py-2 rounded-xl text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all"
+            >
+              <Trash2 className="w-3 h-3" /> Reset Data
+            </button>
+            <button
+              onClick={handleLogout}
+              className="bg-[#1f2933] text-white py-2 rounded-xl text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all border border-white/10"
+            >
+              <LogOut className="w-3 h-3" /> Odhlásit se
+            </button>
+          </div>
+
+          {/* DEBUG: ADD XP BUTTON */}
+          <button
+            onClick={() => setStats(s => {
+              const newPoints = s.points + 100;
+              const oldRank = getRankBasedOnPoints(s.points);
+              const newRank = getRankBasedOnPoints(newPoints);
+              if (newRank.level > oldRank.level) {
+                setShowRankModal({ show: true, rank: newRank });
+              }
+              return { ...s, points: newPoints };
+            })}
+            className="bg-blue-500 text-white w-full py-2 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all"
+          >
+            +100 XP (DEBUG)
+          </button>
+        </div>
+      )}
+
+      {/* Main Content Area */}
+      <main className="flex-1 overflow-y-auto pb-24 px-4 pt-6 space-y-6">
+
+        {activeTab === 'dashboard' && (
+          <Dashboard
+            stats={stats}
+            currentWeek={currentWeek}
+            effectiveDate={getEffectiveDate()}
+          />
+        )}
+
+        {activeTab === 'missions' && (
+          <Missions
+            missions={[]}
+            dailyMissions={activeMissions}
+            postponedMissions={stats.postponedMissions || []}
+            missionHistory={stats.missionHistory || []}
+            dayIndex={currentDayIndex + 1}
+            loading={false}
+            onComplete={handleCompleteMission}
+            onPostpone={handlePostponeMission}
+            onSchedule={handleScheduleMission}
+            onAddCustom={handleAddCustomMission}
+            onDelete={handleDeleteMission}
+            onRefresh={() => { }}
+            simulatedDate={effectiveDate}
+            customMissions={stats.customMissions}
+          />
+        )}
+
+        {activeTab === 'recon' && (
+          <Recon
+            currentWeek={currentWeek}
+            partnerName={stats.partnerName}
+            hospitalTarget={stats.hospitalTarget || ''}
+            backupContacts={stats.backupContacts || []}
+            partnerPhone={stats.partnerPhone}
+            pediatricianContact={stats.pediatricianContact}
+            visitorStatus={stats.visitorStatus || 'bunker'}
+            musicPreference={stats.musicPreference}
+            parkingInfo={stats.parkingInfo}
+            gbsStatus={stats.gbsStatus || 'unknown'}
+            bloodPressureLog={stats.bloodPressureLog || []}
+            amnioticFluidLog={stats.amnioticFluidLog}
+            hospitalBagChecklist={stats.hospitalBagChecklist || []}
+            babyNames={stats.babyNames || []}
+            firstKickDetected={stats.firstKickDetected}
+            onSaveHospital={(target) => setStats(s => ({ ...s, hospitalTarget: target }))}
+            onSaveBackupContacts={(contacts) => setStats(s => ({ ...s, backupContacts: contacts }))}
+            onSavePartnerPhone={(phone) => setStats(s => ({ ...s, partnerPhone: phone }))}
+            onSavePediatrician={(name, phone, address) => setStats(s => ({ ...s, pediatricianContact: { name, phone, address } }))}
+            onSaveVisitorStatus={(status) => setStats(s => ({ ...s, visitorStatus: status }))}
+            onSaveMusicPreference={(genre) => setStats(s => ({ ...s, musicPreference: genre }))}
+            onSaveParking={(info) => setStats(s => ({ ...s, parkingInfo: info }))}
+            onSaveGbsStatus={(status) => setStats(s => ({ ...s, gbsStatus: status }))}
+            onSaveBabyNames={(names) => setStats(s => ({ ...s, babyNames: names }))}
+            onLogBloodPressure={(sys, dia) => setStats(s => ({
+              ...s,
+              bloodPressureLog: [...(s.bloodPressureLog || []), { sys, dia, date: new Date().toISOString() }].slice(-5)
+            }))}
+            onLogAmnioticFluid={(color) => setStats(s => ({ ...s, amnioticFluidLog: { time: new Date().toISOString(), color } }))}
+            onToggleHospitalBag={(id) => setStats(prev => ({
+              ...prev,
+              hospitalBagChecklist: (prev.hospitalBagChecklist || []).includes(id)
+                ? (prev.hospitalBagChecklist || []).filter(x => x !== id)
+                : [...(prev.hospitalBagChecklist || []), id]
+            }))}
+            onReportFirstKick={() => setStats(prev => {
+              const next = { ...prev, firstKickDetected: true };
+              const { updatedStats, newUnlock } = checkAchievements(next);
+              if (newUnlock) setShowAchievementModal(newUnlock);
+              return updatedStats;
+            })}
+            isDevMode={isDevMode}
+            onCompleteAllBag={handleCompleteAllHospitalBag}
+          />
+        )}
+        {activeTab === 'budget' && (
+          <Budget
+            gearChecklist={stats.gearChecklist}
+            budgetPlan={stats.budgetPlan}
+            onSaveBudget={(plan) => setStats(s => ({ ...s, budgetPlan: plan }))}
+            onToggleGear={(id) => setStats(prev => {
+              const isBought = prev.gearChecklist.includes(id);
+              const next = {
+                ...prev,
+                gearChecklist: isBought ? prev.gearChecklist.filter(x => x !== id) : [...prev.gearChecklist, id]
+              };
+              const { updatedStats, newUnlock } = checkAchievements(next);
+              if (newUnlock) setShowAchievementModal(newUnlock);
+              return updatedStats;
+            })}
+            isDevMode={isDevMode}
+            onCompleteAll={handleCompleteAllGear}
+            partnerName={stats.partnerName}
+            currentWeek={currentWeek}
+            customGear={stats.customGear || []}
+            onAddCustomGear={(item) => setStats(prev => ({ ...prev, customGear: [...(prev.customGear || []), item] }))}
+            onDeleteCustomGear={(id) => setStats(prev => ({
+              ...prev,
+              customGear: (prev.customGear || []).filter(g => g.id !== id)
+            }))}
+            onToggleCustomGear={(id) => setStats(prev => ({
+              ...prev,
+              customGear: (prev.customGear || []).map(g => g.id === id ? { ...g, bought: !g.bought } : g)
+            }))}
+            vehicleModel={stats.vehicleModel}
+            onSaveVehicle={(model) => setStats(prev => ({ ...prev, vehicleModel: model }))}
+            onConfirmVehicle={() => setStats(prev => {
+              const { updatedStats, newUnlock } = checkAchievements(prev);
+              if (newUnlock) setShowAchievementModal(newUnlock);
+              return updatedStats;
+            })}
+            onUpdateConsumable={handleUpdateConsumable}
+            onAddCustomConsumable={handleAddCustomConsumable}
+            onDeleteConsumable={handleDeleteConsumable}
+          />
+        )}
+        {activeTab === 'journal' && (
+          <Journal
+            logs={stats.logs.filter(log => !log.id.startsWith('failure_'))}
+            timeCapsule={stats.timeCapsule}
+            onAddLog={(c, m) => setStats(prev => ({ ...prev, logs: [...prev.logs, { id: Date.now().toString(), date: new Date().toISOString(), content: c, mood: m }], points: prev.points + 10 }))}
+            onAddTimeCapsule={(c, type, media) => setStats(prev => ({ ...prev, timeCapsule: [...prev.timeCapsule, { id: Date.now().toString(), date: new Date().toISOString(), content: c, type, mediaUrl: media }], points: prev.points + 20 }))}
+          />
+        )}
+        {activeTab === 'quiz' && <Quiz currentWeek={currentWeek} onReward={(pts) => setStats(prev => ({ ...prev, points: prev.points + pts }))} />}
+        {activeTab === 'achievements' && <Achievements stats={stats} />}
+      </main>
+
+      {/* Navigation */}
+      <Navigation
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onLogout={handleLogout}
+      />
+
+      {/* Onboarding Tour */}
+      {showOnboarding && (
+        <OnboardingTour
+          steps={ONBOARDING_STEPS}
+          onComplete={handleCompleteTour}
+          onSkip={handleSkipTour}
+        />
+      )}
+
+      <style>{`
+        @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin-slow { animation: spin-slow 8s linear infinite; }
+      `}</style>
+    </div>
+  );
+};
+
+export default App;
+

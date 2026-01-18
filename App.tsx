@@ -1,0 +1,491 @@
+
+
+import React, { useState, useEffect } from 'react';
+import { VysadekView } from './components/VysadekView';
+import { AuthScreen } from './components/AuthScreen';
+import { SplashScreen } from './components/layout/SplashScreen';
+import { Onboarding } from './components/Onboarding';
+import { OnboardingTour } from './components/OnboardingTour';
+import { Navigation } from './components/Navigation';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { Tab, Task, Achievement, UserStats } from './types';
+import { GEAR_CHECKLIST, HOSPITAL_BAG_CHECKLIST } from './constants';
+import { RANKS } from './constants';
+import { EyeOff, Shield } from 'lucide-react';
+import { ONBOARDING_STEPS } from './onboardingSteps';
+
+// Layout Components
+import { DevModePanel } from './components/layout/DevModePanel';
+import { TabContent } from './components/layout/TabContent';
+import { ModalManager } from './components/layout/ModalManager';
+
+// Custom hooks
+import { useUserStats } from './hooks/useUserStats';
+import { useDevMode } from './hooks/useDevMode';
+import { useConsumables } from './hooks/useConsumables';
+import { useMissions } from './hooks/useMissions';
+import { notificationService } from './services/NotificationService';
+
+const App: React.FC = () => {
+    // AUTO-LOGIN LOGIC
+    const [currentUser, setCurrentUser] = useState<string | null>(() => {
+        const saved = localStorage.getItem('currentUser');
+        if (!saved) {
+            const adminEmail = 'ja@ja.cz';
+            localStorage.setItem('currentUser', adminEmail);
+            return adminEmail;
+        }
+        return saved;
+    });
+
+    // UI State
+    const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+    const [isVysadekMode, setIsVysadekMode] = useState(false);
+    const [showRankModal, setShowRankModal] = useState<{ show: boolean, rank: typeof RANKS[0] | null }>({ show: false, rank: null });
+    const [showAchievementModal, setShowAchievementModal] = useState<Achievement | null>(null);
+    const [showFailureModal, setShowFailureModal] = useState<Task | null>(null);
+    const [showOnboarding, setShowOnboarding] = useState(false);
+    const [isMissionsLoading, setIsMissionsLoading] = useState(false);
+    const [isBooting, setIsBooting] = useState(true);
+    const [isTabTransitioning, setIsTabTransitioning] = useState(false);
+    const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+    const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+
+    // Initial boot sequence
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsBooting(false);
+        }, 2200);
+        return () => clearTimeout(timer);
+    }, []);
+
+    // Register Service Worker for PWA
+    useEffect(() => {
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered:', registration);
+                    })
+                    .catch(err => {
+                        console.log('SW registration failed:', err);
+                    });
+            });
+        }
+
+        // Listen for install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+            setShowInstallPrompt(true);
+        });
+
+        // Detect if already installed
+        window.addEventListener('appinstalled', () => {
+            setShowInstallPrompt(false);
+            setDeferredPrompt(null);
+        });
+    }, []);
+
+    // Handle PWA install
+    const handleInstallClick = async () => {
+        if (!deferredPrompt) return;
+
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+
+        if (outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+        }
+
+        setDeferredPrompt(null);
+        setShowInstallPrompt(false);
+    };
+
+    // Tab transition handler
+    const handleTabChange = (tab: Tab) => {
+        if (tab === activeTab) return;
+        setIsTabTransitioning(true);
+        setActiveTab(tab);
+        setTimeout(() => {
+            setIsTabTransitioning(false);
+        }, 800); // Increased tactical delay for visibility
+    };
+
+    // Night Mode State
+    const [nightMode, setNightMode] = useState<boolean>(() => {
+        const saved = localStorage.getItem('nightMode');
+        return saved ? JSON.parse(saved) : false;
+    });
+
+    // Custom Hooks
+    const { stats, setStats } = useUserStats(currentUser);
+    const devMode = useDevMode();
+    const effectiveDate = devMode.getEffectiveDate(stats.dueDate);
+
+    // Sync dayOffset with real calendar progress when NOT in dev mode
+    useEffect(() => {
+        if (!devMode.isDevMode && stats.dueDate) {
+            const dueDate = new Date(stats.dueDate);
+            if (isNaN(dueDate.getTime())) return;
+
+            const startDate = new Date(dueDate);
+            startDate.setDate(dueDate.getDate() - 280);
+            const now = new Date();
+            const realDayIndex = Math.floor(Math.max(0, (now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+
+            if (realDayIndex !== devMode.dayOffset) {
+                devMode.setDayOffset(realDayIndex);
+            }
+        }
+    }, [devMode.isDevMode, stats.dueDate, devMode.dayOffset]);
+
+    // Save nightMode to localStorage
+    useEffect(() => {
+        localStorage.setItem('nightMode', JSON.stringify(nightMode));
+    }, [nightMode]);
+
+    const currentDayIndex = devMode.dayOffset;
+    const currentWeekCount = devMode.currentWeek;
+
+    // Consumables & Missions hooks
+    const consumables = useConsumables(stats, setStats, effectiveDate);
+    const missions = useMissions(
+        stats,
+        setStats,
+        effectiveDate,
+        currentDayIndex,
+        setShowRankModal,
+        setShowAchievementModal,
+        setShowFailureModal
+    );
+
+    // Sync missed missions when day changes
+    useEffect(() => {
+        if (stats.email) {
+            const failedRestoredMission = missions.syncMissedMissions(currentDayIndex);
+            // Show failure modal if a restored mission failed
+            if (failedRestoredMission) {
+                // Use setTimeout to ensure state update has completed
+                setTimeout(() => {
+                    setShowFailureModal(failedRestoredMission);
+                }, 150);
+            }
+
+            // Notify about new missions if enabled
+            if (stats.notificationsEnabled) {
+                notificationService.send(
+                    '📍 Nový den, nové rozkazy',
+                    'Máš k dispozici nové denní mise. Podívej se na Briefing!'
+                );
+            }
+        }
+    }, [currentDayIndex, stats.email]);
+
+    // Logout handler
+    const handleLogout = () => {
+        localStorage.removeItem('currentUser');
+        setCurrentUser(null);
+    };
+
+    useEffect(() => {
+        if (stats.email && !stats.nightWatchTriggered) {
+            const hour = new Date().getHours();
+            if (hour >= 0 && hour < 4) {
+                setStats(prev => {
+                    const newStats = { ...prev, nightWatchTriggered: true };
+                    const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
+                    if (newUnlock) setShowAchievementModal(newUnlock);
+                    return updatedStats;
+                });
+            }
+        }
+    }, [stats.email, stats.nightWatchTriggered]);
+
+    useEffect(() => {
+        if (stats.email) {
+            const { updatedStats, newUnlock } = missions.checkAchievements(stats);
+            if (newUnlock) {
+                setStats(updatedStats);
+                setShowAchievementModal(newUnlock);
+            }
+        }
+    }, [stats.email]);
+
+    // Onboarding tour handlers
+    useEffect(() => {
+        if (stats.email && !stats.onboardingCompleted) {
+            const timer = setTimeout(() => setShowOnboarding(true), 500);
+            return () => clearTimeout(timer);
+        }
+    }, [stats.email, stats.onboardingCompleted]);
+
+    const handleCompleteTour = () => {
+        setStats(prev => {
+            const newStats = { ...prev, onboardingCompleted: true };
+            const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
+            if (newUnlock) setShowAchievementModal(newUnlock);
+            return updatedStats;
+        });
+        setShowOnboarding(false);
+    };
+
+    const handleSkipTour = () => {
+        // Skip tour without giving achievement - only mark as completed
+        setStats(prev => ({ ...prev, onboardingCompleted: true }));
+        setShowOnboarding(false);
+    };
+
+    const handleRestartTour = () => {
+        setActiveTab('dashboard');
+        setShowOnboarding(true);
+    };
+
+    // Simulate loading only when switching to Missions tab
+    useEffect(() => {
+        if (activeTab === 'missions') {
+            setIsMissionsLoading(true);
+            const timer = setTimeout(() => setIsMissionsLoading(false), 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [activeTab]);
+
+    // Dev tools handlers
+    const handleCompleteAllGear = () => {
+        const allIds = GEAR_CHECKLIST.flatMap(c => c.items.map(i => i.id));
+        setStats(prev => ({ ...prev, gearChecklist: allIds }));
+    };
+
+    const handleCompleteAllHospitalBag = () => {
+        const allIds = HOSPITAL_BAG_CHECKLIST.flatMap(c => c.items.map(i => i.id));
+        setStats(prev => {
+            const newStats = { ...prev, hospitalBagChecklist: allIds };
+            const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
+            if (newUnlock) setShowAchievementModal(newUnlock);
+            return updatedStats;
+        });
+    };
+
+    const handleResetAllGear = () => {
+        setStats(prev => ({ ...prev, gearChecklist: [] }));
+    };
+
+    const handleResetAllHospitalBag = () => {
+        setStats(prev => ({ ...prev, hospitalBagChecklist: [] }));
+    };
+
+    if (isBooting) {
+        return <SplashScreen />;
+    }
+
+    // Auth screen check
+    if (!currentUser) {
+        return <AuthScreen onLogin={(email) => setCurrentUser(email)} />;
+    }
+
+    // Onboarding process check
+    const isDueDateValid = stats.dueDate ? !isNaN(new Date(stats.dueDate).getTime()) : false;
+    if (!stats.userName || !stats.partnerName || !stats.dueDate || !isDueDateValid) {
+        return (
+            <Onboarding
+                onComplete={(name, dueDate, partnerName) => {
+                    // Calculate initial day index based on due date
+                    const dueDateObj = new Date(dueDate);
+                    const startDate = new Date(dueDateObj);
+                    startDate.setDate(dueDateObj.getDate() - 280);
+                    const now = new Date();
+                    const initialDayIndex = Math.floor(Math.max(0, (now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+
+                    setStats(prev => ({
+                        ...prev,
+                        userName: name,
+                        partnerName: partnerName,
+                        dueDate: dueDate,
+                        lastProcessedDayIndex: initialDayIndex, // Start tracking from today
+                    }));
+
+                    // Also sync devMode state
+                    devMode.setDayOffset(initialDayIndex);
+                }}
+            />
+        );
+    }
+
+    return (
+        <div className={`min-h-screen bg-[#1f2933] text-white ${nightMode ? 'night-vision-mode' : ''} pb-20`}>
+            {/* 1. Dev Mode Panel */}
+            <DevModePanel
+                isDevMode={devMode.isDevMode}
+                dayOffset={devMode.dayOffset}
+                setDayOffset={devMode.setDayOffset}
+                setIsDevMode={devMode.setIsDevMode}
+                stats={stats}
+                setStats={setStats}
+                onRankUp={(rank) => setShowRankModal({ show: true, rank })}
+                onAchievementUnlock={setShowAchievementModal}
+                checkAchievements={missions.checkAchievements}
+            />
+
+            {/* 2. Main Content Tabs */}
+            <TabContent
+                activeTab={activeTab}
+                stats={stats}
+                setStats={setStats}
+                currentWeekCount={currentWeekCount}
+                currentDayIndex={currentDayIndex}
+                effectiveDate={effectiveDate}
+                devMode={devMode}
+                isMissionsLoading={isMissionsLoading || isTabTransitioning}
+                missions={missions}
+                consumables={consumables}
+                handleCompleteAllHospitalBag={handleCompleteAllHospitalBag}
+                handleResetAllHospitalBag={handleResetAllHospitalBag}
+                handleResetAllGear={handleResetAllGear}
+                handleCompleteAllGear={handleCompleteAllGear}
+                setActiveTab={handleTabChange}
+                setIsVysadekMode={setIsVysadekMode}
+                setShowAchievementModal={setShowAchievementModal}
+            />
+
+            {/* 3. Navigation Bar */}
+            <Navigation
+                activeTab={activeTab}
+                setActiveTab={handleTabChange}
+                onLogout={handleLogout}
+                onOpenVysadek={() => setIsVysadekMode(true)}
+                soundEnabled={stats.soundEnabled || false}
+                onToggleSound={(enabled) => setStats(prev => ({ ...prev, soundEnabled: enabled }))}
+                notificationsEnabled={stats.notificationsEnabled || false}
+                onToggleNotifications={(enabled) => setStats(prev => ({ ...prev, notificationsEnabled: enabled }))}
+                nightMode={nightMode}
+                onToggleNightMode={setNightMode}
+                dueDate={stats.dueDate}
+                onUpdateDueDate={(date) => setStats(prev => ({ ...prev, dueDate: date }))}
+                onDeleteAllData={() => {
+                    if (confirm('Opravdu chceš smazat všechna data? Tato akce je nevratná!')) {
+                        localStorage.clear();
+                        window.location.reload();
+                    }
+                }}
+                onRestartTour={() => setShowOnboarding(true)}
+            />
+
+            {/* 4. Modal Overlays */}
+            <ModalManager
+                showRankModal={showRankModal}
+                setShowRankModal={setShowRankModal}
+                showAchievementModal={showAchievementModal}
+                setShowAchievementModal={setShowAchievementModal}
+                showFailureModal={showFailureModal}
+                setShowFailureModal={setShowFailureModal}
+                stats={stats}
+            />
+
+            {/* 5. Onboarding Tutorial */}
+            {showOnboarding && (
+                <OnboardingTour
+                    steps={ONBOARDING_STEPS}
+                    onComplete={handleCompleteTour}
+                    onSkip={handleSkipTour}
+                    onNavigate={setActiveTab}
+                />
+            )}
+
+            {/* 6. PWA Install Prompt */}
+            {showInstallPrompt && (
+                <div className="fixed bottom-24 left-4 right-4 mx-auto max-w-md z-50 animate-slide-up">
+                    <div className="bg-gradient-to-br from-[#f6c453]/10 via-slate-500/5 to-slate-500/10 border-2 border-[#f6c453]/30 rounded-2xl p-4 shadow-2xl backdrop-blur-lg">
+                        <div className="flex items-start gap-3">
+                            <div className="p-2 bg-[#f6c453]/10 rounded-lg">
+                                <Shield className="w-6 h-6 text-[#f6c453]" />
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-sm font-black uppercase text-[#f6c453] mb-1">Přidat na plochu</h3>
+                                <p className="text-xs text-white/70 mb-3">Nainstaluj aplikaci pro rychlý přístup a offline režim</p>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={handleInstallClick}
+                                        className="flex-1 bg-[#f6c453] text-[#1f2933] py-2 px-4 rounded-lg font-bold text-xs uppercase hover:bg-[#ffcf60] transition-all active:scale-95"
+                                    >
+                                        Instalovat
+                                    </button>
+                                    <button
+                                        onClick={() => setShowInstallPrompt(false)}
+                                        className="px-4 py-2 bg-white/10 text-white rounded-lg font-bold text-xs uppercase hover:bg-white/20 transition-all"
+                                    >
+                                        Později
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 7. Hidden Dev Trigger */}
+            {!devMode.isDevMode && (
+                <button
+                    onClick={() => devMode.setIsDevMode(true)}
+                    className="fixed top-4 right-4 opacity-0 hover:opacity-100 transition-opacity z-50"
+                >
+                    <EyeOff className="w-4 h-4 text-yellow-400" />
+                </button>
+            )}
+
+            {/* 7. Special Vysadek Mode */}
+            <VysadekOverlay
+                isVysadekMode={isVysadekMode}
+                stats={stats}
+                setStats={setStats}
+                onExit={() => setIsVysadekMode(false)}
+            />
+
+            <style>{`
+                @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+                .animate-spin-slow { animation: spin-slow 8s linear infinite; }
+                
+                /* Night Vision Mode */
+                .night-vision-mode {
+                    /* Toto změní barvy na červené/oranžové */
+                    filter: sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.9) brightness(0.8);
+                    background-color: #000 !important;
+                }
+                /* Toto přebarví zvýrazněné texty (zlaté) na sytě červenou */
+                .night-vision-mode .accent-text, 
+                .night-vision-mode .text-\\[\\#f6c453\\] {
+                    color: #ff3300 !important;
+                }
+                .night-vision-mode .accent-bg {
+                    background-color: #ff3300 !important;
+                }
+            `}</style>
+        </div>
+    );
+};
+
+const VysadekOverlay: React.FC<{
+    isVysadekMode: boolean;
+    stats: UserStats;
+    setStats: React.Dispatch<React.SetStateAction<UserStats>>;
+    onExit: () => void;
+}> = ({ isVysadekMode, stats, setStats, onExit }) => {
+    if (!isVysadekMode) return null;
+    return (
+        <VysadekView
+            partnerName={stats.partnerName}
+            hospitalTarget={stats.hospitalTarget}
+            amnioticFluidLog={stats.amnioticFluidLog}
+            partnerPhone={stats.partnerPhone}
+            pediatricianContact={stats.pediatricianContact}
+            backupContacts={stats.backupContacts}
+            stats={stats}
+            onLogAmnioticFluid={(color) => setStats(prev => ({
+                ...prev,
+                amnioticFluidLog: { time: new Date().toISOString(), color }
+            }))}
+            onExit={onExit}
+        />
+    );
+};
+
+export default App;

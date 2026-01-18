@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Zvuků - Operace Výsadek</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1f2933 0%, #2d3748 100%);
+            color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(246, 196, 83, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            color: #f6c453;
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 40px;
+        }
+        .sound-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .sound-card:hover {
+            background: rgba(246, 196, 83, 0.05);
+            border-color: rgba(246, 196, 83, 0.3);
+            transform: translateY(-2px);
+        }
+        .sound-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f6c453;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .sound-desc {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #f6c453;
+            color: #1f2933;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 1px;
+        }
+        button:hover {
+            background: #ffcf60;
+            transform: scale(1.02);
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .playing {
+            background: #4ade80 !important;
+            animation: pulse 0.5s ease-in-out;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Test Zvuků</h1>
+        <p class="subtitle">Operace Výsadek</p>
+
+        <div class="sound-card">
+            <div class="sound-title">📻 Rádiový Beep</div>
+            <div class="sound-desc">Notifikační zvuk - krátký beep s radio static efektem (400ms)</div>
+            <button onclick="playSound('notification')">Přehrát Notifikaci</button>
+        </div>
+
+        <div class="sound-card">
+            <div class="sound-title">📡 Sonar Ping</div>
+            <div class="sound-desc">Zvuk při dosažení 36. týdne - ping s echo efektem (1.2s)</div>
+            <button onclick="playSound('sonar')">Přehrát Sonar</button>
+        </div>
+
+        <div class="sound-card">
+            <div class="sound-title">✅ Mechanické Cvaknutí</div>
+            <div class="sound-desc">Zvuk při dokončení mise - krátké cvaknutí (80ms)</div>
+            <button onclick="playSound('click')">Přehrát Click</button>
+        </div>
+    </div>
+
+    <script>
+        function playSound(type) {
+            const audio = new Audio(`/${type}.wav`);
+            const button = event.target;
+            
+            button.classList.add('playing');
+            button.textContent = '🔊 Přehrávání...';
+            
+            audio.play().catch(err => {
+                console.error('Chyba při přehrávání:', err);
+                alert('Nepodařilo se přehrát zvuk. Zkontroluj, zda je soubor na správném místě.');
+            });
+            
+            audio.onended = () => {
+                button.classList.remove('playing');
+                button.textContent = type === 'notification' ? 'Přehrát Notifikaci' : 
+                                    type === 'sonar' ? 'Přehrát Sonar' : 
+                                    'Přehrát Click';
+            };
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "Partner v akci: Junior Deploy v.6",
+  "description": "Systém pro řízení operace 'Nové miminko'. Mise, XP, a AI taktický poradce pro budoucí velitele rodiny.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
