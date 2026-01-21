@@ -249,19 +249,19 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
                             </div>
                         </div>
                     </div>
-            )}
+                </div>
 
-                    {/* Date Picker Modal */}
-                    <DatePickerModal
-                        isOpen={showDatePicker}
-                        onClose={() => setShowDatePicker(false)}
-                        onSelect={(date) => {
-                            setNewCheckupDate(date);
-                            setShowDatePicker(false);
-                        }}
-                        initialDate={newCheckupDate}
-                        title="Datum kontroly"
-                    />
-                </>
-            );
+            {/* Date Picker Modal */}
+            <DatePickerModal
+                isOpen={showDatePicker}
+                onClose={() => setShowDatePicker(false)}
+                onSelect={(date) => {
+                    setNewCheckupDate(date);
+                    setShowDatePicker(false);
+                }}
+                initialDate={newCheckupDate}
+                title="Datum kontroly"
+            />
+        </>
+    );
 };
