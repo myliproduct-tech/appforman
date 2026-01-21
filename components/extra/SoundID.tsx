@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { X, Play, Volume2, CheckCircle, XCircle, Trophy, TrendingUp } from 'lucide-react';
 
+// Helper to get correct asset path
+const getAssetPath = (filename: string): string => {
+    const origin = window.location.origin;
+    const pathname = window.location.pathname;
+    if (pathname.includes('/appforman/')) {
+        return `${origin}/appforman/${filename}`;
+    }
+    return `${origin}/${filename}`;
+};
+
 type CryType = 'NEH' | 'OWH' | 'EHA' | 'EAIRH' | 'HEH';
 
 interface CryPattern {
@@ -30,7 +40,7 @@ const CRY_PATTERNS: CryPattern[] = [
         explanation: 'Slyšíš to \'N\' na začátku? To je sací reflex. Miminko má hlad a připravuje se na sání.',
         color: 'from-[#f6c453] to-slate-400',
         frequency: [40, 60, 80, 95, 85, 70, 50, 65, 80, 90, 75, 60, 45, 55, 70, 85, 95, 80, 60, 40],
-        soundFile: '/sounds/Hlad.mp3'
+        soundFile: getAssetPath('sounds/Hlad.mp3')
     },
     {
         id: 'OWH',
@@ -40,7 +50,7 @@ const CRY_PATTERNS: CryPattern[] = [
         explanation: 'Protáhlý zvuk připomínající zívání. Miminko je unavené a potřebuje spánek.',
         color: 'from-[#f6c453] to-slate-400',
         frequency: [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25],
-        soundFile: '/sounds/unava.mp3'
+        soundFile: getAssetPath('sounds/unava.mp3')
     },
     {
         id: 'EHA',
@@ -50,7 +60,7 @@ const CRY_PATTERNS: CryPattern[] = [
         explanation: 'Krátké, trhané zvuky znamenají napětí v hrudníku. Miminko potřebuje odříhnout.',
         color: 'from-[#f6c453] to-slate-400',
         frequency: [50, 30, 70, 40, 80, 35, 75, 45, 85, 40, 70, 50, 60, 45, 75, 55, 65, 50, 55, 45],
-        soundFile: '/sounds/eha.mp3'
+        soundFile: getAssetPath('sounds/eha.mp3')
     },
     {
         id: 'EAIRH',
@@ -60,7 +70,7 @@ const CRY_PATTERNS: CryPattern[] = [
         explanation: 'Miminko má plyny a potřebuje pomoct s jejich uvolněním. Může pomoci masáž bříška nebo "kolo".',
         color: 'from-[#f6c453] to-slate-400',
         frequency: [45, 50, 55, 60, 70, 75, 80, 85, 80, 75, 70, 65, 60, 55, 50, 55, 60, 65, 60, 50],
-        soundFile: '/sounds/prdy.mp3'
+        soundFile: getAssetPath('sounds/prdy.mp3')
     },
     {
         id: 'HEH',
@@ -70,7 +80,7 @@ const CRY_PATTERNS: CryPattern[] = [
         explanation: 'Syčivý zvuk "H" na začátku naznačuje nepohodlí - mokrá plena, zima nebo něco tlačí.',
         color: 'from-[#f6c453] to-slate-400',
         frequency: [45, 55, 50, 60, 55, 65, 60, 70, 65, 75, 70, 65, 60, 55, 50, 55, 60, 55, 50, 45],
-        soundFile: '/sounds/nepohodli.mp3'
+        soundFile: getAssetPath('sounds/nepohodli.mp3')
     }
 ];
 
