@@ -31,6 +31,13 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
     const [isExporting, setIsExporting] = useState(false);
     const reportRef = useRef<HTMLDivElement>(null);
 
+    // Auto-fill baby name if a name is selected
+    React.useEffect(() => {
+        if (selectedName && !babyName) {
+            setBabyName(selectedName.name);
+        }
+    }, [selectedName, babyName]);
+
     const currentRank = getRankBasedOnPoints(stats.points);
     const completedMissions = stats.completedTasks.length;
     const achievementCount = stats.badges.length;
