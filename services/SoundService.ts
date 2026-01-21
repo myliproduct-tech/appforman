@@ -1,7 +1,6 @@
-// Sound Service using Web Audio API for better mobile support
+// Sound Service using HTML Audio API for better mobile compatibility
 class SoundService {
-    private audioContext: AudioContext | null = null;
-    private soundBuffers: Map<string, AudioBuffer> = new Map();
+    private audioElements: Map<string, HTMLAudioElement> = new Map();
     private isInitialized = false;
 
     // Sound file paths
@@ -29,18 +28,17 @@ class SoundService {
         document.addEventListener('click', init, { once: true });
     }
 
-    private async initialize() {
+    private initialize() {
         try {
-            // Create AudioContext
-            this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-            console.log('🔊 AudioContext initialized');
+            console.log('🔊 Initializing SoundService...');
 
             // Preload all sounds
-            await this.preloadSounds();
+            this.preloadSounds();
             this.isInitialized = true;
-            console.log('✅ All sounds preloaded');
+
+            console.log('✅ SoundService initialized');
         } catch (error) {
-            console.error('❌ Failed to initialize AudioContext:', error);
+            console.error('❌ Failed to initialize SoundService:', error);
         }
     }
 
@@ -55,59 +53,50 @@ class SoundService {
         return `${origin}/${filename}`;
     }
 
-    private async preloadSounds() {
-        const loadPromises = Object.entries(this.sounds).map(async ([key, filename]) => {
+    private preloadSounds() {
+        Object.entries(this.sounds).forEach(([key, filename]) => {
             try {
                 const url = this.getAssetPath(filename);
-                console.log(`📥 Loading sound: ${key} from ${url}`);
+                console.log(`📥 Preloading sound: ${key} from ${url}`);
 
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
+                const audio = new Audio(url);
+                audio.preload = 'auto';
+                audio.load();
 
-                const arrayBuffer = await response.arrayBuffer();
-                const audioBuffer = await this.audioContext!.decodeAudioData(arrayBuffer);
+                // Handle load success
+                audio.addEventListener('canplaythrough', () => {
+                    console.log(`✅ Loaded: ${key}`);
+                }, { once: true });
 
-                this.soundBuffers.set(key, audioBuffer);
-                console.log(`✅ Loaded: ${key}`);
+                // Handle load error
+                audio.addEventListener('error', (e) => {
+                    console.error(`❌ Failed to load ${key}:`, e);
+                }, { once: true });
+
+                this.audioElements.set(key, audio);
             } catch (error) {
-                console.error(`❌ Failed to load ${key}:`, error);
+                console.error(`❌ Error preloading ${key}:`, error);
             }
         });
-
-        await Promise.all(loadPromises);
     }
 
     public async play(soundName: 'click' | 'sonar' | 'notification') {
         // Initialize if not done yet
         if (!this.isInitialized) {
-            await this.initialize();
+            this.initialize();
         }
 
-        if (!this.audioContext) {
-            console.error('❌ AudioContext not available');
-            return;
-        }
-
-        // Resume context if suspended (mobile requirement)
-        if (this.audioContext.state === 'suspended') {
-            await this.audioContext.resume();
-        }
-
-        const buffer = this.soundBuffers.get(soundName);
-        if (!buffer) {
-            console.error(`❌ Sound not loaded: ${soundName}`);
+        const audio = this.audioElements.get(soundName);
+        if (!audio) {
+            console.error(`❌ Sound not found: ${soundName}`);
             return;
         }
 
         try {
-            // Create source
-            const source = this.audioContext.createBufferSource();
-            source.buffer = buffer;
-            source.connect(this.audioContext.destination);
-            source.start(0);
+            // Reset to start if already playing
+            audio.currentTime = 0;
 
+            await audio.play();
             console.log(`🔊 Playing: ${soundName}`);
         } catch (error) {
             console.error(`❌ Failed to play ${soundName}:`, error);
