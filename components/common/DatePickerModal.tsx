@@ -92,7 +92,7 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
 
                 {/* Picker */}
                 <div className="p-6">
-                    <div className="flex gap-4 items-center justify-center">
+                    <div className="flex gap-2 sm:gap-4 items-center justify-center">
                         {/* Day Picker */}
                         <div className="flex-1 flex flex-col items-center">
                             <button
@@ -101,8 +101,8 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
                             >
                                 <ChevronUp className="w-8 h-8" />
                             </button>
-                            <div className="h-20 flex items-center justify-center bg-[#f6c453]/10 border-2 border-[#f6c453]/30 rounded-2xl px-6 my-2">
-                                <span className="text-4xl font-black text-[#f6c453]">
+                            <div className="h-16 sm:h-20 flex items-center justify-center bg-[#f6c453]/10 border-2 border-[#f6c453]/30 rounded-xl sm:rounded-2xl px-3 sm:px-6 my-2 min-w-[60px] sm:min-w-[80px]">
+                                <span className="text-2xl sm:text-4xl font-black text-[#f6c453]">
                                     {String(selectedDay).padStart(2, '0')}
                                 </span>
                             </div>
@@ -125,8 +125,8 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
                             >
                                 <ChevronUp className="w-8 h-8" />
                             </button>
-                            <div className="h-20 flex items-center justify-center bg-[#f6c453]/10 border-2 border-[#f6c453]/30 rounded-2xl px-4 my-2">
-                                <span className="text-2xl font-black text-[#f6c453] text-center">
+                            <div className="h-16 sm:h-20 flex items-center justify-center bg-[#f6c453]/10 border-2 border-[#f6c453]/30 rounded-xl sm:rounded-2xl px-2 sm:px-4 my-2 min-w-[70px] sm:min-w-[100px]">
+                                <span className="text-sm sm:text-2xl font-black text-[#f6c453] text-center">
                                     {MONTHS[selectedMonth - 1]}
                                 </span>
                             </div>
@@ -149,8 +149,8 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
                             >
                                 <ChevronUp className="w-8 h-8" />
                             </button>
-                            <div className="h-20 flex items-center justify-center bg-[#f6c453]/10 border-2 border-[#f6c453]/30 rounded-2xl px-6 my-2">
-                                <span className="text-3xl font-black text-[#f6c453]">
+                            <div className="h-16 sm:h-20 flex items-center justify-center bg-[#f6c453]/10 border-2 border-[#f6c453]/30 rounded-xl sm:rounded-2xl px-3 sm:px-6 my-2 min-w-[65px] sm:min-w-[90px]">
+                                <span className="text-xl sm:text-3xl font-black text-[#f6c453]">
                                     {selectedYear}
                                 </span>
                             </div>
