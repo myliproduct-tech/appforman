@@ -2,7 +2,7 @@ import React from 'react';
 import { UserStats, Task, Achievement } from '../types';
 import { getDailyMissions } from '../data/dailyMissions';
 import { localizeText, getRankBasedOnPoints } from '../utils';
-import { playSound } from '../utils/soundUtils';
+import { soundService } from '../services/SoundService';
 import { ACHIEVEMENTS } from '../constants';
 import { notificationService } from '../services/NotificationService';
 
@@ -95,7 +95,7 @@ export const useMissions = (
 
         // Play completion sound if enabled
         if (stats.soundEnabled) {
-            playSound('click.wav');
+            soundService.playClick();
         }
 
         const timePart = new Date().toISOString().split('T')[1];

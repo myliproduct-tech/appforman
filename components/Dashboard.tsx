@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { UserStats } from '../types';
-import { playSound } from '../utils/soundUtils';
+import { soundService } from '../services/SoundService';
 import { PREGNANCY_STAGES, BABY_SIZES, RANKS, WEEKLY_INTEL, PARTNER_RECON, DESERTER_RANK } from '../constants';
 import { Flame, Target, Trophy, Activity, Dna, X, ChevronRight, FileText, AlertTriangle, Shield } from 'lucide-react';
 
@@ -29,7 +29,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
     if (currentWeek >= 36 && !stats.vysadekClicked && stats.soundEnabled) {
       // Small delay to ensure audio context is unlocked (especially on mobile)
       const timeout = setTimeout(() => {
-        playSound('sonar.wav');
+        soundService.playSonar();
       }, 300);
 
       return () => clearTimeout(timeout);
