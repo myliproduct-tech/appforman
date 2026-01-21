@@ -102,6 +102,39 @@ const App: React.FC = () => {
         setShowInstallPrompt(false);
     };
 
+    // Audio unlock for mobile browsers
+    useEffect(() => {
+        let unlocked = false;
+
+        const unlockAudio = () => {
+            if (unlocked) return;
+
+            // Create and play silent audio to unlock audio context on mobile
+            const silentAudio = new Audio();
+            silentAudio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhAC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAA4T/jRkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+xBkAA/wAABpAAAACAAADSAAAAATEFT0pdAAAH0AAACwAAAAETEFT0pdgAAB9AAALAABhAFT0pdgAAH0AAAsAAGEAVPSl2AAAH0AAAwAAYQBU9KXYAAAfQAACwAAYQBU9KYQAAB9AAALAABhAFT0pdAAAH0AAAsAAGEAVNSl0AAAfQAACwAAYQBU1KXQAAUAAALAABhAFTUpdAAABQAAAsAAGEAVNSl0AAAFAAACwAAYQBU1KXQAAAUAAALAABhAFTUpdAAAFAAACwAAYQBU1KXQAAAUAAALAAA';
+            silentAudio.play().then(() => {
+                console.log('🔊 Audio unlocked for mobile');
+                unlocked = true;
+            }).catch(() => {
+                // Ignore errors - audio will unlock on next interaction
+            });
+
+            // Remove listeners after first unlock
+            document.removeEventListener('touchstart', unlockAudio);
+            document.removeEventListener('click', unlockAudio);
+        };
+
+        // Listen for first user interaction
+        document.addEventListener('touchstart', unlockAudio, { once: true });
+        document.addEventListener('click', unlockAudio, { once: true });
+
+        return () => {
+            document.removeEventListener('touchstart', unlockAudio);
+            document.removeEventListener('click', unlockAudio);
+        };
+    }, []);
+
+
     // Tab transition handler
     const handleTabChange = (tab: Tab) => {
         if (tab === activeTab) return;
