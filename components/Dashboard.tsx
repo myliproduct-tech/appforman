@@ -24,17 +24,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
   const { state, dispatch } = useDashboardReducer();
   const { showIntelModal, showMissionModal } = state.modals;
 
-  // Play sonar sound when Vysadek button appears (week 36+) and user hasn't clicked it yet
-  useEffect(() => {
+  // Play sonar sound when user clicks anywhere on dashboard (if week 36+ and not clicked Vysadek yet)
+  const handleDashboardClick = () => {
     if (currentWeek >= 36 && !stats.vysadekClicked && stats.soundEnabled) {
-      // Small delay to ensure audio context is unlocked (especially on mobile)
-      const timeout = setTimeout(() => {
-        soundService.playSonar();
-      }, 300);
-
-      return () => clearTimeout(timeout);
+      soundService.playSonar();
     }
-  }, [currentWeek, stats.vysadekClicked, stats.soundEnabled]);
+  };
 
   const currentMilestone = PREGNANCY_STAGES.find(s => currentWeek <= s.week) || PREGNANCY_STAGES[PREGNANCY_STAGES.length - 1];
   const progress = Math.min(100, (currentWeek / 40) * 100);
@@ -130,10 +125,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
     : 100;
 
   return (
-    <div className="space-y-6 pb-8">
+    <div
+      className="flex-1 overflow-y-auto pb-20 px-4"
+      onClick={handleDashboardClick}
+    >
       {/* Enhanced Header - Simplified to Yellow/Slate */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#f6c453]/10 via-slate-500/5 to-slate-500/10 border border-[#f6c453]/20 p-6 shadow-lg shadow-[#f6c453]/5 group">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y2YzQ1MyIgc3Ryb2tlLXdpZHRoPSIwLjUiIG9wYWNpdHk9IjAuMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30 group-hover:opacity-40 transition-opacity"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y2YzQ1MyIgc3Ryb2tlLXdpZHRoPSIwLjUiIG9wYWNpdHk9IjAuMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWghtD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30 group-hover:opacity-40 transition-opacity"></div>
 
         <div className="relative flex items-center justify-between">
           <div className="flex items-center gap-3">
