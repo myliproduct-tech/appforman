@@ -348,11 +348,21 @@ export const ACHIEVEMENTS: Achievement[] = [
     id: 'logistic_master',
     title: 'Mistr logistiky',
     description: 'Bojový rozpočet a logistický plán je připraven.',
-    howToUnlock: 'Vytvořit položky v sekci Plánování rozpočtu.',
+    howToUnlock: 'Vytvořit položky v sekci Plánování rozpočtu a uložit rozpočet.',
     icon: 'Wallet',
     rarity: 'rare',
     xpReward: 250,
-    condition: (stats: UserStats) => Object.keys(stats.budgetPlan || {}).length > 0
+    condition: (stats: UserStats) => {
+      const plan = stats.budgetPlan;
+      if (!plan) return false;
+      // Check if at least one budget item has a value
+      return (plan.stroller || 0) > 0 ||
+        (plan.carSeat || 0) > 0 ||
+        (plan.furniture || 0) > 0 ||
+        (plan.clothes || 0) > 0 ||
+        (plan.cosmetics || 0) > 0 ||
+        (plan.other || 0) > 0;
+    }
   },
   {
     id: 'tactic_expert',
