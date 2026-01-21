@@ -139,11 +139,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
               <Shield className="w-6 h-6 text-[#f6c453]" />
             </div>
             <div>
-              <h2 className="text-2xl font-black italic uppercase accent-text tracking-tight inline-block pr-3 group-hover:translate-x-1 transition-transform">
+              <h2 className="text-xl sm:text-2xl font-black italic uppercase accent-text tracking-tight inline-block pr-3 group-hover:translate-x-1 transition-transform">
                 Centrum Velení
               </h2>
-              <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">
-                Operace Probíhá • Týden {currentWeek}
+              <p className="text-[9px] sm:text-[10px] font-bold text-white/40 uppercase tracking-wider">
+                Týden {currentWeek}
               </p>
             </div>
           </div>
@@ -278,8 +278,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
             {sizeInfo.emoji}
           </div>
           <div>
-            <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.15em] mb-1">Jednotka: Junior</p>
-            <p className="font-bold text-[#f5f7fa] text-lg leading-tight">{sizeInfo.name}</p>
+            <p className="text-[9px] sm:text-[10px] font-black opacity-30 uppercase tracking-tight mb-1">Junior</p>
+            <p className="font-bold text-[#f5f7fa] text-base sm:text-lg leading-tight">{sizeInfo.name}</p>
           </div>
         </div>
         <button
@@ -292,8 +292,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
             <ChevronRight className="w-5 h-5 accent-text opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
           <div>
-            <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.15em] mb-1">Mise Splněny</p>
-            <p className="font-bold text-[#f5f7fa] text-lg">{stats.completedTasks.length}</p>
+            <p className="text-[9px] sm:text-[10px] font-black opacity-30 uppercase tracking-tight mb-1">Splněno</p>
+            <p className="font-bold text-[#f5f7fa] text-base sm:text-lg">{stats.completedTasks.length}</p>
           </div>
         </button>
       </div>
@@ -305,10 +305,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
         {isDeserter && <div className="absolute inset-0 bg-red-500/10 animate-pulse pointer-events-none"></div>}
 
         <div className="flex justify-between items-end mb-5 px-1 relative z-10">
-          <h2 className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Průběh Mise</h2>
-          <span className="accent-text font-black text-4xl italic tracking-tighter leading-none flex items-center gap-2">
-            {currentWeek}<span className="text-xl">. týden</span>
-            <ChevronRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity text-[#f6c453]" />
+          <h2 className="text-[9px] sm:text-[10px] font-black uppercase tracking-tight opacity-40">Průběh</h2>
+          <span className="accent-text font-black text-3xl sm:text-4xl italic tracking-tighter leading-none flex items-center gap-1 sm:gap-2">
+            {currentWeek}<span className="text-base sm:text-xl">. týden</span>
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 opacity-0 group-hover:opacity-100 transition-opacity text-[#f6c453]" />
           </span>
         </div>
         <div className="w-full bg-white/5 rounded-full h-3 overflow-hidden border border-white/5 relative z-10">
