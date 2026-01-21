@@ -99,7 +99,7 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
 
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-[70] bg-[#1f2933] animate-fade-in flex flex-col">
+                <div className="fixed inset-0 z-[100] bg-[#1f2933] animate-fade-in flex flex-col">
                     <div className="w-full max-w-xl mx-auto flex-1 flex flex-col overflow-hidden">
                         <div className="flex justify-between items-center p-4 pt-6 border-b border-white/5 pb-4 shrink-0">
                             <div>
