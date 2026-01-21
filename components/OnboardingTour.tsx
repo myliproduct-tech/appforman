@@ -21,6 +21,7 @@ interface OnboardingTourProps {
 export const OnboardingTour: React.FC<OnboardingTourProps> = ({ steps, onComplete, onSkip, onNavigate }) => {
     const [currentStep, setCurrentStep] = React.useState(0);
     const [position, setPosition] = React.useState({ top: 0, left: 0 });
+    const [spotlightRect, setSpotlightRect] = React.useState({ top: 0, left: 0, width: 0, height: 0 });
     const cardRef = React.useRef<HTMLDivElement>(null);
 
     const step = steps[currentStep];
@@ -33,12 +34,22 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ steps, onComplet
 
         if (step.placement === 'center') {
             setPosition({ top: 0, left: 0 });
+            setSpotlightRect({ top: 0, left: 0, width: 0, height: 0 });
             return;
         }
 
         const targetElement = document.querySelector(step.target);
         if (targetElement) {
             const rect = targetElement.getBoundingClientRect();
+
+            // Update spotlight position
+            setSpotlightRect({
+                top: rect.top - 8,
+                left: rect.left - 8,
+                width: rect.width + 16,
+                height: rect.height + 16
+            });
+
             const cardElement = cardRef.current;
             const cardWidth = cardElement?.offsetWidth || 300;
             const cardHeight = cardElement?.offsetHeight || 200;
@@ -97,9 +108,12 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ steps, onComplet
         }, step.tab ? 400 : 100);
 
         window.addEventListener('resize', updatePosition);
+        window.addEventListener('scroll', updatePosition, true); // Capture scroll events
+
         return () => {
             clearTimeout(timer);
             window.removeEventListener('resize', updatePosition);
+            window.removeEventListener('scroll', updatePosition, true);
         };
     }, [currentStep, step, onNavigate, updatePosition]);
 
@@ -191,14 +205,14 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ steps, onComplet
             </div>
 
             {/* Spotlight effect - rendered AFTER tour card to potentially show over it if needed, or better separation */}
-            {!isCentered && position.top !== 0 && (
+            {!isCentered && spotlightRect.width > 0 && (
                 <div
                     className="fixed z-[9999] pointer-events-none border-4 border-[#f6c453] rounded-2xl animate-pulse"
                     style={{
-                        top: `${(document.querySelector(step.target)?.getBoundingClientRect().top || 0) - 8}px`,
-                        left: `${(document.querySelector(step.target)?.getBoundingClientRect().left || 0) - 8}px`,
-                        width: `${(document.querySelector(step.target)?.getBoundingClientRect().width || 0) + 16}px`,
-                        height: `${(document.querySelector(step.target)?.getBoundingClientRect().height || 0) + 16}px`,
+                        top: `${spotlightRect.top}px`,
+                        left: `${spotlightRect.left}px`,
+                        width: `${spotlightRect.width}px`,
+                        height: `${spotlightRect.height}px`,
                         boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 30px rgba(246, 196, 83, 0.5)',
                         transition: 'all 0.3s ease',
                     }}
