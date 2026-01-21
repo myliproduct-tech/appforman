@@ -1,35 +1,32 @@
 // Helper function to get correct asset path for GitHub Pages and other environments
 export function getAssetPath(filename: string): string {
-    // Get base path from current location
+    // Use absolute URL from current origin
+    const origin = window.location.origin;
     const pathname = window.location.pathname;
 
-    // Check if we're on GitHub Pages (contains /appforman/ in path)
+    // Check if we're on GitHub Pages (contains /appforman/)
     if (pathname.includes('/appforman/')) {
-        return `/appforman/${filename}`;
+        return `${origin}/appforman/${filename}`;
     }
 
     // For local dev or other hosting (Render.com)
-    return `/${filename}`;
-}
-
-// Pre-create Audio objects for better mobile support
-export function createAudio(filename: string): HTMLAudioElement {
-    const audio = new Audio(getAssetPath(filename));
-
-    // Preload for mobile
-    audio.preload = 'auto';
-
-    return audio;
+    return `${origin}/${filename}`;
 }
 
 // Play sound with error handling
 export function playSound(filename: string): void {
     try {
-        const audio = createAudio(filename);
+        const soundPath = getAssetPath(filename);
+        console.log('🔊 Attempting to play sound:', soundPath);
+
+        const audio = new Audio(soundPath);
+        audio.preload = 'auto';
+
         audio.play().catch(err => {
-            console.warn(`Failed to play sound: ${filename}`, err);
+            console.error(`❌ Failed to play sound: ${filename}`, err);
+            console.error('Sound path was:', soundPath);
         });
     } catch (error) {
-        console.error(`Error creating audio: ${filename}`, error);
+        console.error(`❌ Error creating audio: ${filename}`, error);
     }
 }
