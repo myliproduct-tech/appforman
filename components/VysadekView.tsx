@@ -200,7 +200,7 @@ export const VysadekView: React.FC<VysadekViewProps> = ({
                                 </div>
 
                                 <div className="p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-[2.5rem] flex items-center gap-6">
-                                    <div className="text-4xl font-black text-emerald-400 italic">5-1-1</div>
+                                    <div className="text-2xl sm:text-3xl md:text-4xl font-black text-emerald-400 italic whitespace-nowrap">5-1-1</div>
                                     <div className="text-[10px] text-white/70 leading-relaxed font-bold uppercase tracking-tight">
                                         Kontrakce každých <span className="text-emerald-400 text-sm">5</span> minut,
                                         trvající <span className="text-emerald-400 text-sm">1</span> minutu,
