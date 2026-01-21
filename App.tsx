@@ -228,22 +228,31 @@ const App: React.FC = () => {
                 setStats(prev => {
                     const newStats = { ...prev, nightWatchTriggered: true };
                     const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-                    if (newUnlock) setShowAchievementModal(newUnlock);
+                    setStats(updatedStats);
+                    if (newUnlock) handleAchievementUnlock(newUnlock);
                     return updatedStats;
                 });
             }
         }
     }, [stats.email, stats.nightWatchTriggered]);
 
+    // Achievement unlock handler - prevent during onboarding
+    const handleAchievementUnlock = (achievement: Achievement | null) => {
+        // Don't show achievement modal during onboarding tour
+        if (showOnboarding) return;
+        setShowAchievementModal(achievement);
+    };
+
+    // Check for new achievements when stats change (but not during onboarding)
     useEffect(() => {
-        if (stats.email) {
+        if (stats.userName && !showOnboarding) {
             const { updatedStats, newUnlock } = missions.checkAchievements(stats);
             if (newUnlock) {
                 setStats(updatedStats);
-                setShowAchievementModal(newUnlock);
+                handleAchievementUnlock(newUnlock);
             }
         }
-    }, [stats.email]);
+    }, [stats.points, stats.missionHistory.length, stats.badges.length, showOnboarding]);
 
     // Onboarding tour handlers
     useEffect(() => {
