@@ -294,8 +294,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
             </div>
             <ChevronRight className="w-5 h-5 accent-text opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
-          <div>
-            <p className="text-[9px] sm:text-[10px] font-black opacity-30 uppercase tracking-tight mb-1">Splněno</p>
+          <div className="flex items-baseline gap-2">
+            <p className="text-[9px] sm:text-[10px] font-black opacity-30 uppercase tracking-tight">Splněno</p>
             <p className="font-bold text-[#f5f7fa] text-base sm:text-lg">{stats.completedTasks.length}</p>
           </div>
         </button>
