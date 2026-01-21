@@ -288,7 +288,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
           data-tour="missions-dashboard-link"
         >
           <div className="flex justify-between items-start mb-3">
-            <Target className="w-8 h-8 accent-text opacity-40 group-hover:opacity-100 transition-opacity" />
+            <div className="flex items-center gap-2">
+              <Target className="w-8 h-8 accent-text opacity-40 group-hover:opacity-100 transition-opacity" />
+              <span className="text-sm font-black accent-text opacity-60 group-hover:opacity-100 transition-opacity">Mise</span>
+            </div>
             <ChevronRight className="w-5 h-5 accent-text opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
           <div>
