@@ -122,12 +122,12 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
                                 {/* Partner Blood Type */}
                                 <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
                                     <label className="text-xs font-bold uppercase tracking-wider text-white/50 mb-2 block">Partnerka</label>
-                                    <div className="grid grid-cols-4 gap-2">
+                                    <div className="grid grid-cols-4 sm:grid-cols-4 gap-2">
                                         {BLOOD_TYPES.map(type => (
                                             <button
                                                 key={type}
                                                 onClick={() => { setPartnerBloodType(type); handleSave(type); }}
-                                                className={`py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all ${partnerBloodType === type
+                                                className={`py-2 sm:py-3 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider transition-all ${partnerBloodType === type
                                                     ? 'bg-pink-500 text-white shadow-lg shadow-pink-500/20'
                                                     : 'bg-white/5 text-white/60 hover:bg-white/10'
                                                     }`}
@@ -141,12 +141,12 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
                                 {/* User Blood Type */}
                                 <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
                                     <label className="text-xs font-bold uppercase tracking-wider text-white/50 mb-2 block">Partner (Ty)</label>
-                                    <div className="grid grid-cols-4 gap-2">
+                                    <div className="grid grid-cols-4 sm:grid-cols-4 gap-2">
                                         {BLOOD_TYPES.map(type => (
                                             <button
                                                 key={type}
                                                 onClick={() => { setUserBloodType(type); handleSave(undefined, type); }}
-                                                className={`py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all ${userBloodType === type
+                                                className={`py-2 sm:py-3 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider transition-all ${userBloodType === type
                                                     ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/20'
                                                     : 'bg-white/5 text-white/60 hover:bg-white/10'
                                                     }`}
@@ -164,17 +164,17 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
 
                                 <div className="space-y-3">
                                     {checkupDates.map(checkup => (
-                                        <div key={checkup.id} className="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center justify-between">
-                                            <div className="flex items-center gap-3">
-                                                <Calendar className="w-4 h-4 text-pink-400" />
-                                                <div>
-                                                    <p className="text-sm font-bold text-white">{new Date(checkup.date).toLocaleDateString('cs-CZ')}</p>
-                                                    <p className="text-xs text-white/50">{checkup.note}</p>
+                                        <div key={checkup.id} className="bg-white/5 rounded-2xl p-3 sm:p-4 border border-white/10 flex items-center justify-between gap-2">
+                                            <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                                                <Calendar className="w-4 h-4 text-pink-400 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <p className="text-xs sm:text-sm font-bold text-white truncate">{new Date(checkup.date).toLocaleDateString('cs-CZ')}</p>
+                                                    <p className="text-[10px] sm:text-xs text-white/50 truncate">{checkup.note}</p>
                                                 </div>
                                             </div>
                                             <button
                                                 onClick={() => handleDeleteCheckup(checkup.id)}
-                                                className="p-2 bg-white/5 rounded-lg text-rose-500 hover:bg-rose-500/10 transition-all"
+                                                className="p-2 bg-white/5 rounded-lg text-rose-500 hover:bg-rose-500/10 transition-all shrink-0"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
@@ -211,13 +211,13 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={handleAddCheckup}
-                                                    className="flex-1 bg-pink-500 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-pink-600 transition-all"
+                                                    className="flex-1 bg-pink-500 text-white py-2 sm:py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-pink-600 transition-all"
                                                 >
                                                     Uložit
                                                 </button>
                                                 <button
                                                     onClick={() => setIsAddingCheckup(false)}
-                                                    className="px-4 bg-white/5 text-white/50 rounded-xl font-bold text-xs uppercase hover:bg-white/10 transition-all"
+                                                    className="px-3 sm:px-4 bg-white/5 text-white/50 rounded-xl font-bold text-xs uppercase hover:bg-white/10 transition-all"
                                                 >
                                                     Zrušit
                                                 </button>
