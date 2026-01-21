@@ -30,7 +30,7 @@ export const CommunicationManual: React.FC<CommunicationManualProps> = ({ showMo
             {/* Communication Manual Modal */}
             {showCommManual && (
                 <div className="fixed inset-0 z-[70] bg-[#1f2933] overflow-y-auto animate-fade-in p-4 flex flex-col">
-                    <div className="w-full max-w-xl mx-auto flex-1 flex flex-col pb-32">
+                    <div className="w-full max-w-xl mx-auto flex-1 flex flex-col pb-40">
                         <div className="flex justify-between items-center mb-6 pt-4 border-b border-white/5 pb-4">
                             <div>
                                 <h3 className="text-xl font-black italic uppercase text-[#f6c453] tracking-tighter">Komunikační Manuál</h3>
@@ -42,7 +42,7 @@ export const CommunicationManual: React.FC<CommunicationManualProps> = ({ showMo
                         </div>
 
                         {/* Simplified List Area */}
-                        <div className="space-y-3 pb-10">
+                        <div className="space-y-3 pb-6">
                             {COMMUNICATION_MANUAL.map((entry, idx) => (
                                 <div
                                     key={idx}
