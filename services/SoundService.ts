@@ -1,46 +1,10 @@
-// Sound Service using HTML Audio API for better mobile compatibility
+// Simplified sound service - play sounds directly without preloading
 class SoundService {
-    private audioElements: Map<string, HTMLAudioElement> = new Map();
-    private isInitialized = false;
-
-    // Sound file paths
     private sounds = {
         click: 'click.wav',
         sonar: 'sonar.wav',
         notification: 'notification.wav'
     };
-
-    constructor() {
-        // Initialize on first user interaction
-        this.initOnUserGesture();
-    }
-
-    private initOnUserGesture() {
-        const init = () => {
-            if (!this.isInitialized) {
-                this.initialize();
-                document.removeEventListener('touchstart', init);
-                document.removeEventListener('click', init);
-            }
-        };
-
-        document.addEventListener('touchstart', init, { once: true });
-        document.addEventListener('click', init, { once: true });
-    }
-
-    private initialize() {
-        try {
-            console.log('🔊 Initializing SoundService...');
-
-            // Preload all sounds
-            this.preloadSounds();
-            this.isInitialized = true;
-
-            console.log('✅ SoundService initialized');
-        } catch (error) {
-            console.error('❌ Failed to initialize SoundService:', error);
-        }
-    }
 
     private getAssetPath(filename: string): string {
         const origin = window.location.origin;
@@ -53,66 +17,51 @@ class SoundService {
         return `${origin}/${filename}`;
     }
 
-    private preloadSounds() {
-        Object.entries(this.sounds).forEach(([key, filename]) => {
-            try {
-                const url = this.getAssetPath(filename);
-                console.log(`📥 Preloading sound: ${key} from ${url}`);
-
-                const audio = new Audio(url);
-                audio.preload = 'auto';
-                audio.load();
-
-                // Handle load success
-                audio.addEventListener('canplaythrough', () => {
-                    console.log(`✅ Loaded: ${key}`);
-                }, { once: true });
-
-                // Handle load error
-                audio.addEventListener('error', (e) => {
-                    console.error(`❌ Failed to load ${key}:`, e);
-                }, { once: true });
-
-                this.audioElements.set(key, audio);
-            } catch (error) {
-                console.error(`❌ Error preloading ${key}:`, error);
-            }
-        });
-    }
-
-    public async play(soundName: 'click' | 'sonar' | 'notification') {
-        // Initialize if not done yet
-        if (!this.isInitialized) {
-            this.initialize();
-        }
-
-        const audio = this.audioElements.get(soundName);
-        if (!audio) {
-            console.error(`❌ Sound not found: ${soundName}`);
-            return;
-        }
-
+    public play(soundName: 'click' | 'sonar' | 'notification') {
         try {
-            // Reset to start if already playing
-            audio.currentTime = 0;
+            const filename = this.sounds[soundName];
+            const url = this.getAssetPath(filename);
 
-            await audio.play();
-            console.log(`🔊 Playing: ${soundName}`);
+            console.log(`🔊 Attempting to play: ${soundName} from ${url}`);
+
+            // Create fresh audio element each time
+            const audio = new Audio();
+
+            // Set source
+            audio.src = url;
+
+            // Try to play
+            const playPromise = audio.play();
+
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        console.log(`✅ Successfully playing: ${soundName}`);
+                    })
+                    .catch(err => {
+                        console.error(`❌ Failed to play ${soundName}:`, err);
+                        console.error('Error details:', {
+                            name: err.name,
+                            message: err.message,
+                            code: err.code
+                        });
+                    });
+            }
         } catch (error) {
-            console.error(`❌ Failed to play ${soundName}:`, error);
+            console.error(`❌ Error in play function for ${soundName}:`, error);
         }
     }
 
-    public async playClick() {
-        await this.play('click');
+    public playClick() {
+        this.play('click');
     }
 
-    public async playSonar() {
-        await this.play('sonar');
+    public playSonar() {
+        this.play('sonar');
     }
 
-    public async playNotification() {
-        await this.play('notification');
+    public playNotification() {
+        this.play('notification');
     }
 }
 
