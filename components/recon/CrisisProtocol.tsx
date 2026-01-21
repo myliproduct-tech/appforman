@@ -257,13 +257,6 @@ export const CrisisProtocol: React.FC<{ onClose: () => void }> = ({ onClose }) =
                             );
                         })}
                     </div>
-
-                    {/* Footer note */}
-                    <div className="mt-8 bg-[#f6c453]/5 border border-[#f6c453]/20 rounded-2xl p-5">
-                        <p className="text-[11px] text-[#f6c453]/80 text-center leading-relaxed font-bold uppercase tracking-wider">
-                            💡 Tip: Ukaž tento seznam partnerovi a rodině, aby věděli, jak ti pomoct.
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>
