@@ -94,9 +94,8 @@ export const useMissions = (
 
         // Play completion sound if enabled
         if (stats.soundEnabled) {
-            const clickSound = new Audio(`${import.meta.env.BASE_URL}click.wav`);
-            clickSound.play().catch(err => {
-                console.warn('Failed to play completion sound:', err);
+            import('../utils/soundUtils').then(({ playSound }) => {
+                playSound('click.wav');
             });
         }
 

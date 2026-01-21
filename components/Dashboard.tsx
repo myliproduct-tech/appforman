@@ -28,9 +28,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
     if (currentWeek >= 36 && !stats.vysadekClicked && stats.soundEnabled) {
       // Small delay to ensure audio context is unlocked (especially on mobile)
       const timeout = setTimeout(() => {
-        const sonarSound = new Audio(`${import.meta.env.BASE_URL}sonar.wav`);
-        sonarSound.play().catch(err => {
-          console.warn('Failed to play sonar sound:', err);
+        import('../utils/soundUtils').then(({ playSound }) => {
+          playSound('sonar.wav');
         });
       }, 300);
 
