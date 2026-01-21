@@ -80,14 +80,14 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
         <>
             <button
                 onClick={() => setShowModal(true)}
-                className="group relative overflow-hidden rounded-3xl border py-6 transition-all duration-300 bg-white/5 border-white/10 hover:border-pink-500/30 hover:bg-pink-500/5"
+                className="group relative overflow-hidden rounded-3xl border py-5 transition-all duration-300 bg-white/5 border-white/10 hover:border-pink-500/30 hover:bg-pink-500/5 active:scale-95 tap-effect card-tactical"
             >
-                <div className="relative flex flex-col items-center gap-4">
-                    <div className="p-3 rounded-2xl transition-all bg-white/5">
-                        <Heart className="w-6 h-6 text-white/40" />
+                <div className="relative flex flex-col items-center gap-3 transition-transform group-hover:-translate-y-1">
+                    <div className="p-2.5 rounded-2xl transition-all bg-white/5 group-hover:bg-pink-500/10">
+                        <Heart className="w-5 h-5 text-white/40 group-hover:text-pink-500/60 transition-colors" />
                     </div>
                     <div className="text-center">
-                        <p className="text-[11px] font-black uppercase tracking-tighter text-white/70">
+                        <p className="text-[10px] font-black uppercase tracking-tighter text-white/70">
                             Medicínské
                         </p>
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-30 text-white">
