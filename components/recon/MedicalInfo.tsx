@@ -114,20 +114,19 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
                             </button>
                         </div>
 
-                        <div className="space-y-6 pb-10">
-                            {/* Blood Types */}
-                            <div className="space-y-4">
-                                <h4 className="text-sm font-black uppercase tracking-widest text-white/60">Krevní skupiny</h4>
+                        <div className="space-y-4 pb-6">
+                            <div className="space-y-3">
+                                <h4 className="text-xs font-black uppercase tracking-widest text-white/60">Krevní skupiny</h4>
 
                                 {/* Partner Blood Type */}
-                                <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-white/50 mb-2 block">Partnerka</label>
+                                <div className="bg-white/5 rounded-2xl p-3 border border-white/10">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-2 block">Partnerka</label>
                                     <div className="grid grid-cols-4 sm:grid-cols-4 gap-2">
                                         {BLOOD_TYPES.map(type => (
                                             <button
                                                 key={type}
                                                 onClick={() => { setPartnerBloodType(type); handleSave(type); }}
-                                                className={`py-2 sm:py-3 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider transition-all ${partnerBloodType === type
+                                                className={`py-2 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all ${partnerBloodType === type
                                                     ? 'bg-pink-500 text-white shadow-lg shadow-pink-500/20'
                                                     : 'bg-white/5 text-white/60 hover:bg-white/10'
                                                     }`}
@@ -139,14 +138,14 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
                                 </div>
 
                                 {/* User Blood Type */}
-                                <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-white/50 mb-2 block">Partner (Ty)</label>
+                                <div className="bg-white/5 rounded-2xl p-3 border border-white/10">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-2 block">Partner (Ty)</label>
                                     <div className="grid grid-cols-4 sm:grid-cols-4 gap-2">
                                         {BLOOD_TYPES.map(type => (
                                             <button
                                                 key={type}
                                                 onClick={() => { setUserBloodType(type); handleSave(undefined, type); }}
-                                                className={`py-2 sm:py-3 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider transition-all ${userBloodType === type
+                                                className={`py-2 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all ${userBloodType === type
                                                     ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/20'
                                                     : 'bg-white/5 text-white/60 hover:bg-white/10'
                                                     }`}
@@ -159,17 +158,17 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
                             </div>
 
                             {/* Checkup Dates */}
-                            <div className="space-y-4">
-                                <h4 className="text-sm font-black uppercase tracking-widest text-white/60">Data kontrol</h4>
+                            <div className="space-y-3">
+                                <h4 className="text-xs font-black uppercase tracking-widest text-white/60">Data kontrol</h4>
 
                                 <div className="space-y-3">
                                     {checkupDates.map(checkup => (
-                                        <div key={checkup.id} className="bg-white/5 rounded-2xl p-3 sm:p-4 border border-white/10 flex items-center justify-between gap-2">
+                                        <div key={checkup.id} className="bg-white/5 rounded-2xl p-2 border border-white/10 flex items-center justify-between gap-2">
                                             <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                                                 <Calendar className="w-4 h-4 text-pink-400 shrink-0" />
                                                 <div className="min-w-0">
-                                                    <p className="text-xs sm:text-sm font-bold text-white truncate">{new Date(checkup.date).toLocaleDateString('cs-CZ')}</p>
-                                                    <p className="text-[10px] sm:text-xs text-white/50 truncate">{checkup.note}</p>
+                                                    <p className="text-[10px] font-bold text-white truncate">{new Date(checkup.date).toLocaleDateString('cs-CZ')}</p>
+                                                    <p className="text-[9px] text-white/50 truncate">{checkup.note}</p>
                                                 </div>
                                             </div>
                                             <button
@@ -235,13 +234,13 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
                             </div>
 
                             {/* Notes */}
-                            <div className="space-y-4">
-                                <h4 className="text-sm font-black uppercase tracking-widest text-white/60">Poznámky</h4>
+                            <div className="space-y-3">
+                                <h4 className="text-xs font-black uppercase tracking-widest text-white/60">Poznámky</h4>
                                 <textarea
                                     value={notes}
                                     onChange={(e) => { setNotes(e.target.value); handleSave(undefined, undefined, undefined, e.target.value); }}
                                     placeholder="Další medicínské poznámky..."
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-sm focus:outline-none focus:border-pink-400 min-h-[100px] resize-none"
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-pink-400 min-h-[80px] resize-none"
                                 />
                             </div>
                         </div>
