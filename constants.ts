@@ -522,7 +522,7 @@ export const COMMUNICATION_MANUAL: CommunicationEntry[] = [
     meaning: "Moje tělo se mění tak rychle, že se v něm občas necítím svá. Potřebuji od tebe potvrdit, že jsem pro tebe pořád přitažlivá."
   },
   {
-    situation: "Můžeš mi na chvíli podržet nohy/břicho?",
+    situation: "Strašně mě bolí nohy, hodila by se mi masáž.",
     meaning: "Hledám fyzickou úlevu od té váhy. Tvoje ruce jsou pro mě ten nejlepší relax."
   },
   {
