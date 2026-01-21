@@ -30,7 +30,7 @@ export const CommunicationManual: React.FC<CommunicationManualProps> = ({ showMo
             {/* Communication Manual Modal */}
             {showCommManual && (
                 <div className="fixed inset-0 z-[70] bg-[#1f2933] overflow-y-auto animate-fade-in p-4 flex flex-col">
-                    <div className="w-full max-w-xl mx-auto flex-1 flex flex-col">
+                    <div className="w-full max-w-xl mx-auto flex-1 flex flex-col pb-32">
                         <div className="flex justify-between items-center mb-6 pt-4 border-b border-white/5 pb-4">
                             <div>
                                 <h3 className="text-xl font-black italic uppercase text-[#f6c453] tracking-tighter">Komunikační Manuál</h3>
@@ -82,9 +82,11 @@ export const CommunicationManual: React.FC<CommunicationManualProps> = ({ showMo
                                 </div>
                             ))}
                         </div>
+                    </div>
 
-                        {/* Universal Tactical Tip Footer - Fixed at bottom */}
-                        <div className="sticky bottom-0 left-0 right-0 mt-auto pt-6 pb-4 bg-gradient-to-t from-[#1f2933] via-[#1f2933] to-transparent z-10">
+                    {/* Universal Tactical Tip Footer - Fixed at bottom */}
+                    <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#1f2933] via-[#1f2933]/95 to-transparent z-[80]">
+                        <div className="w-full max-w-xl mx-auto">
                             <div className="p-5 bg-[#f6c453]/5 border border-[#f6c453]/20 rounded-[2rem] flex items-start gap-4 shadow-2xl backdrop-blur-xl">
                                 <div className="p-3 bg-[#f6c453]/20 rounded-2xl shrink-0">
                                     <Info className="w-5 h-5 text-[#f6c453]" />
