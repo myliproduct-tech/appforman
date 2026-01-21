@@ -152,24 +152,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-4">
-        {/* Streak Badge */}
-        <div className="bg-white/5 p-4 rounded-3xl border border-white/5 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:bg-[#f6c453]/5 hover:border-[#f6c453]/20 transition-all duration-300 animate-glow-gold tap-effect card-tactical" data-tour="streak">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-1.5 bg-[#f6c453]/10 rounded-lg group-hover:scale-110 group-hover:rotate-12 transition-transform">
-              <Flame className="w-4 h-4 fill-[#f6c453] text-[#f6c453]" />
-            </div>
-            <span className="text-[9px] uppercase font-black opacity-40 tracking-widest group-hover:opacity-60 transition-opacity">Streak</span>
-          </div>
-          <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-black accent-text italic group-hover:scale-110 transition-transform inline-block origin-left">{stats.streak}</span>
-            <span className="text-[10px] font-bold opacity-30 uppercase">Dní</span>
-          </div>
-        </div>
-
-        {/* Intel Report - Moved next to streak */}
+        {/* Intel Report - Left side with pulse */}
         <div
           onClick={() => dispatch({ type: 'SET_INTEL_MODAL', value: true })}
-          className="bg-white/5 p-4 rounded-3xl border border-white/5 flex flex-col justify-between shadow-lg relative overflow-hidden cursor-pointer active:scale-95 transition-all group hover:bg-[#f6c453]/5 hover:border-[#f6c453]/20 tap-effect card-tactical"
+          className="bg-white/5 p-4 rounded-3xl border border-white/5 flex flex-col justify-between shadow-lg relative overflow-hidden cursor-pointer active:scale-95 transition-all group hover:bg-[#f6c453]/5 hover:border-[#f6c453]/20 tap-effect card-tactical animate-pulse"
           data-tour="intel"
         >
           <div className="flex items-center gap-2 mb-2">
@@ -181,6 +167,20 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-tight accent-text">Týden {currentWeek}</span>
             <ChevronRight className="w-3 h-3 text-[#f6c453] opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+          </div>
+        </div>
+
+        {/* Streak Badge - Right side */}
+        <div className="bg-white/5 p-4 rounded-3xl border border-white/5 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:bg-[#f6c453]/5 hover:border-[#f6c453]/20 transition-all duration-300 animate-glow-gold tap-effect card-tactical" data-tour="streak">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="p-1.5 bg-[#f6c453]/10 rounded-lg group-hover:scale-110 group-hover:rotate-12 transition-transform">
+              <Flame className="w-4 h-4 fill-[#f6c453] text-[#f6c453]" />
+            </div>
+            <span className="text-[9px] uppercase font-black opacity-40 tracking-widest group-hover:opacity-60 transition-opacity">Streak</span>
+          </div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl font-black accent-text italic group-hover:scale-110 transition-transform inline-block origin-left">{stats.streak}</span>
+            <span className="text-[10px] font-bold opacity-30 uppercase">Dní</span>
           </div>
         </div>
       </div>
@@ -284,7 +284,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
         </div>
         <button
           onClick={onNavigateMissions}
-          className="glass-card p-5 rounded-[2rem] border-white/5 relative overflow-hidden flex flex-col justify-between text-left hover:bg-white/5 transition-all group active:scale-95 tap-effect card-tactical"
+          className="glass-card p-5 rounded-[2rem] border-white/5 relative overflow-hidden flex flex-col justify-between text-left hover:bg-white/5 transition-all group active:scale-95 tap-effect card-tactical animate-pulse"
           data-tour="missions-dashboard-link"
         >
           <div className="flex justify-between items-start mb-3">
@@ -300,7 +300,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
 
       <section
         onClick={() => dispatch({ type: 'SET_MISSION_MODAL', value: true })}
-        className={`glass-card p-7 rounded-[2.5rem] border-white/5 cursor-pointer active:scale-95 transition-all group relative overflow-hidden tap-effect card-tactical animate-slide-up ${isDeserter ? 'border-red-500/50 shadow-[0_0_30px_rgba(220,38,38,0.2)]' : ''}`}
+        className={`glass-card p-7 rounded-[2.5rem] border-white/5 cursor-pointer active:scale-95 transition-all group relative overflow-hidden tap-effect card-tactical animate-slide-up animate-pulse ${isDeserter ? 'border-red-500/50 shadow-[0_0_30px_rgba(220,38,38,0.2)]' : ''}`}
       >
         {isDeserter && <div className="absolute inset-0 bg-red-500/10 animate-pulse pointer-events-none"></div>}
 
