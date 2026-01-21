@@ -26,10 +26,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
   // Play sonar sound when Vysadek button appears (week 36+) and user hasn't clicked it yet
   useEffect(() => {
     if (currentWeek >= 36 && !stats.vysadekClicked && stats.soundEnabled) {
-      const sonarSound = new Audio('/sonar.wav');
-      sonarSound.play().catch(err => {
-        console.warn('Failed to play sonar sound:', err);
-      });
+      // Small delay to ensure audio context is unlocked (especially on mobile)
+      const timeout = setTimeout(() => {
+        const sonarSound = new Audio('/sonar.wav');
+        sonarSound.play().catch(err => {
+          console.warn('Failed to play sonar sound:', err);
+        });
+      }, 300);
+
+      return () => clearTimeout(timeout);
     }
   }, [currentWeek, stats.vysadekClicked, stats.soundEnabled]);
 
