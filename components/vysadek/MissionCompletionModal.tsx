@@ -127,33 +127,33 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                                     value={babyName}
                                     onChange={(e) => setBabyName(e.target.value)}
                                     placeholder="Zadej jméno..."
-                                    className="w-full bg-[#0f1419] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
+                                    className="w-full bg-[#0f1419] border border-white/10 rounded-xl px-4 py-2 text-white placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-all text-xs"
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#f6c453] mb-1">Datum narození</label>
+                                    <label className="block text-[9px] font-bold uppercase tracking-wider text-[#f6c453] mb-1">Datum narození</label>
                                     <button
                                         type="button"
                                         onClick={() => setShowDatePicker(true)}
-                                        className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-[#f6c453] transition-all flex items-center justify-between hover:bg-white/15 active:scale-95 text-xs"
+                                        className="w-full px-2 py-1.5 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-[#f6c453] transition-all flex items-center justify-between hover:bg-white/15 active:scale-95 text-[11px]"
                                     >
                                         <span className={birthDate ? 'text-white' : 'text-white/40'}>
                                             {birthDate ? new Date(birthDate).toLocaleDateString('cs-CZ') : 'Datum'}
                                         </span>
-                                        <Calendar className="w-4 h-4 text-[#f6c453]" />
+                                        <Calendar className="w-3.5 h-3.5 text-[#f6c453]" />
                                     </button>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-1 block">
+                                    <label className="text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 block">
                                         Čas narození
                                     </label>
                                     <input
                                         type="time"
                                         value={birthTime}
                                         onChange={(e) => setBirthTime(e.target.value)}
-                                        className="w-full bg-[#0f1419] border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-all text-xs"
+                                        className="w-full bg-[#0f1419] border border-white/10 rounded-lg px-2 py-1.5 text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-all text-[11px] appearance-none"
                                     />
                                 </div>
                             </div>
