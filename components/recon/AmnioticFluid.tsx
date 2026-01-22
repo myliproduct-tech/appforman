@@ -21,14 +21,14 @@ export const AmnioticFluid: React.FC<AmnioticFluidProps> = ({ partnerName, amnio
             <div className="grid grid-cols-2 gap-3 mb-4">
                 <button
                     onClick={() => onLogAmnioticFluid('clear')}
-                    className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${amnioticFluidLog?.color === 'clear' ? 'bg-emerald-500/20 border-emerald-500' : 'bg-[#1f2933] border-white/5 hover:bg-emerald-500/10'}`}
+                    className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${amnioticFluidLog?.color === 'clear' ? 'bg-emerald-500/20 border-emerald-500' : 'bg-[#1f2933] border-white/20 hover:bg-emerald-500/10'}`}
                 >
                     <div className="w-8 h-8 rounded-full bg-white/90 border-2 border-[#f6c453]/30 shadow-inner group-hover:scale-110 transition-transform"></div>
                     <span className="text-[10px] font-black uppercase tracking-widest text-center">Čirá / Růžová</span>
                 </button>
                 <button
                     onClick={() => onLogAmnioticFluid('green')}
-                    className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${amnioticFluidLog?.color === 'green' ? 'bg-lime-500/20 border-lime-500' : 'bg-[#1f2933] border-white/5 hover:bg-lime-500/10'}`}
+                    className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${amnioticFluidLog?.color === 'green' ? 'bg-lime-500/20 border-lime-500' : 'bg-[#1f2933] border-white/20 hover:bg-lime-500/10'}`}
                 >
                     <div className="w-8 h-8 rounded-full bg-lime-700 border-2 border-lime-500"></div>
                     <span className="text-[10px] font-black uppercase tracking-widest text-center text-lime-500">Zelená / Zakalená</span>

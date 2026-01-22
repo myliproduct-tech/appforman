@@ -35,7 +35,7 @@ const CustomMissionFormComponent: React.FC<CustomMissionFormProps> = ({
         return (
             <button
                 onClick={() => onToggle(true)}
-                className="w-full py-6 bg-white/[0.03] border-2 border-dashed border-white/10 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 hover:bg-white/[0.06] hover:border-[#f6c453]/30 transition-all group"
+                className="w-full py-6 bg-white/[0.03] border-2 border-dashed border-white/20 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 hover:bg-white/[0.06] hover:border-[#f6c453]/30 transition-all group"
             >
                 <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#f6c453]/10 transition-all">
                     <Plus className="w-6 h-6 text-white/40 group-hover:text-[#f6c453]" />
@@ -75,7 +75,7 @@ const CustomMissionFormComponent: React.FC<CustomMissionFormProps> = ({
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="Napiš co je potřeba udělat..."
-                        className="w-full bg-[#1f2933] border border-white/10 rounded-2xl p-5 text-white placeholder:text-white/20 focus:outline-none focus:border-[#f6c453] transition-all font-bold"
+                        className="w-full bg-[#1f2933] border-2 border-white/20 rounded-2xl p-5 text-white placeholder:text-white/20 focus:outline-none focus:border-[#f6c453] transition-all font-bold"
                         required
                     />
                 </div>
@@ -88,7 +88,7 @@ const CustomMissionFormComponent: React.FC<CustomMissionFormProps> = ({
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Podrobnější instrukce..."
-                        className="w-full bg-[#1f2933] border border-white/10 rounded-2xl p-5 text-white placeholder:text-white/20 focus:outline-none focus:border-[#f6c453] transition-all font-medium text-sm min-h-[100px] resize-none"
+                        className="w-full bg-[#1f2933] border-2 border-white/20 rounded-2xl p-5 text-white placeholder:text-white/20 focus:outline-none focus:border-[#f6c453] transition-all font-medium text-sm min-h-[100px] resize-none"
                     />
                 </div>
 
@@ -114,7 +114,7 @@ const CustomMissionFormComponent: React.FC<CustomMissionFormProps> = ({
                     <button
                         type="button"
                         onClick={() => onToggle(false)}
-                        className="flex-1 py-5 bg-white/5 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 transition-all border border-white/5"
+                        className="flex-1 py-5 bg-white/5 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 transition-all border border-white/20"
                     >
                         Zrušit
                     </button>

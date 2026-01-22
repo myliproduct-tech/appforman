@@ -58,7 +58,7 @@ const MissionSchedulerComponent: React.FC<MissionSchedulerProps> = ({
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
-            <div className="glass-card w-full max-w-lg rounded-[2.5rem] border-white/10 overflow-hidden relative animate-in fade-in zoom-in duration-300">
+            <div className="glass-card w-full max-w-lg rounded-[2.5rem] border-white/20 overflow-hidden relative animate-in fade-in zoom-in duration-300">
                 <div className="p-8">
                     <div className="flex justify-between items-start mb-6">
                         <div>
@@ -88,7 +88,7 @@ const MissionSchedulerComponent: React.FC<MissionSchedulerProps> = ({
                                 <div className="flex gap-3">
                                     <button
                                         onClick={onClose}
-                                        className="flex-1 py-4 bg-white/5 border border-white/10 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-white/10 transition-all"
+                                        className="flex-1 py-4 bg-white/5 border-2 border-white/20 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-white/10 transition-all"
                                     >
                                         Zrušit
                                     </button>
@@ -122,21 +122,21 @@ const MissionSchedulerComponent: React.FC<MissionSchedulerProps> = ({
                                 <div className="grid grid-cols-2 gap-3">
                                     <button
                                         onClick={() => onConfirm(getDateShifted(0))}
-                                        className="p-5 bg-white/5 border border-white/5 rounded-[2rem] hover:bg-white/10 transition-all group flex flex-col items-center gap-2"
+                                        className="p-5 bg-white/5 border border-white/20 rounded-[2rem] hover:bg-white/10 transition-all group flex flex-col items-center gap-2"
                                     >
                                         <Sunrise className="w-8 h-8 text-[#f6c453] group-hover:scale-110 transition-transform" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">Dnes</span>
                                     </button>
                                     <button
                                         onClick={() => onConfirm(getDateShifted(1))}
-                                        className="p-5 bg-white/5 border border-white/5 rounded-[2rem] hover:bg-white/10 transition-all group flex flex-col items-center gap-2"
+                                        className="p-5 bg-white/5 border border-white/20 rounded-[2rem] hover:bg-white/10 transition-all group flex flex-col items-center gap-2"
                                     >
                                         <Sun className="w-8 h-8 text-amber-500 group-hover:scale-110 transition-transform" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">Zítra</span>
                                     </button>
                                     <button
                                         onClick={() => onConfirm(getDateShifted(7))}
-                                        className="p-5 bg-white/5 border border-white/5 rounded-[2rem] hover:bg-white/10 transition-all group flex flex-col items-center gap-2"
+                                        className="p-5 bg-white/5 border border-white/20 rounded-[2rem] hover:bg-white/10 transition-all group flex flex-col items-center gap-2"
                                     >
                                         <CalendarDays className="w-8 h-8 text-indigo-400 group-hover:scale-110 transition-transform" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">Za týden</span>
@@ -145,7 +145,7 @@ const MissionSchedulerComponent: React.FC<MissionSchedulerProps> = ({
                                     {/* Manual Date Picker as Tile */}
                                     <button
                                         onClick={() => setShowDatePicker(true)}
-                                        className="p-5 bg-white/5 border border-white/5 rounded-[2rem] hover:bg-white/10 transition-all group flex flex-col items-center gap-2 relative overflow-hidden cursor-pointer"
+                                        className="p-5 bg-white/5 border border-white/20 rounded-[2rem] hover:bg-white/10 transition-all group flex flex-col items-center gap-2 relative overflow-hidden cursor-pointer"
                                     >
                                         <Calendar className="w-8 h-8 text-cyan-400 group-hover:scale-110 transition-transform" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">Vlastní</span>

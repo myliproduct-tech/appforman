@@ -69,8 +69,8 @@ export const ContractionTimer: React.FC = () => {
     const isAlert = avgInterval > 0 && avgInterval <= 5 && avgDuration >= 60;
 
     return (
-        <div className="bg-[#1f2933] rounded-2xl p-6 border border-white/10">
-            <div className="mb-6 pb-4 border-b border-white/5">
+        <div className="bg-[#1f2933] rounded-2xl p-6 border-2 border-white/20">
+            <div className="mb-6 pb-4 border-b border-white/20">
                 <h3 className="text-lg font-black italic uppercase text-red-400 tracking-tighter">Časovač Kontrakcí</h3>
                 <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em]">Měření intervalů výsadku</p>
             </div>
