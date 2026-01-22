@@ -99,7 +99,7 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
             </button>
 
             {/* Modal - Fullscreen Page Layout */}
-            {showModal && ( ReactDOM.createPortal(
+            {showModal && (ReactDOM.createPortal(
                 <div className="fixed inset-0 z-[150] bg-[#1f2933] animate-fade-in">
                     <div className="h-screen flex flex-col">
                         {/* Fixed Header */}
@@ -251,21 +251,25 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
                         </div>
                     </div>
                 </div>
-                </div>,
-            <DatePickerModal
-                isOpen={showDatePicker}
-                onClose={() => setShowDatePicker(false)}
-                onSelect={(date) => {
-                    setNewCheckupDate(date);
-                    setShowDatePicker(false);
-                }}
-                initialDate={newCheckupDate}
-                title="Datum kontroly"
-            />
+                </div >,
+        document.body
+            )}
+
+{/* Date Picker Modal */ }
+<DatePickerModal
+    isOpen={showDatePicker}
+    onClose={() => setShowDatePicker(false)}
+    onSelect={(date) => {
+        setNewCheckupDate(date);
+        setShowDatePicker(false);
+    }}
+    initialDate={newCheckupDate}
+    title="Datum kontroly"
+/>
         </>
     );
 };
-                document.body
+document.body
             )}
 
-            {/* Date Picker Modal */}
+{/* Date Picker Modal */ }
