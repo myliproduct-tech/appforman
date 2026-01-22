@@ -42,6 +42,7 @@ const App: React.FC = () => {
     const [activeTab, setActiveTab] = useState<Tab>('dashboard');
     const [isVysadekMode, setIsVysadekMode] = useState(false);
     const [showRankModal, setShowRankModal] = useState<{ show: boolean, rank: typeof RANKS[0] | null }>({ show: false, rank: null });
+    const [achievementQueue, setAchievementQueue] = useState<Achievement[]>([]);
     const [showAchievementModal, setShowAchievementModal] = useState<Achievement | null>(null);
     const [showFailureModal, setShowFailureModal] = useState<Task | null>(null);
     const [showOnboarding, setShowOnboarding] = useState(false);
@@ -50,6 +51,20 @@ const App: React.FC = () => {
     const [isTabTransitioning, setIsTabTransitioning] = useState(false);
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
     const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+
+    // Achievement Queue Management
+    const addToAchievementQueue = (achievement: Achievement) => {
+        setAchievementQueue(prev => [...prev, achievement]);
+    };
+
+    // Show next achievement from queue when modal closes
+    useEffect(() => {
+        if (!showAchievementModal && achievementQueue.length > 0) {
+            const nextAchievement = achievementQueue[0];
+            setShowAchievementModal(nextAchievement);
+            setAchievementQueue(prev => prev.slice(1));
+        }
+    }, [showAchievementModal, achievementQueue]);
 
     // Initial boot sequence
     useEffect(() => {
@@ -181,6 +196,13 @@ const App: React.FC = () => {
     const currentDayIndex = devMode.dayOffset;
     const currentWeekCount = devMode.currentWeek;
 
+    // Achievement unlock handler - prevent during onboarding
+    const handleAchievementUnlock = (achievement: Achievement | null) => {
+        // Don't show achievement modal during onboarding tour
+        if (showOnboarding || !achievement) return;
+        addToAchievementQueue(achievement);
+    };
+
     // Consumables & Missions hooks
     const consumables = useConsumables(stats, setStats, effectiveDate);
     const missions = useMissions(
@@ -189,7 +211,7 @@ const App: React.FC = () => {
         effectiveDate,
         currentDayIndex,
         setShowRankModal,
-        setShowAchievementModal,
+        handleAchievementUnlock,
         setShowFailureModal
     );
 
@@ -236,12 +258,7 @@ const App: React.FC = () => {
         }
     }, [stats.email, stats.nightWatchTriggered]);
 
-    // Achievement unlock handler - prevent during onboarding
-    const handleAchievementUnlock = (achievement: Achievement | null) => {
-        // Don't show achievement modal during onboarding tour
-        if (showOnboarding) return;
-        setShowAchievementModal(achievement);
-    };
+
 
     // Check for new achievements when stats change (but not during onboarding)
     useEffect(() => {
@@ -266,7 +283,7 @@ const App: React.FC = () => {
         setStats(prev => {
             const newStats = { ...prev, onboardingCompleted: true };
             const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-            if (newUnlock) setShowAchievementModal(newUnlock);
+            if (newUnlock) addToAchievementQueue(newUnlock);
             return updatedStats;
         });
         setShowOnboarding(false);
@@ -303,7 +320,7 @@ const App: React.FC = () => {
         setStats(prev => {
             const newStats = { ...prev, hospitalBagChecklist: allIds };
             const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-            if (newUnlock) setShowAchievementModal(newUnlock);
+            if (newUnlock) addToAchievementQueue(newUnlock);
             return updatedStats;
         });
     };
