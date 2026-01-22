@@ -129,7 +129,7 @@ export const ICECard: React.FC<ICECardProps> = ({
             {showIceCard && (
                 <div className="bg-[#1f2933] animate-fade-in h-[500px] flex flex-col">
                     {/* Header */}
-                    <div className="p-5 border-b border-white/5 flex justify-between items-center">
+                    <div className="p-5 border-b border-white/20 flex justify-between items-center">
                         <div className="flex items-center gap-3">
                             <Siren className="w-5 h-5 text-red-500 animate-bounce" />
                             <h3 className="text-sm font-black text-red-500 uppercase tracking-widest">Krizový Štítek</h3>
@@ -152,7 +152,7 @@ export const ICECard: React.FC<ICECardProps> = ({
                                     <p className="text-xs opacity-50 uppercase tracking-widest">Taktická navigace</p>
                                 </div>
 
-                                <div className="bg-[#2d3748] p-4 rounded-2xl border border-white/5 space-y-3">
+                                <div className="bg-[#2d3748] p-4 rounded-2xl border border-white/20 space-y-3">
                                     {isEditingTarget ? (
                                         <div className="space-y-3">
                                             <input
@@ -160,7 +160,7 @@ export const ICECard: React.FC<ICECardProps> = ({
                                                 value={targetInput}
                                                 onChange={(e) => setTargetInput(e.target.value)}
                                                 placeholder="Název porodnice / Adresa"
-                                                className="w-full bg-[#1f2933] border border-white/10 rounded-xl px-4 py-4 text-sm focus:outline-none focus:border-blue-400"
+                                                className="w-full bg-[#1f2933] border-2 border-white/20 rounded-xl px-4 py-4 text-sm focus:outline-none focus:border-blue-400"
                                             />
                                             <button
                                                 onClick={handleSaveTarget}
@@ -203,7 +203,7 @@ export const ICECard: React.FC<ICECardProps> = ({
                                 {/* Contact List */}
                                 <div className="space-y-3">
                                     {backupContacts.map((contact) => (
-                                        <div key={contact.id} className="bg-[#2d3748] p-4 rounded-2xl border border-white/5 flex items-center justify-between">
+                                        <div key={contact.id} className="bg-[#2d3748] p-4 rounded-2xl border border-white/20 flex items-center justify-between">
                                             <div>
                                                 <p className="font-bold text-white text-sm">{contact.name}</p>
                                                 <p className="text-xs opacity-50 font-mono">{contact.phone}</p>
@@ -212,7 +212,7 @@ export const ICECard: React.FC<ICECardProps> = ({
                                                 <button onClick={() => handleCall(contact.phone)} className="p-3 bg-purple-500 rounded-xl text-white shadow-lg shadow-purple-500/20 active:scale-90 transition-transform">
                                                     <Phone className="w-4 h-4 fill-current" />
                                                 </button>
-                                                <button onClick={() => handleDeleteContact(contact.id)} className="p-3 bg-white/5 rounded-xl text-rose-500 border border-white/5 hover:bg-rose-500/10 active:scale-90 transition-transform">
+                                                <button onClick={() => handleDeleteContact(contact.id)} className="p-3 bg-white/5 rounded-xl text-rose-500 border border-white/20 hover:bg-rose-500/10 active:scale-90 transition-transform">
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
@@ -227,14 +227,14 @@ export const ICECard: React.FC<ICECardProps> = ({
                                                 value={newContactName}
                                                 onChange={(e) => setNewContactName(e.target.value)}
                                                 placeholder="Jméno (např. Děda)"
-                                                className="w-full bg-[#1f2933] p-3 rounded-xl text-sm border border-white/10"
+                                                className="w-full bg-[#1f2933] p-3 rounded-xl text-sm border-2 border-white/20"
                                             />
                                             <input
                                                 type="tel"
                                                 value={newContactPhone}
                                                 onChange={(e) => setNewContactPhone(e.target.value)}
                                                 placeholder="Telefon"
-                                                className="w-full bg-[#1f2933] p-3 rounded-xl text-sm border border-white/10"
+                                                className="w-full bg-[#1f2933] p-3 rounded-xl text-sm border-2 border-white/20"
                                             />
                                             <div className="flex gap-2">
                                                 <button onClick={handleAddContact} className="flex-1 bg-purple-500 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest">Uložit</button>
@@ -332,7 +332,7 @@ export const ICECard: React.FC<ICECardProps> = ({
                     </div>
 
                     {/* Bottom Navigation */}
-                    <div className="p-2 grid grid-cols-3 gap-2 border-t border-white/5 bg-black/20">
+                    <div className="p-2 grid grid-cols-3 gap-2 border-t border-white/20 bg-black/20">
                         <button
                             onClick={() => setIceTab('target')}
                             className={`flex flex-col items-center justify-center py-3 rounded-xl transition-all ${iceTab === 'target' ? 'bg-blue-500 text-white shadow-lg' : 'text-white/30 hover:bg-white/5'}`}

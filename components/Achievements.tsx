@@ -65,7 +65,7 @@ export const Achievements: React.FC<AchievementsProps> = ({ stats }) => {
 
             {/* FILTER PANEL */}
             <div className="px-4 space-y-3">
-                <div className="glass-card p-4 rounded-2xl border border-white/5 group hover:border-[#f6c453]/20 transition-all duration-300">
+                <div className="glass-card p-4 rounded-2xl border border-white/20 group hover:border-[#f6c453]/20 transition-all duration-300">
                     <div className="flex items-center justify-between mb-3">
                         <h3 className="text-[10px] font-black uppercase tracking-widest text-white/40 group-hover:text-white/60 transition-colors">Filtry</h3>
                         {hasActiveFilters && (
@@ -83,7 +83,7 @@ export const Achievements: React.FC<AchievementsProps> = ({ stats }) => {
                         <select
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value as any)}
-                            className="bg-[#1f2933] text-white text-[10px] font-bold p-3 rounded-xl border border-white/10 outline-none focus:border-[#f6c453] uppercase tracking-wider transition-all"
+                            className="bg-[#1f2933] text-white text-[10px] font-bold p-3 rounded-xl border-2 border-white/20 outline-none focus:border-[#f6c453] uppercase tracking-wider transition-all"
                         >
                             <option value="all">Všechny</option>
                             <option value="unlocked">Odemčené</option>
@@ -94,7 +94,7 @@ export const Achievements: React.FC<AchievementsProps> = ({ stats }) => {
                         <select
                             value={filterRarity}
                             onChange={(e) => setFilterRarity(e.target.value as any)}
-                            className="bg-[#1f2933] text-white text-[10px] font-bold p-3 rounded-xl border border-white/10 outline-none focus:border-[#f6c453] uppercase tracking-wider transition-all"
+                            className="bg-[#1f2933] text-white text-[10px] font-bold p-3 rounded-xl border-2 border-white/20 outline-none focus:border-[#f6c453] uppercase tracking-wider transition-all"
                         >
                             <option value="all">Všechny Vzácnosti</option>
                             <option value="common">Common</option>
@@ -105,7 +105,7 @@ export const Achievements: React.FC<AchievementsProps> = ({ stats }) => {
                     </div>
 
                     {/* Results Counter */}
-                    <div className="mt-3 pt-3 border-t border-white/5">
+                    <div className="mt-3 pt-3 border-t border-white/20">
                         <p className="text-[10px] font-mono text-white/40 text-center">
                             Zobrazeno: <span className="text-[#f6c453] font-black">{filteredAchievements.length}</span> / {ACHIEVEMENTS.length}
                         </p>
@@ -134,7 +134,7 @@ export const Achievements: React.FC<AchievementsProps> = ({ stats }) => {
                                     className={`relative aspect-[3/4] rounded-2xl p-5 flex flex-col items-center justify-between border-2 transition-all active:scale-95 cursor-pointer group
                 ${isUnlocked
                                             ? 'bg-[#1f2933] border-[#f6c453]/30 shadow-lg shadow-[#f6c453]/5'
-                                            : 'bg-black/20 border-white/5 opacity-60 grayscale'
+                                            : 'bg-black/20 border-white/20 opacity-60 grayscale'
                                         }`}
                                 >
                                     {/* Rarity Glow for Unlocked */}
@@ -295,7 +295,7 @@ const AchievementModalComponent: React.FC<ModalProps> = ({ achievement, unlocked
                     {!isUnlocked && (
                         <div className="px-6 pb-6 space-y-3 relative z-10">
                             {/* How to Unlock */}
-                            <div className="bg-black/30 border border-white/10 rounded-xl p-4">
+                            <div className="bg-black/30 border-2 border-white/20 rounded-xl p-4">
                                 <p className="text-[10px] font-black uppercase text-[#f6c453] tracking-widest mb-2">JAK ZÍSKAT:</p>
                                 <p className="text-xs text-white/80 leading-relaxed">{achievement.howToUnlock}</p>
                             </div>
@@ -306,7 +306,7 @@ const AchievementModalComponent: React.FC<ModalProps> = ({ achievement, unlocked
                                 const progressData = achievement.progress(stats);
                                 const progressPercent = (progressData.current / progressData.total) * 100;
                                 return (
-                                    <div className="bg-black/30 border border-white/10 rounded-xl p-4">
+                                    <div className="bg-black/30 border-2 border-white/20 rounded-xl p-4">
                                         <div className="flex justify-between items-center mb-2">
                                             <p className="text-[10px] font-black uppercase text-white/50 tracking-widest">PROGRESS:</p>
                                             <p className="text-xs font-mono text-[#f6c453]">{progressData.current}/{progressData.total}</p>
@@ -324,7 +324,7 @@ const AchievementModalComponent: React.FC<ModalProps> = ({ achievement, unlocked
                     )}
 
                     {/* Footer */}
-                    <div className="p-6 bg-black/20 border-t border-white/5 space-y-3">
+                    <div className="p-6 bg-black/20 border-t border-white/20 space-y-3">
                         <div className="flex justify-between items-end">
                             <div>
                                 <p className="text-[10px] font-black uppercase text-white/30 tracking-widest mb-1">Držitel</p>

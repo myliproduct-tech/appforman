@@ -83,14 +83,14 @@ export const HospitalBag: React.FC<HospitalBagProps> = ({
             {showHospitalBag && (
                 <div className="fixed inset-0 z-[70] bg-[#1f2933] overflow-y-auto animate-fade-in p-4">
                     <div className="max-w-md mx-auto min-h-full flex flex-col">
-                        <div className="flex justify-between items-center mb-6 pt-4 border-b border-white/5 pb-4 sticky top-0 bg-[#1f2933] z-20">
+                        <div className="flex justify-between items-center mb-6 pt-4 border-b border-white/20 pb-4 sticky top-0 bg-[#1f2933] z-20">
                             <div>
                                 <h2 className="text-xl font-black italic uppercase text-[#f6c453] tracking-tighter">Evakuační Batoh</h2>
                                 <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em]">Pohotovostní zavazadlo</p>
                             </div>
                             <button
                                 onClick={() => setShowHospitalBag(false)}
-                                className="p-3 bg-white/5 rounded-xl border border-white/10"
+                                className="p-3 bg-white/5 rounded-xl border-2 border-white/20"
                             >
                                 <XIcon className="w-6 h-6 text-[#f6c453]" />
                             </button>
@@ -110,7 +110,7 @@ export const HospitalBag: React.FC<HospitalBagProps> = ({
                                 {onResetAll && (
                                     <button
                                         onClick={onResetAll}
-                                        className="flex-1 bg-white/5 text-white/50 border border-white/10 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-white/10 transition-all font-mono"
+                                        className="flex-1 bg-white/5 text-white/50 border-2 border-white/20 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-white/10 transition-all font-mono"
                                     >
                                         <RotateCcw className="w-4 h-4" /> [DEV] Odškrtnout
                                     </button>
@@ -119,7 +119,7 @@ export const HospitalBag: React.FC<HospitalBagProps> = ({
                         )}
 
                         {/* Bag Progress */}
-                        <div className="glass-card p-6 rounded-[2rem] border-white/5 mb-8 bg-gradient-to-br from-white/5 to-transparent relative overflow-hidden">
+                        <div className="glass-card p-6 rounded-[2rem] border-white/20 mb-8 bg-gradient-to-br from-white/5 to-transparent relative overflow-hidden">
                             <div
                                 className="absolute inset-0 opacity-10 pointer-events-none"
                                 style={{ background: `radial-gradient(circle at top right, ${progressColor}, transparent)` }}
@@ -128,7 +128,7 @@ export const HospitalBag: React.FC<HospitalBagProps> = ({
                                 <span className="text-[10px] font-black uppercase tracking-widest opacity-60 text-white/70">Stav sbalení</span>
                                 <span className="text-2xl font-black italic" style={{ color: progressColor }}>{bagProgressPercent}%</span>
                             </div>
-                            <div className="w-full bg-white/5 h-3 rounded-full overflow-hidden border border-white/5 relative z-10">
+                            <div className="w-full bg-white/5 h-3 rounded-full overflow-hidden border border-white/20 relative z-10">
                                 <div
                                     className="h-full transition-all duration-700"
                                     style={{
@@ -176,7 +176,7 @@ export const HospitalBag: React.FC<HospitalBagProps> = ({
                                                             onClick={() => onToggleHospitalBag && onToggleHospitalBag(item.id)}
                                                             className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center gap-4 ${isChecked
                                                                 ? 'bg-emerald-500/10 border-emerald-500/20'
-                                                                : 'bg-white/5 border-white/5 hover:border-white/10'
+                                                                : 'bg-white/5 border-white/20 hover:border-white/20'
                                                                 }`}
                                                         >
                                                             {isChecked ? (
@@ -197,7 +197,7 @@ export const HospitalBag: React.FC<HospitalBagProps> = ({
                             })}
 
                             {/* Custom Items Section */}
-                            <div className="space-y-4 pt-6 border-t border-white/5">
+                            <div className="space-y-4 pt-6 border-t border-white/20">
                                 <div
                                     onClick={() => toggleCategory('custom')}
                                     className="flex items-center justify-between px-2 cursor-pointer group"
@@ -236,7 +236,7 @@ export const HospitalBag: React.FC<HospitalBagProps> = ({
                                                     key={item.id}
                                                     className={`p-4 rounded-2xl border transition-all flex items-center gap-4 ${item.bought
                                                         ? 'bg-emerald-500/10 border-emerald-500/20'
-                                                        : 'bg-white/5 border-white/5 hover:border-white/10'
+                                                        : 'bg-white/5 border-white/20 hover:border-white/20'
                                                         }`}
                                                 >
                                                     <div onClick={() => onToggleCustomHospitalBagGear && onToggleCustomHospitalBagGear(item.id)} className="cursor-pointer">

@@ -31,12 +31,12 @@ export const CommunicationManual: React.FC<CommunicationManualProps> = ({ showMo
             {showCommManual && (
                 <div className="fixed inset-0 z-[70] bg-[#1f2933] animate-fade-in flex flex-col">
                     <div className="w-full max-w-xl mx-auto flex-1 flex flex-col overflow-hidden">
-                        <div className="flex justify-between items-center p-4 pt-6 border-b border-white/5 pb-4 shrink-0">
+                        <div className="flex justify-between items-center p-4 pt-6 border-b border-white/20 pb-4 shrink-0">
                             <div>
                                 <h3 className="text-xl font-black italic uppercase text-[#f6c453] tracking-tighter">Komunikační Manuál</h3>
                                 <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em]">Dekódování potřeb partnerky</p>
                             </div>
-                            <button onClick={() => { setShowCommManual(false); setExpandedIdx(null); }} className="p-3 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+                            <button onClick={() => { setShowCommManual(false); setExpandedIdx(null); }} className="p-3 bg-white/5 rounded-xl border-2 border-white/20 hover:bg-white/10 transition-colors">
                                 <XIcon className="w-6 h-6 text-[#f6c453]" />
                             </button>
                         </div>
@@ -51,7 +51,7 @@ export const CommunicationManual: React.FC<CommunicationManualProps> = ({ showMo
                                         onClick={() => toggleEntry(idx)}
                                         className={`p-4 rounded-2xl border transition-all cursor-pointer group ${expandedIdx === idx
                                             ? 'bg-[#f6c453]/10 border-[#f6c453]/40 shadow-lg shadow-[#f6c453]/5'
-                                            : 'bg-white/5 border-white/5 hover:border-white/10'}`}
+                                            : 'bg-white/5 border-white/20 hover:border-white/20'}`}
                                     >
                                         <div className="flex items-center justify-between gap-4">
                                             <div className="flex items-center gap-3">

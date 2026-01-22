@@ -83,7 +83,7 @@ export const Modal: React.FC<ModalProps> = ({
 
                 {/* Footer */}
                 {footer && (
-                    <div className="p-6 pt-0 border-t border-white/5 mt-auto bg-[#1f2933]">
+                    <div className="p-6 pt-0 border-t border-white/20 mt-auto bg-[#1f2933]">
                         {footer}
                     </div>
                 )}

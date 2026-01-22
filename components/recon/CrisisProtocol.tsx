@@ -169,7 +169,7 @@ export const CrisisProtocol: React.FC<{ onClose: () => void }> = ({ onClose }) =
             <div className="min-h-full p-4 pb-24">
                 <div className="max-w-2xl mx-auto">
                     {/* Minimalist Header */}
-                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/20">
                         <div className="flex items-center gap-3">
                             <div>
                                 <h1 className="text-xl font-black italic uppercase text-[#f6c453] tracking-tighter">
@@ -183,7 +183,7 @@ export const CrisisProtocol: React.FC<{ onClose: () => void }> = ({ onClose }) =
 
                         <button
                             onClick={onClose}
-                            className="p-3 rounded-xl bg-white/5 hover:bg-black/20 transition-all border border-white/10 active:scale-95 group"
+                            className="p-3 rounded-xl bg-white/5 hover:bg-black/20 transition-all border-2 border-white/20 active:scale-95 group"
                         >
                             <X className="w-6 h-6 text-[#f6c453] group-hover:rotate-90 transition-transform" />
                         </button>
@@ -211,7 +211,7 @@ export const CrisisProtocol: React.FC<{ onClose: () => void }> = ({ onClose }) =
                             const isExpanded = expandedCategory === warning.category;
 
                             return (
-                                <div key={warning.category} className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden transition-all">
+                                <div key={warning.category} className="bg-white/5 rounded-2xl border-2 border-white/20 overflow-hidden transition-all">
                                     {/* Category header */}
                                     <button
                                         onClick={() => toggleCategory(warning.category)}
@@ -233,7 +233,7 @@ export const CrisisProtocol: React.FC<{ onClose: () => void }> = ({ onClose }) =
                                             {warning.items.map((item, index) => (
                                                 <div
                                                     key={index}
-                                                    className={`p-4 rounded-xl border border-white/10 ${getSeverityColor(item.severity)} bg-opacity-5`}
+                                                    className={`p-4 rounded-xl border-2 border-white/20 ${getSeverityColor(item.severity)} bg-opacity-5`}
                                                 >
                                                     <div className="flex items-start justify-between gap-3 mb-2">
                                                         <div className="flex items-center gap-2">

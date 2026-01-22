@@ -82,7 +82,7 @@ export const BabyNameGenerator: React.FC<BabyNameGeneratorProps> = ({
             {/* BABY NAMES MODAL */}
             {showNameList && (
                 <>
-                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/20">
                         <div className="flex items-center gap-3">
                             <div>
                                 <h2 className="text-xl font-black italic uppercase text-[#f6c453] tracking-tighter">
@@ -96,17 +96,17 @@ export const BabyNameGenerator: React.FC<BabyNameGeneratorProps> = ({
 
                         <button
                             onClick={() => onClose ? onClose() : setShowNameList(false)}
-                            className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/10"
+                            className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all border-2 border-white/20"
                         >
                             <XIcon className="w-6 h-6 text-[#f6c453]" />
                         </button>
                     </div>
 
                     {/* Content Card */}
-                    <div className="glass-card p-6 rounded-[2rem] border-white/10 animate-slide-up mb-4">
+                    <div className="glass-card p-6 rounded-[2rem] border-white/20 animate-slide-up mb-4">
 
                         {/* Add New Name */}
-                        <div className="bg-[#2d3748] p-4 rounded-2xl border border-white/5 space-y-3 mb-6">
+                        <div className="bg-[#2d3748] p-4 rounded-2xl border border-white/20 space-y-3 mb-6">
                             <div className="flex gap-2">
                                 <div className="flex-1">
                                     <input
@@ -114,10 +114,10 @@ export const BabyNameGenerator: React.FC<BabyNameGeneratorProps> = ({
                                         value={newNameInput}
                                         onChange={(e) => setNewNameInput(e.target.value)}
                                         placeholder="Nové jméno..."
-                                        className="w-full bg-[#1f2933] border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#f6c453]"
+                                        className="w-full bg-[#1f2933] border-2 border-white/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#f6c453]"
                                     />
                                 </div>
-                                <div className="flex bg-[#1f2933] rounded-xl p-1 border border-white/10">
+                                <div className="flex bg-[#1f2933] rounded-xl p-1 border-2 border-white/20">
                                     <button
                                         onClick={() => setNewGenderInput('boy')}
                                         className={`px-3 rounded-lg transition-all ${newGenderInput === 'boy' ? 'bg-blue-500/20 text-blue-400' : 'opacity-30'}`}
@@ -147,7 +147,7 @@ export const BabyNameGenerator: React.FC<BabyNameGeneratorProps> = ({
                                 <p className="text-center text-[10px] opacity-30 uppercase tracking-widest py-4">Seznam je prázdný</p>
                             ) : (
                                 sortedNames.map(name => (
-                                    <div key={name.id} className="bg-[#1f2933] p-4 rounded-2xl border border-white/5">
+                                    <div key={name.id} className="bg-[#1f2933] p-4 rounded-2xl border border-white/20">
                                         <div className="flex justify-between items-start mb-3">
                                             <div className="flex items-center gap-3">
                                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${name.gender === 'boy' ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' : 'bg-pink-500/10 border-pink-500/30 text-pink-400'}`}>
@@ -187,7 +187,7 @@ export const BabyNameGenerator: React.FC<BabyNameGeneratorProps> = ({
                                             onClick={() => handleSelectName(name.id, name.gender)}
                                             className={`w-full mt-3 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 border-2 ${name.selected
                                                 ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white border-rose-400 shadow-lg shadow-rose-500/30'
-                                                : 'bg-white/5 text-white/40 border-white/10 hover:bg-white/10 hover:text-white/60'
+                                                : 'bg-white/5 text-white/40 border-white/20 hover:bg-white/10 hover:text-white/60'
                                                 }`}
                                         >
                                             <Heart className={`w-4 h-4 ${name.selected ? 'fill-current' : ''}`} />
