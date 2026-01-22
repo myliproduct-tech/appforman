@@ -251,8 +251,8 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
                         </div>
                     </div>
                 </div>
-                </div >,
-        document.body
+                </div>,
+                document.body
             )}
 
 {/* Date Picker Modal */ }
