@@ -324,33 +324,35 @@ export const useMissions = (
             currentEffectiveDate.setDate(dueDateObj.getDate() - (280 - effectiveDayIndex));
             const currentEffectiveDateStr = currentEffectiveDate.toISOString().split('T')[0];
 
-            const overdueRestored = prev.customMissions.filter(cm =>
-                cm.restoredCount && cm.restoredCount >= 1 &&
+            const overdueCustom = prev.customMissions.filter(cm =>
                 cm.scheduledDate && cm.scheduledDate < currentEffectiveDateStr
             );
 
-            if (overdueRestored.length > 0) {
-                overdueRestored.forEach((m, index) => {
+            if (overdueCustom.length > 0) {
+                overdueCustom.forEach((m, index) => {
                     const failedMission = {
                         ...m,
                         completed: false,
                         failed: true,
                         manualFail: false, // Auto-failed, not manual
-                        completedDate: m.scheduledDate
+                        completedDate: m.scheduledDate || currentEffectiveDateStr
                     };
                     newMissionHistory.push(failedMission);
-                    // Penalty -30 XP for failed second chance
-                    newPoints = Math.max(0, newPoints - 30);
 
-                    // Store first failed restored mission to trigger modal after state update
-                    if (index === 0) {
-                        failedRestoredMission = failedMission;
+                    // Penalty -30 XP ONLY if it was already restored from Archive
+                    // (Missions restored from Backup have restoredCount 0)
+                    if (m.restoredCount && m.restoredCount >= 1) {
+                        newPoints = Math.max(0, newPoints - 30);
+                        // Store failed second-chance mission to trigger warning modal
+                        if (index === 0) {
+                            failedRestoredMission = failedMission;
+                        }
                     }
                 });
             }
 
             const newCustomMissions = prev.customMissions.filter(cm =>
-                !overdueRestored.some(om => om.id === cm.id)
+                !overdueCustom.some(om => om.id === cm.id)
             );
 
             // Calculate new rank/level if points changed
