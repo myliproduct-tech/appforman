@@ -208,12 +208,14 @@ export const useMissions = (
     // Handler: Restore mission
     const handleRestoreMission = (task: Task, date: string) => {
         setStats(prev => {
+            const isFromArchive = task.failed === true;
+
             const restoredTask = {
                 ...task,
                 scheduledDate: date,
-                restoredCount: (task.restoredCount || 0) + 1,
+                restoredCount: isFromArchive ? (task.restoredCount || 0) + 1 : (task.restoredCount || 0),
                 failed: false,
-                priority: 'highest' as const // Mark as highest priority
+                priority: isFromArchive ? ('highest' as const) : task.priority
             };
 
             // Remove from backup/postponed and history
