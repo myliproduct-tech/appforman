@@ -251,7 +251,7 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
                         </div>
                     </div>
                 </div>
-                </div>,`r`n                document.body`r`n            )}`r`n`r`n            {/* Date Picker Modal */}
+                </div>,
             <DatePickerModal
                 isOpen={showDatePicker}
                 onClose={() => setShowDatePicker(false)}
@@ -265,3 +265,7 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
         </>
     );
 };
+                document.body
+            )}
+
+            {/* Date Picker Modal */}
