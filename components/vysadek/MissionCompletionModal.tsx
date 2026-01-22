@@ -95,25 +95,25 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                 </button>
 
                 {/* Report Content */}
-                <div ref={reportRef} className="p-8 space-y-6">
+                <div ref={reportRef} className="p-5 space-y-4">
                     {/* Header */}
-                    <div className="text-center space-y-4">
+                    <div className="text-center space-y-2">
                         <div className="flex justify-center">
-                            <div className="p-4 bg-amber-500/20 rounded-3xl border-2 border-amber-500/40 animate-pulse">
-                                <Trophy className="w-16 h-16 text-amber-400" />
+                            <div className="p-3 bg-amber-500/20 rounded-2xl border-2 border-amber-500/40 animate-pulse">
+                                <Trophy className="w-10 h-10 text-amber-400" />
                             </div>
                         </div>
-                        <h2 className="text-3xl font-black uppercase tracking-tighter text-amber-400 italic">
+                        <h2 className="text-2xl font-black uppercase tracking-tighter text-amber-400 italic">
                             Mise Dokončena
                         </h2>
-                        <p className="text-sm text-white/60 font-bold uppercase tracking-widest">
+                        <p className="text-[10px] text-white/60 font-bold uppercase tracking-widest">
                             Black Box Report • Operace Partner v Akci
                         </p>
                     </div>
 
                     {/* Baby Info Form */}
-                    <div className="space-y-4 bg-white/5 p-6 rounded-2xl border border-white/10">
-                        <h3 className="text-xs font-black uppercase tracking-widest text-[#f6c453] mb-4">
+                    <div className="space-y-3 bg-white/5 p-4 rounded-xl border border-white/10">
+                        <h3 className="text-[10px] font-black uppercase tracking-widest text-[#f6c453] mb-2">
                             Informace o jednotce
                         </h3>
 
@@ -131,33 +131,29 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label className="block text-xs font-bold uppercase tracking-wider text-[#f6c453] mb-2">Datum narození</label>
+                                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#f6c453] mb-1">Datum narození</label>
                                     <button
                                         type="button"
                                         onClick={() => setShowDatePicker(true)}
-                                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-[#f6c453] transition-all flex items-center justify-between hover:bg-white/15 active:scale-95"
+                                        className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-[#f6c453] transition-all flex items-center justify-between hover:bg-white/15 active:scale-95 text-xs"
                                     >
                                         <span className={birthDate ? 'text-white' : 'text-white/40'}>
-                                            {birthDate ? new Date(birthDate).toLocaleDateString('cs-CZ', {
-                                                day: 'numeric',
-                                                month: 'long',
-                                                year: 'numeric'
-                                            }) : 'Vyberte datum'}
+                                            {birthDate ? new Date(birthDate).toLocaleDateString('cs-CZ') : 'Datum'}
                                         </span>
-                                        <Calendar className="w-5 h-5 text-[#f6c453]" />
+                                        <Calendar className="w-4 h-4 text-[#f6c453]" />
                                     </button>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-2 block">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-1 block">
                                         Čas narození
                                     </label>
                                     <input
                                         type="time"
                                         value={birthTime}
                                         onChange={(e) => setBirthTime(e.target.value)}
-                                        className="w-full bg-[#0f1419] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
+                                        className="w-full bg-[#0f1419] border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-all text-xs"
                                     />
                                 </div>
                             </div>
@@ -165,88 +161,85 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                     </div>
 
                     {/* Statistics */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 p-6 rounded-2xl border border-amber-500/20">
-                            <div className="flex items-center gap-3 mb-3">
-                                <Star className="w-5 h-5 text-amber-400" />
-                                <p className="text-[10px] font-black uppercase tracking-widest text-amber-400">
-                                    Celkové XP
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 p-3 rounded-xl border border-amber-500/20">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Star className="w-3 h-3 text-amber-400" />
+                                <p className="text-[8px] font-black uppercase tracking-widest text-amber-400">
+                                    XP
                                 </p>
                             </div>
-                            <p className="text-4xl font-black text-white">{stats.points}</p>
+                            <p className="text-xl font-black text-white">{stats.points}</p>
                         </div>
 
-                        <div className="bg-gradient-to-br from-[#f6c453]/10 to-[#f6c453]/5 p-6 rounded-2xl border border-[#f6c453]/20">
-                            <div className="flex items-center gap-3 mb-3">
-                                <Target className="w-5 h-5 text-[#f6c453]" />
-                                <p className="text-[10px] font-black uppercase tracking-widest text-[#f6c453]">
-                                    Mise splněny
+                        <div className="bg-gradient-to-br from-[#f6c453]/10 to-[#f6c453]/5 p-3 rounded-xl border border-[#f6c453]/20">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Target className="w-3 h-3 text-[#f6c453]" />
+                                <p className="text-[8px] font-black uppercase tracking-widest text-[#f6c453]">
+                                    Mise
                                 </p>
                             </div>
-                            <p className="text-4xl font-black text-white">{completedMissions}</p>
+                            <p className="text-xl font-black text-white">{completedMissions}</p>
                         </div>
 
-                        <div className="bg-gradient-to-br from-white/10 to-white/5 p-6 rounded-2xl border border-white/20">
-                            <div className="flex items-center gap-3 mb-3">
-                                <Medal className="w-5 h-5 text-white/60" />
-                                <p className="text-[10px] font-black uppercase tracking-widest text-white/60">
-                                    Achievementy
+                        <div className="bg-gradient-to-br from-white/10 to-white/5 p-3 rounded-xl border border-white/20">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Medal className="w-3 h-3 text-white/60" />
+                                <p className="text-[8px] font-black uppercase tracking-widest text-white/60">
+                                    Bachové
                                 </p>
                             </div>
-                            <p className="text-4xl font-black text-white">{achievementCount}</p>
+                            <p className="text-xl font-black text-white">{achievementCount}</p>
                         </div>
 
-                        <div className="bg-gradient-to-br from-rose-500/10 to-rose-600/5 p-6 rounded-2xl border border-rose-500/20">
-                            <div className="flex items-center gap-3 mb-3">
-                                <Flame className="w-5 h-5 text-rose-400" />
-                                <p className="text-[10px] font-black uppercase tracking-widest text-rose-400">
-                                    Nejdelší série
+                        <div className="bg-gradient-to-br from-rose-500/10 to-rose-600/5 p-3 rounded-xl border border-rose-500/20">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Flame className="w-3 h-3 text-rose-400" />
+                                <p className="text-[8px] font-black uppercase tracking-widest text-rose-400">
+                                    Série
                                 </p>
                             </div>
-                            <p className="text-4xl font-black text-white">{stats.streak}</p>
+                            <p className="text-xl font-black text-white">{stats.streak}</p>
                         </div>
                     </div>
 
                     {/* Final Rank */}
-                    <div className="bg-gradient-to-r from-amber-500/20 to-yellow-500/20 p-6 rounded-2xl border-2 border-amber-500/40">
-                        <div className="text-center space-y-3">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-amber-400">
-                                Finální hodnost
-                            </p>
-                            <div className="text-5xl">{currentRank.icon}</div>
-                            <p className="text-xl font-black uppercase tracking-tight text-amber-300">
-                                {currentRank.name}
-                            </p>
+                    <div className="bg-gradient-to-r from-amber-500/20 to-yellow-500/20 p-4 rounded-xl border-2 border-amber-500/40">
+                        <div className="flex items-center justify-center gap-4">
+                            <div className="text-3xl">{currentRank.icon}</div>
+                            <div className="text-left">
+                                <p className="text-[8px] font-black uppercase tracking-widest text-amber-400">
+                                    Finální hodnost
+                                </p>
+                                <p className="text-lg font-black uppercase tracking-tight text-amber-300">
+                                    {currentRank.name}
+                                </p>
+                            </div>
                         </div>
                     </div>
 
                     {/* Message */}
                     {babyName && (
-                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10 text-center">
-                            <p className="text-sm text-white/80 leading-relaxed italic">
+                        <div className="bg-white/5 p-4 rounded-xl border border-white/10 text-center">
+                            <p className="text-[11px] text-white/80 leading-relaxed italic">
                                 Gratuluji, <span className="font-black text-[#f6c453]">{stats.userName || 'veliteli'}</span>!
-                                Tvoje mise byla úspěšná. <span className="font-black text-[#f6c453]">{babyName}</span> je
-                                v bezpečí a ty jsi dokázal, že jsi skutečný <span className="font-black text-[#f6c453]">TÁTA</span>.
-                                Vítej v nejdůležitější roli tvého života. 🎖️
+                                Mise byla úspěšná. <span className="font-black text-[#f6c453]">{babyName}</span> je
+                                v bezpečí. Vítej v nejdůležitější roli tvého života. 🎖️
                             </p>
                         </div>
                     )}
                 </div>
 
                 {/* Action Buttons */}
-                <div className="p-6 border-t border-white/10 space-y-3">
+                <div className="p-4 border-t border-white/10">
                     <button
                         onClick={handleExport}
                         disabled={!babyName || isExporting}
-                        className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 text-[#1f2933] font-black py-4 rounded-xl shadow-lg shadow-amber-500/30 flex items-center justify-center gap-3 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-sm"
+                        className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 text-[#1f2933] font-black py-3 rounded-lg shadow-lg shadow-amber-500/30 flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-[10px]"
                     >
-                        <Download className="w-5 h-5" />
-                        {isExporting ? 'Exportuji...' : 'Stáhnout Black Box Report'}
+                        <Download className="w-4 h-4" />
+                        {isExporting ? 'Exportuji...' : 'Stáhnout Report'}
                     </button>
-
-                    <p className="text-center text-[10px] text-white/30 italic">
-                        Report bude uložen jako obrázek PNG
-                    </p>
                 </div>
             </div>
 
