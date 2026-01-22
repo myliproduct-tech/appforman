@@ -151,7 +151,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-2 gap-3 mb-4 mt-4">
         {/* Intel Report - Left side with gold border and pulse */}
         <div
           onClick={() => dispatch({ type: 'SET_INTEL_MODAL', value: true })}
