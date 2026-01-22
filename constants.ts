@@ -3,8 +3,7 @@ import { Task, Achievement, UserStats, ConsumableItem } from './types';
 
 // Default consumable items (teas only - vitamins are added by user)
 export const DEFAULT_CONSUMABLES: Omit<ConsumableItem, 'quantity' | 'lastUpdated'>[] = [
-  { id: 'g51', name: 'Čaj pro těhotné ženy', isCustom: false },
-  { id: 'g23', name: 'Čaj pro kojící matky', isCustom: false }
+  { id: 'g51', name: 'Čaj pro těhotné ženy', isCustom: false }
 ];
 
 // Baby size comparison using tools
@@ -592,8 +591,7 @@ export const GEAR_CHECKLIST = [
       { id: "g16", label: "Kojící polštář (Podpora stability)", week: 18, endWeek: 22, tip: "Využijete ho už před porodem; mamince pomůže najít pohodlnou polohu při spaní na boku.", condition: "Bazar / Nové" },
       { id: "g18", label: "Kojící podprsenky (2-3 ks)", week: 30, endWeek: 32, tip: "Kupuj je až ke konci; prsa se zvětší i o dvě čísla a kostice by mohly blokovat mlékovody.", condition: "Vždy NOVÁ!" },
       { id: "g17", label: "Vložky do podprsenky (Absorpce)", week: 34, endWeek: 36, tip: "Jednorázové jsou praktičtější na cesty, pratelné jsou příjemnější na kůži (neškrábou).", condition: "Vždy NOVÁ!" },
-      { id: "g21", label: "Mastička na bradavky (Purelan)", week: 34, endWeek: 36, tip: "Čistý lanolin; je to zázrak na hojení, který miminku nijak neškodí při krmení.", condition: "Vždy NOVÁ!" },
-      { id: "g23", label: "Čaj pro kojící matky (Laktace)", week: 36, endWeek: 38, tip: "Podporuje tvorbu paliva (laktaci); začněte pít až těsně před porodem nebo po něm.", condition: "Vždy NOVÁ!" }
+      { id: "g21", label: "Mastička na bradavky (Purelan)", week: 34, endWeek: 36, tip: "Čistý lanolin; je to zázrak na hojení, který miminku nijak neškodí při krmení.", condition: "Vždy NOVÁ!" }
     ]
   },
   {
