@@ -409,7 +409,7 @@ const App: React.FC = () => {
                         window.location.reload();
                     }
                 }}
-                onRestartTour={() => setShowOnboarding(true)}
+                onRestartTour={handleRestartTour}
             />
 
             {/* 4. Modal Overlays */}
