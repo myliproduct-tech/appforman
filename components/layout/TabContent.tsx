@@ -227,15 +227,11 @@ export const TabContent: React.FC<TabContentProps> = ({
                                 ...prev,
                                 customGear: (prev.customGear || []).map(g => g.id === id ? { ...g, bought: !g.bought } : g)
                             }))}
-                            onSaveVehicle={(model) => setStats(prev => {
-                                const newStats = { ...prev, vehicleModel: model };
-                                const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-                                if (newUnlock) setShowAchievementModal(newUnlock);
-                                return updatedStats;
-                            })}
+                            onSaveVehicle={(model) => setStats(prev => ({ ...prev, vehicleModel: model }))}
                             onConfirmVehicle={() => {
                                 setStats(prev => {
-                                    const { updatedStats, newUnlock } = missions.checkAchievements(prev);
+                                    const newStats = { ...prev, vehicleConfirmed: true };
+                                    const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
                                     if (newUnlock) setShowAchievementModal(newUnlock);
                                     return updatedStats;
                                 });

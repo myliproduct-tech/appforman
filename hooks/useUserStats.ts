@@ -58,7 +58,8 @@ export const useUserStats = (currentUser: string | null) => {
             budget: false
         },
         lastProcessedDayIndex: 0,
-        operationalPrepChecklist: []
+        operationalPrepChecklist: [],
+        vehicleConfirmed: false
     };
 
     const [stats, setStats] = useState<UserStats>(initialStats);

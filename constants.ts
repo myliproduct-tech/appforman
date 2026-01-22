@@ -176,7 +176,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     icon: 'Car',
     rarity: 'rare',
     xpReward: 300,
-    condition: (stats: UserStats) => !!stats.vehicleModel && stats.vehicleModel.length > 2
+    condition: (stats: UserStats) => !!stats.vehicleConfirmed
   },
   {
     id: 'warm_supplies',

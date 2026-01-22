@@ -48,6 +48,7 @@ export interface UserStats {
     budget: boolean;
   }; // Track which section tours have been completed
   vehicleModel?: string; // New: Model of the assembled stroller/vehicle
+  vehicleConfirmed?: boolean; // New: Track if stroller model was confirmed (for achievement)
   firstKickDetected?: boolean; // New: Track first felt kick achievement
   medicalInfo?: MedicalInfo; // New: Medical information (blood types, checkup dates)
   lastProcessedDayIndex?: number; // New: Tracking pointer for missed missions synchronization
