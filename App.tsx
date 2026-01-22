@@ -295,7 +295,7 @@ const App: React.FC = () => {
 
     const handleCompleteTour = () => {
         setStats(prev => {
-            const newStats = { ...prev, onboardingCompleted: true };
+            const newStats = { ...prev, onboardingCompleted: true, onboardingFinished: true };
             const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
             newUnlocks.forEach(ach => addToAchievementQueue(ach));
             return updatedStats;
@@ -304,8 +304,8 @@ const App: React.FC = () => {
     };
 
     const handleSkipTour = () => {
-        // Skip tour without giving achievement - only mark as completed
-        setStats(prev => ({ ...prev, onboardingCompleted: true }));
+        // Skip tour without giving achievement - only mark as completed to hide it
+        setStats(prev => ({ ...prev, onboardingCompleted: true, onboardingFinished: false }));
         setShowOnboarding(false);
     };
 

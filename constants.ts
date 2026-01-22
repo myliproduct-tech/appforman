@@ -47,7 +47,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     icon: 'BookOpen',
     rarity: 'common',
     xpReward: 100,
-    condition: (stats: UserStats) => !!stats.onboardingCompleted
+    condition: (stats: UserStats) => !!stats.onboardingFinished
   },
   {
     id: 'trainee',

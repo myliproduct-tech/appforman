@@ -39,7 +39,8 @@ export interface UserStats {
   budgetPlan?: BudgetPlan; // New: Financial calculator data
   accountCreated?: string; // New: Date when account was created (for Deserter logic)
   customGear?: CustomGearItem[]; // New: User defined inventory items
-  onboardingCompleted?: boolean; // Track if user completed onboarding tour
+  onboardingCompleted?: boolean; // Track if user saw/interacted with onboarding tour
+  onboardingFinished?: boolean; // New: Track if user actually COMPLETED the tour (for achievement)
   tourCompleted?: {
     missions: boolean;
     achievements: boolean;
