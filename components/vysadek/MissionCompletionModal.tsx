@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import { Trophy, Download, X, Star, Medal, Target, Flame, Baby, Calendar, Heart } from 'lucide-react';
 import { DatePickerModal } from '../common/DatePickerModal';
 import html2canvas from 'html2canvas';
@@ -66,7 +67,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
         }
     };
 
-    return (
+    return ReactDOM.createPortal(
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-md animate-fade-in p-4">
             {/* Confetti Animation */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -277,6 +278,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                 initialDate={birthDate}
                 title="Datum narození"
             />
-        </div>
+        </div>,
+        document.body
     );
 };
