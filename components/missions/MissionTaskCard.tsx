@@ -73,12 +73,12 @@ const MissionTaskCardComponent: React.FC<MissionTaskCardProps> = ({
 
     return (
         <div
-            className={`glass-card p-6 rounded-[2rem] border transition-all relative overflow-hidden group tap-effect card-tactical animate-scale-in
-      ${isHistory ? 'border-emerald-500/20 bg-emerald-500/5 opacity-80' :
-                    isPostponed ? 'border-amber-500/20 bg-amber-500/5' :
-                        isMissed ? 'border-red-500/20 bg-red-500/5 opacity-60 grayscale-[0.5]' :
-                            'hover:bg-white/[0.05] border-white/5'}
-      ${isBigMission && !isHistory && !isMissed ? 'shadow-[0_0_30px_rgba(168,85,247,0.15)] border-purple-500/30' : ''}
+            className={`glass-card p-6 rounded-[2rem] border-2 transition-all relative overflow-hidden group tap-effect card-tactical animate-scale-in
+      ${isHistory ? 'border-emerald-500/30 bg-emerald-500/5 opacity-80' :
+                    isPostponed ? 'border-amber-500/30 bg-amber-500/5' :
+                        isMissed ? 'border-red-500/30 bg-red-500/5 opacity-60 grayscale-[0.5]' :
+                            'hover:bg-white/[0.05] border-white/20'}
+      ${isBigMission && !isHistory && !isMissed ? 'shadow-[0_0_30px_rgba(168,85,247,0.15)] border-purple-500/40' : ''}
     `}
         >
             <div className="flex items-start justify-between mb-3">
@@ -152,7 +152,7 @@ const MissionTaskCardComponent: React.FC<MissionTaskCardProps> = ({
                     </button>
                     <button
                         onClick={() => onOpenScheduleModal && onOpenScheduleModal(task, 'postpone')}
-                        className="px-5 py-4 bg-white/5 text-[#f5f7fa] rounded-xl border border-white/10 active:scale-95 transition-all hover:bg-white/10 min-h-[48px] min-w-[48px] flex items-center justify-center tap-effect btn-tactical"
+                        className="px-5 py-4 bg-white/5 text-[#f5f7fa] rounded-xl border-2 border-white/20 active:scale-95 transition-all hover:bg-white/10 min-h-[48px] min-w-[48px] flex items-center justify-center tap-effect btn-tactical"
                         title="Odložit"
                     >
                         <Clock className="w-6 h-6 opacity-60" />
@@ -174,7 +174,7 @@ const MissionTaskCardComponent: React.FC<MissionTaskCardProps> = ({
                 <div className="flex gap-2">
                     <button
                         onClick={() => onOpenScheduleModal(task, 'restore')}
-                        className="flex-1 py-4 bg-white/5 text-[#f5f7fa] rounded-xl font-black uppercase tracking-[0.2em] text-[10px] border border-white/10 active:scale-95 transition-all hover:bg-white/10 flex items-center justify-center gap-2"
+                        className="flex-1 py-4 bg-white/5 text-[#f5f7fa] rounded-xl font-black uppercase tracking-[0.2em] text-[10px] border-2 border-white/20 active:scale-95 transition-all hover:bg-white/10 flex items-center justify-center gap-2"
                     >
                         <RotateCcw className="w-4 h-4" /> Obnovit do služby
                     </button>
