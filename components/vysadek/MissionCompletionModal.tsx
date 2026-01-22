@@ -49,21 +49,43 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
 
         try {
             setIsExporting(true);
+
+            // Clean filename
+            const safeName = babyName.toLowerCase().trim().replace(/\s+/g, '-').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const dateStr = birthDate || new Date().toISOString().split('T')[0];
+
             const canvas = await html2canvas(reportRef.current, {
                 scale: 2,
-                backgroundColor: '#0f172a',
+                backgroundColor: '#1f2933', // Match app background
                 logging: false,
-                useCORS: true
+                useCORS: true,
+                allowTaint: true,
+                onclone: (clonedDoc) => {
+                    // Hide elements that shouldn't be in the report
+                    const elementsToHide = clonedDoc.querySelectorAll('[data-html2canvas-ignore]');
+                    elementsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
+                }
             });
 
-            const imgData = canvas.toDataURL('image/png');
-            const link = document.createElement('a');
-            link.download = `black-box-${babyName.toLowerCase().replace(/\s+/g, '-')}-${birthDate}.png`;
-            link.href = imgData;
-            link.click();
-            setIsExporting(false);
+            canvas.toBlob((blob) => {
+                if (!blob) throw new Error('Canvas to Blob failed');
+
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = `black-box-${safeName}-${dateStr}.png`;
+                link.href = url;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Cleanup
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+                setIsExporting(false);
+            }, 'image/png', 1.0);
+
         } catch (error) {
             console.error('Export failed:', error);
+            alert('Export reportu se nezdařil. Zkuste to prosím znovu.');
             setIsExporting(false);
         }
     };
@@ -90,6 +112,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                 {/* Close Button */}
                 <button
                     onClick={onClose}
+                    data-html2canvas-ignore
                     className="absolute top-4 right-4 z-10 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-all"
                 >
                     <X className="w-5 h-5 text-white" />
@@ -249,7 +272,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                 </div>
 
                 {/* Action Buttons */}
-                <div className="p-4 border-t border-white/10">
+                <div className="p-4 border-t border-white/10" data-html2canvas-ignore>
                     <button
                         onClick={handleExport}
                         disabled={!babyName || isExporting}
