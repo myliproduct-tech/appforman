@@ -99,7 +99,7 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
 
             {/* Modal - Fullscreen Page Layout */}
             {showModal && (
-                <div className="fixed inset-0 z-[100] bg-[#1f2933] animate-fade-in">
+                <div className="fixed inset-0 z-[150] bg-[#1f2933] animate-fade-in">
                     <div className="h-screen flex flex-col">
                         {/* Fixed Header */}
                         <div className="flex justify-between items-center p-4 pt-6 border-b border-white/5 pb-4 shrink-0">
