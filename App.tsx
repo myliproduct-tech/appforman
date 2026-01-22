@@ -215,7 +215,7 @@ const App: React.FC = () => {
         setShowFailureModal
     );
 
-    // Sync missed missions when day changes
+    // Sync missed missions when day changes or when switching tabs
     useEffect(() => {
         if (stats.email) {
             const failedRestoredMission = missions.syncMissedMissions(currentDayIndex);
@@ -235,7 +235,7 @@ const App: React.FC = () => {
                 );
             }
         }
-    }, [currentDayIndex, stats.email]);
+    }, [currentDayIndex, stats.email, activeTab]);
 
     // Logout handler
     const handleLogout = () => {
