@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { XIcon, Heart, Calendar, Plus, Trash2, FileText } from 'lucide-react';
 import { MedicalInfo, CheckupDate } from '../../types';
 import { DatePickerModal } from '../common/DatePickerModal';
@@ -98,7 +99,7 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
             </button>
 
             {/* Modal - Fullscreen Page Layout */}
-            {showModal && (
+            {showModal && ( ReactDOM.createPortal(
                 <div className="fixed inset-0 z-[150] bg-[#1f2933] animate-fade-in">
                     <div className="h-screen flex flex-col">
                         {/* Fixed Header */}
