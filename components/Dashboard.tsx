@@ -198,7 +198,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
 
       <button
         onClick={onNavigateAchievements}
-        className={`w-full text-left glass-card p-6 rounded-[2.5rem] relative overflow-hidden group transition-all duration-500 hover:bg-white/5 active:scale-[0.98] animate-glow-gold tap-effect card-tactical ${isDeserter ? 'border-red-500/50 shadow-[0_0_30px_rgba(220,38,38,0.2)] bg-red-900/10' : ''}`}
+        className={`w-full text-left glass-card p-6 rounded-[2.5rem] relative overflow-hidden group transition-all duration-500 hover:bg-white/5 active:scale-[0.98] animate-glow-gold tap-effect card-tactical mt-4 ${isDeserter ? 'border-red-500/50 shadow-[0_0_30px_rgba(220,38,38,0.2)] bg-red-900/10' : ''}`}
         data-tour="rank-card"
       >
         {isDeserter ? (
@@ -272,7 +272,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
         </div>
       </Modal>
 
-      <div className="grid grid-cols-2 gap-4 animate-slide-up">
+      <div className="grid grid-cols-2 gap-4 animate-slide-up mt-4">
         <div className="glass-card p-5 rounded-[2rem] border-white/5 relative overflow-hidden flex flex-col justify-between tap-effect card-tactical">
           <div className="text-3xl mb-3">
             {sizeInfo.emoji}
@@ -303,7 +303,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
 
       <section
         onClick={() => dispatch({ type: 'SET_MISSION_MODAL', value: true })}
-        className={`glass-card p-7 rounded-[2.5rem] cursor-pointer active:scale-95 transition-all group relative overflow-hidden tap-effect card-tactical animate-slide-up animate-pulse ${isDeserter ? 'border-red-500/50 shadow-[0_0_30px_rgba(220,38,38,0.2)]' : 'border-[#f6c453]/30 hover:border-[#f6c453]/40'}`}
+        className={`glass-card p-7 rounded-[2.5rem] cursor-pointer active:scale-95 transition-all group relative overflow-hidden tap-effect card-tactical animate-slide-up animate-pulse mt-4 ${isDeserter ? 'border-red-500/50 shadow-[0_0_30px_rgba(220,38,38,0.2)]' : 'border-[#f6c453]/30 hover:border-[#f6c453]/40'}`}
       >
         {isDeserter && <div className="absolute inset-0 bg-red-500/10 animate-pulse pointer-events-none"></div>}
 
