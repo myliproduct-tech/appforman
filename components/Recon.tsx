@@ -272,9 +272,9 @@ export const Recon: React.FC<ReconProps> = ({ currentWeek, partnerName, userName
                     {/* Movement Tracker Card */}
                     <button
                         onClick={() => dispatch({ type: 'SET_ACTIVE_TOOL', value: activeTool === 'kicks' ? 'none' : 'kicks' })}
-                        className={`group relative overflow-hidden rounded-3xl border transition-all duration-300 py-5 active:scale-95 tap-effect card-tactical ${activeTool === 'kicks'
+                        className={`group relative overflow-hidden rounded-3xl border-2 transition-all duration-300 py-5 active:scale-95 tap-effect card-tactical ${activeTool === 'kicks'
                             ? 'bg-[#f6c453]/10 border-[#f6c453]/40 shadow-lg shadow-[#f6c453]/10'
-                            : 'bg-white/5 border-white/10 hover:border-[#f6c453]/30 hover:bg-[#f6c453]/5'
+                            : 'bg-white/5 border-white/20 hover:border-[#f6c453]/30 hover:bg-[#f6c453]/5'
                             }`}
                     >
                         <div className="relative flex flex-col items-center gap-3 transition-transform group-hover:-translate-y-1">
@@ -298,7 +298,7 @@ export const Recon: React.FC<ReconProps> = ({ currentWeek, partnerName, userName
                             dispatch({ type: 'TOGGLE_MODAL', modal: 'showCommManual' });
                             if (onViewManual) onViewManual();
                         }}
-                        className="group relative overflow-hidden rounded-3xl border py-5 transition-all duration-300 bg-white/5 border-white/10 hover:border-[#f6c453]/30 hover:bg-[#f6c453]/5 active:scale-95 tap-effect card-tactical"
+                        className="group relative overflow-hidden rounded-3xl border-2 py-5 transition-all duration-300 bg-white/5 border-white/20 hover:border-[#f6c453]/30 hover:bg-[#f6c453]/5 active:scale-95 tap-effect card-tactical"
                     >
                         <div className="relative flex flex-col items-center gap-3 transition-transform group-hover:-translate-y-1">
                             <div className="p-2.5 rounded-2xl transition-all bg-white/5 group-hover:bg-[#f6c453]/10">
@@ -333,7 +333,7 @@ export const Recon: React.FC<ReconProps> = ({ currentWeek, partnerName, userName
                 )}
 
                 {activeTool === 'music' && (
-                    <div className="glass-card p-6 rounded-3xl border-white/10 animate-slide-up bg-gradient-to-br from-[#f6c453]/5 to-slate-500/5">
+                    <div className="glass-card p-6 rounded-3xl border-2 border-white/20 animate-slide-up bg-gradient-to-br from-[#f6c453]/5 to-slate-500/5">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-3 bg-[#f6c453]/20 rounded-xl">
                                 <Music className="w-6 h-6 text-[#f6c453]" />
