@@ -84,7 +84,7 @@ export const Extra: React.FC<ExtraProps> = ({
         return (
             <div className="fixed inset-0 z-[80] bg-[#1f2933] overflow-y-auto animate-fade-in p-4">
                 <div className="max-w-2xl mx-auto min-h-full flex flex-col">
-                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/20">
                         <div className="flex items-center gap-3">
                             <div>
                                 <h2 className="text-xl font-black italic uppercase accent-text tracking-tighter">
@@ -96,7 +96,7 @@ export const Extra: React.FC<ExtraProps> = ({
                             </div>
                         </div>
 
-                        <button onClick={() => setShowTrainingCamp(false)} className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/10">
+                        <button onClick={() => setShowTrainingCamp(false)} className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all border-2 border-white/20">
                             <X className="w-6 h-6 text-[#f6c453]" />
                         </button>
                     </div>

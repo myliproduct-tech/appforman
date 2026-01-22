@@ -107,14 +107,14 @@ export const Budget: React.FC<BudgetProps> = ({
                 </button>
                 <button
                     onClick={() => setShowCalculator(true)}
-                    className="bg-[#1f2933] text-[#f5f7fa] border border-white/10 px-2 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex flex-col items-center justify-center gap-2 shadow-lg active:scale-95 transition-all hover:bg-white/5 group"
+                    className="bg-[#1f2933] text-[#f5f7fa] border-2 border-white/20 px-2 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex flex-col items-center justify-center gap-2 shadow-lg active:scale-95 transition-all hover:bg-white/5 group"
                 >
                     <Calculator className="w-5 h-5 text-[#f6c453] group-hover:scale-110 group-hover:rotate-6 transition-transform" />
                     <span>Kalkulačka</span>
                 </button>
                 <button
                     onClick={() => setShowGuide(true)}
-                    className="bg-white/5 border border-white/10 text-white px-2 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex flex-col items-center justify-center gap-2 shadow-lg active:scale-95 transition-all hover:border-[#f6c453]/30 group"
+                    className="bg-white/5 border-2 border-white/20 text-white px-2 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex flex-col items-center justify-center gap-2 shadow-lg active:scale-95 transition-all hover:border-[#f6c453]/30 group"
                 >
                     <ShoppingCart className="w-5 h-5 text-[#f6c453] group-hover:scale-110 group-hover:-rotate-6 transition-transform" />
                     <span>Nákupčí</span>
@@ -124,7 +124,7 @@ export const Budget: React.FC<BudgetProps> = ({
             {/* STROLLER CONFIGURATOR BUTTON */}
             <button
                 onClick={() => setShowStrollerConfig(true)}
-                className="w-full bg-[#1f2933] text-[#f5f7fa] border border-white/10 px-3 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 transition-all mb-2 hover:bg-white/5 group"
+                className="w-full bg-[#1f2933] text-[#f5f7fa] border-2 border-white/20 px-3 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 transition-all mb-2 hover:bg-white/5 group"
             >
                 <Truck className="w-5 h-5 opacity-60 text-[#f6c453] group-hover:scale-110 group-hover:translate-x-1 transition-transform" />
                 <span>Konfigurátor Vozidla</span>
@@ -133,7 +133,7 @@ export const Budget: React.FC<BudgetProps> = ({
             {/* CONSUMABLES BUTTON */}
             <button
                 onClick={() => setShowConsumables(true)}
-                className="w-full bg-[#1f2933] text-[#f5f7fa] border border-white/10 px-3 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 transition-all mb-2 hover:bg-white/5 group"
+                className="w-full bg-[#1f2933] text-[#f5f7fa] border-2 border-white/20 px-3 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 transition-all mb-2 hover:bg-white/5 group"
             >
                 <Package className="w-5 h-5 opacity-60 text-[#f6c453] group-hover:scale-110 group-hover:rotate-12 transition-transform" />
                 <span>Počet v balení</span>
@@ -142,7 +142,7 @@ export const Budget: React.FC<BudgetProps> = ({
             {/* OPERATIONAL PREP BUTTON */}
             <button
                 onClick={() => setShowOperationalPrep(true)}
-                className="w-full bg-[#1f2933] text-[#f5f7fa] border border-white/10 px-3 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 transition-all mb-2 hover:bg-white/5 group"
+                className="w-full bg-[#1f2933] text-[#f5f7fa] border-2 border-white/20 px-3 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 transition-all mb-2 hover:bg-white/5 group"
             >
                 <ClipboardList className="w-5 h-5 opacity-60 text-[#f6c453] group-hover:scale-110 group-hover:-rotate-3 transition-transform" />
                 <span>Operační Příprava</span>
@@ -156,7 +156,7 @@ export const Budget: React.FC<BudgetProps> = ({
                             <h2 className="text-xl font-black italic uppercase accent-text tracking-tighter">Finanční Centrum</h2>
                             <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em]">Správa kreditů</p>
                         </div>
-                        <button onClick={() => setShowCalculator(false)} className="p-3 bg-white/5 rounded-2xl border border-white/10 active:scale-95">
+                        <button onClick={() => setShowCalculator(false)} className="p-3 bg-white/5 rounded-2xl border-2 border-white/20 active:scale-95">
                             <X className="w-6 h-6" />
                         </button>
                     </div>
@@ -256,7 +256,7 @@ export const Budget: React.FC<BudgetProps> = ({
             }
 
             {/* Strategy Card */}
-            <div className="p-7 glass-card rounded-[3rem] bg-gradient-to-br from-slate-500/10 to-slate-500/5 border-white/5">
+            <div className="p-7 glass-card rounded-[3rem] bg-gradient-to-br from-slate-500/10 to-slate-500/5 border-white/20">
                 <div className="flex items-center gap-4 mb-4">
                     <div className="p-3 bg-[#f6c453]/10 rounded-2xl">
                         <Wallet className="w-6 h-6 text-[#f6c453]" />
