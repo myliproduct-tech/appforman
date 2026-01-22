@@ -77,7 +77,7 @@ export const VysadekView: React.FC<VysadekViewProps> = ({
             <main className="flex-1 p-4 space-y-6 max-w-xl mx-auto w-full pb-32">
 
                 {/* HLAVNÍ MENU - TŘI FÁZE */}
-                <div className="flex p-1 bg-white/5 rounded-[2rem] border border-white/10 shadow-inner sticky top-24 z-[105] backdrop-blur-md">
+                <div className="flex p-1 bg-white/5 rounded-[2rem] border-2 border-white/20 shadow-inner sticky top-24 z-[105] backdrop-blur-md">
                     <button
                         onClick={() => dispatch({ type: 'SET_ACTIVE_TAB', value: 'logistika' })}
                         className={`flex-1 py-3 rounded-[1.5rem] flex flex-col items-center justify-center gap-1 transition-all duration-300 ${activeTab === 'logistika' ? 'bg-[#f6c453] text-[#1f2933] shadow-lg scale-105' : 'text-white/40 hover:text-white/70 hover:bg-white/5'}`}
@@ -131,7 +131,7 @@ export const VysadekView: React.FC<VysadekViewProps> = ({
                                 </div>
 
                                 {/* BOX KONTAKTY */}
-                                <div className="glass-card p-6 rounded-[2.5rem] border-white/10 bg-white/5 flex flex-col justify-between group">
+                                <div className="glass-card p-6 rounded-[2.5rem] border-white/20 bg-white/5 flex flex-col justify-between group">
                                     <div className="flex items-center gap-3 mb-4">
                                         <Users className="w-5 h-5 text-[#f6c453] group-hover:scale-110 transition-transform" />
                                         <h3 className="text-xs font-black text-[#f6c453] uppercase tracking-widest">Kontakty</h3>
@@ -142,7 +142,7 @@ export const VysadekView: React.FC<VysadekViewProps> = ({
                                             <button
                                                 key={contact.id}
                                                 onClick={() => makePhoneCall(contact.phone)}
-                                                className="bg-white/5 border border-white/10 p-3 rounded-2xl flex flex-col items-center gap-1 active:scale-95 transition-all text-center hover:bg-[#f6c453]/10 hover:border-[#f6c453]/20 group/btn"
+                                                className="bg-white/5 border-2 border-white/20 p-3 rounded-2xl flex flex-col items-center gap-1 active:scale-95 transition-all text-center hover:bg-[#f6c453]/10 hover:border-[#f6c453]/20 group/btn"
                                             >
                                                 <Phone className="w-4 h-4 text-[#f6c453]/60 fill-current group-hover/btn:text-[#f6c453] transition-colors" />
                                                 <span className="text-[10px] font-black uppercase tracking-tighter text-white/60 truncate w-full">{contact.name}</span>
@@ -157,7 +157,7 @@ export const VysadekView: React.FC<VysadekViewProps> = ({
                                 </div>
                             </div>
 
-                            <div className="glass-card p-6 rounded-[2rem] border-white/5 bg-white/[0.02] space-y-6">
+                            <div className="glass-card p-6 rounded-[2rem] border-white/20 bg-white/[0.02] space-y-6">
                                 <h4 className="text-xs font-black text-[#f6c453] uppercase tracking-widest flex items-center gap-2">
                                     <ClipboardCheck className="w-5 h-5" /> Co nezapomenout při odjezdu
                                 </h4>
@@ -169,7 +169,7 @@ export const VysadekView: React.FC<VysadekViewProps> = ({
                                         'Nabíječky na telefony a powerbanku',
                                         'Přezůvky pro tebe i pro ni'
                                     ].map((item, i) => (
-                                        <li key={i} className="flex items-start gap-3 p-3 bg-white/5 rounded-xl border border-white/5 group">
+                                        <li key={i} className="flex items-start gap-3 p-3 bg-white/5 rounded-xl border border-white/20 group">
                                             <div className="mt-1 w-2 h-2 rounded-full bg-[#f6c453]/40 group-hover:scale-125 transition-transform shadow-[0_0_5px_rgba(246,196,83,0.5)]"></div>
                                             <span className="text-xs font-medium text-white/80">{item}</span>
                                         </li>
@@ -244,7 +244,7 @@ export const VysadekView: React.FC<VysadekViewProps> = ({
                                 {isProtocolOpen && (
                                     <div className="px-6 pb-6 space-y-4 animate-in slide-in-from-top-2 duration-200">
                                         {protocolItems.map((item, i) => (
-                                            <div key={i} className="p-3 bg-white/5 rounded-xl border border-white/5">
+                                            <div key={i} className="p-3 bg-white/5 rounded-xl border border-white/20">
                                                 <p className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">{item.title}</p>
                                                 <p className="text-[11px] text-white/70 leading-relaxed italic">{item.text}</p>
                                             </div>
@@ -276,7 +276,7 @@ export const VysadekView: React.FC<VysadekViewProps> = ({
                                         onClick={() => dispatch({ type: 'SET_BABY_GENDER', value: 'boy' })}
                                         className={`flex-1 py-4 rounded-xl font-black text-sm transition-all border-2 flex items-center justify-center gap-2 ${babyGender === 'boy'
                                             ? 'bg-blue-500 text-white border-blue-400 shadow-lg shadow-blue-500/30 scale-105'
-                                            : 'bg-white/5 text-white/40 border-white/10 hover:bg-white/10'
+                                            : 'bg-white/5 text-white/40 border-white/20 hover:bg-white/10'
                                             }`}
                                     >
                                         <Baby className="w-6 h-6" />
@@ -286,7 +286,7 @@ export const VysadekView: React.FC<VysadekViewProps> = ({
                                         onClick={() => dispatch({ type: 'SET_BABY_GENDER', value: 'girl' })}
                                         className={`flex-1 py-4 rounded-xl font-black text-sm transition-all border-2 flex items-center justify-center gap-2 ${babyGender === 'girl'
                                             ? 'bg-pink-500 text-white border-pink-400 shadow-lg shadow-pink-500/30 scale-105'
-                                            : 'bg-white/5 text-white/40 border-white/10 hover:bg-white/10'
+                                            : 'bg-white/5 text-white/40 border-white/20 hover:bg-white/10'
                                             }`}
                                     >
                                         <Baby className="w-6 h-6" />
@@ -308,7 +308,7 @@ export const VysadekView: React.FC<VysadekViewProps> = ({
 
                                 <GoldenHour />
 
-                                <div className="mt-8 p-5 bg-white/5 rounded-2xl border border-white/5 group">
+                                <div className="mt-8 p-5 bg-white/5 rounded-2xl border border-white/20 group">
                                     <h5 className="text-[10px] font-black uppercase tracking-widest text-[#f6c453] mb-3 flex items-center gap-1.5"><Bed className="w-3 h-3 group-hover:translate-x-1 transition-transform" /> Přežití v nemocnici:</h5>
                                     <p className="text-[11px] text-white/70 leading-relaxed font-medium">
                                         Měj u sebe rychlou energii (hroznový cukr, energy tyčinku). Čekání může být dlouhé. Měj drobné na automat na kávu. Buď připraven na vedro v sále. Pokud tě pošlou domů se vyspat (po porodu), udělej to – tvá síla bude brzy potřeba.
