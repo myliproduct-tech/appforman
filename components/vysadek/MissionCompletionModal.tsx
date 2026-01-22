@@ -50,20 +50,56 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
         try {
             setIsExporting(true);
 
-            // Clean filename
-            const safeName = babyName.toLowerCase().trim().replace(/\s+/g, '-').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            // Keep diacritics as requested by user
+            const safeName = babyName.toLowerCase().trim().replace(/\s+/g, '-');
             const dateStr = birthDate || new Date().toISOString().split('T')[0];
 
             const canvas = await html2canvas(reportRef.current, {
                 scale: 2,
-                backgroundColor: '#1f2933', // Match app background
+                backgroundColor: '#1f2933',
                 logging: false,
                 useCORS: true,
                 allowTaint: true,
                 onclone: (clonedDoc) => {
-                    // Hide elements that shouldn't be in the report
+                    // Hide ignored elements
                     const elementsToHide = clonedDoc.querySelectorAll('[data-html2canvas-ignore]');
                     elementsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
+
+                    // Fix for inputs: Replace with text containers in the clone for perfect rendering
+                    const inputs = clonedDoc.querySelectorAll('input');
+                    inputs.forEach(input => {
+                        const val = (input as HTMLInputElement).value;
+                        const parent = input.parentElement;
+                        if (parent) {
+                            const replacement = clonedDoc.createElement('div');
+                            replacement.innerText = val || '---';
+                            replacement.style.color = '#f6c453'; // Tactical yellow
+                            replacement.style.fontSize = '14px';
+                            replacement.style.fontWeight = '900';
+                            replacement.style.textTransform = 'uppercase';
+                            replacement.style.padding = '8px 4px';
+                            parent.appendChild(replacement);
+                            (input as HTMLElement).style.display = 'none';
+                        }
+                    });
+
+                    // Fix for date button
+                    const dateButtons = clonedDoc.querySelectorAll('button[type="button"]');
+                    dateButtons.forEach(btn => {
+                        const span = btn.querySelector('span');
+                        const val = span ? span.innerText : '---';
+                        const parent = btn.parentElement;
+                        if (parent) {
+                            const replacement = clonedDoc.createElement('div');
+                            replacement.innerText = val;
+                            replacement.style.color = '#f6c453';
+                            replacement.style.fontSize = '14px';
+                            replacement.style.fontWeight = '900';
+                            replacement.style.padding = '8px 4px';
+                            parent.appendChild(replacement);
+                            (btn as HTMLElement).style.display = 'none';
+                        }
+                    });
                 }
             });
 
