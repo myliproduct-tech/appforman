@@ -53,18 +53,29 @@ const App: React.FC = () => {
     const [showInstallPrompt, setShowInstallPrompt] = useState(false);
 
     // Achievement Queue Management
-    const addToAchievementQueue = (achievement: Achievement) => {
-        setAchievementQueue(prev => [...prev, achievement]);
-    };
+    const addToAchievementQueue = React.useCallback((achievement: Achievement) => {
+        setAchievementQueue(prev => {
+            // Check if already in queue to prevent duplicates
+            if (prev.some(a => a.id === achievement.id)) return prev;
+            return [...prev, achievement];
+        });
+    }, []);
 
     // Show next achievement from queue when modal closes
     useEffect(() => {
         if (!showAchievementModal && achievementQueue.length > 0) {
-            const nextAchievement = achievementQueue[0];
-            setShowAchievementModal(nextAchievement);
-            setAchievementQueue(prev => prev.slice(1));
+            // Need a tiny delay to ensure React state batching is finished
+            const timer = setTimeout(() => {
+                setAchievementQueue(prev => {
+                    if (prev.length === 0) return prev;
+                    const [next, ...rest] = prev;
+                    setShowAchievementModal(next);
+                    return rest;
+                });
+            }, 100);
+            return () => clearTimeout(timer);
         }
-    }, [showAchievementModal, achievementQueue]);
+    }, [showAchievementModal, achievementQueue.length]);
 
     // Initial boot sequence
     useEffect(() => {
@@ -197,11 +208,11 @@ const App: React.FC = () => {
     const currentWeekCount = devMode.currentWeek;
 
     // Achievement unlock handler - prevent during onboarding
-    const handleAchievementUnlock = (achievement: Achievement | null) => {
+    const handleAchievementUnlock = React.useCallback((achievement: Achievement | null) => {
         // Don't show achievement modal during onboarding tour
         if (showOnboarding || !achievement) return;
         addToAchievementQueue(achievement);
-    };
+    }, [showOnboarding, addToAchievementQueue]);
 
     // Consumables & Missions hooks
     const consumables = useConsumables(stats, setStats, effectiveDate);
@@ -249,9 +260,9 @@ const App: React.FC = () => {
             if (hour >= 0 && hour < 4) {
                 setStats(prev => {
                     const newStats = { ...prev, nightWatchTriggered: true };
-                    const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
+                    const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
                     setStats(updatedStats);
-                    if (newUnlock) handleAchievementUnlock(newUnlock);
+                    newUnlocks.forEach(ach => handleAchievementUnlock(ach));
                     return updatedStats;
                 });
             }
@@ -261,15 +272,18 @@ const App: React.FC = () => {
 
 
     // Check for new achievements when stats change (but not during onboarding)
+    // Centralized check - runs whenever points or history change
     useEffect(() => {
-        if (stats.userName && !showOnboarding) {
-            const { updatedStats, newUnlock } = missions.checkAchievements(stats);
-            if (newUnlock) {
+        if (stats.userName && !showOnboarding && stats.email) {
+            const { updatedStats, newUnlocks } = missions.checkAchievements(stats);
+            if (newUnlocks.length > 0) {
+                // Update stats only if we haven't added these badges yet
+                // (missions.checkAchievements already filtered them based on stats.badges)
                 setStats(updatedStats);
-                handleAchievementUnlock(newUnlock);
+                newUnlocks.forEach(ach => handleAchievementUnlock(ach));
             }
         }
-    }, [stats.points, stats.missionHistory.length, stats.badges.length, showOnboarding]);
+    }, [stats.points, stats.missionHistory.length, stats.badges.length, stats.email, showOnboarding, missions.checkAchievements, handleAchievementUnlock]);
 
     // Onboarding tour handlers
     useEffect(() => {
@@ -282,8 +296,8 @@ const App: React.FC = () => {
     const handleCompleteTour = () => {
         setStats(prev => {
             const newStats = { ...prev, onboardingCompleted: true };
-            const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-            if (newUnlock) addToAchievementQueue(newUnlock);
+            const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
+            newUnlocks.forEach(ach => addToAchievementQueue(ach));
             return updatedStats;
         });
         setShowOnboarding(false);
@@ -319,8 +333,8 @@ const App: React.FC = () => {
         const allIds = HOSPITAL_BAG_CHECKLIST.flatMap(c => c.items.map(i => i.id));
         setStats(prev => {
             const newStats = { ...prev, hospitalBagChecklist: allIds };
-            const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-            if (newUnlock) addToAchievementQueue(newUnlock);
+            const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
+            newUnlocks.forEach(ach => addToAchievementQueue(ach));
             return updatedStats;
         });
     };

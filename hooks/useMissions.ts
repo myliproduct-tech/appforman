@@ -23,15 +23,15 @@ export const useMissions = (
     const todaysMissionsRaw = getDailyMissions(currentDayIndex);
 
     // Achievement checker
-    const checkAchievements = (currentStats: UserStats): { updatedStats: UserStats, newUnlock: Achievement | null } => {
-        let newUnlock: Achievement | null = null;
+    const checkAchievements = React.useCallback((currentStats: UserStats): { updatedStats: UserStats, newUnlocks: Achievement[] } => {
+        let newUnlocks: Achievement[] = [];
         let newBadges = [...currentStats.badges];
         let xpGain = 0;
 
         ACHIEVEMENTS.forEach(ach => {
             if (newBadges.some(b => b.id === ach.id)) return;
             if (ach.condition(currentStats)) {
-                newUnlock = ach;
+                newUnlocks.push(ach);
                 newBadges.push({ id: ach.id, unlockedDate: new Date().toISOString() });
                 xpGain += ach.xpReward;
 
@@ -47,12 +47,12 @@ export const useMissions = (
         if (xpGain > 0) {
             return {
                 updatedStats: { ...currentStats, badges: newBadges, points: currentStats.points + xpGain },
-                newUnlock
+                newUnlocks
             };
         }
 
-        return { updatedStats: currentStats, newUnlock: null };
-    };
+        return { updatedStats: currentStats, newUnlocks: [] };
+    }, [stats.notificationsEnabled]);
 
     // Prepare active missions list
     const dailyMissionsFiltered = todaysMissionsRaw
@@ -156,10 +156,7 @@ export const useMissions = (
                 setShowRankModal({ show: true, rank: newRank });
             }
 
-            const { updatedStats, newUnlock } = checkAchievements(nextStats);
-            if (newUnlock) setShowAchievementModal(newUnlock);
-
-            return updatedStats;
+            return nextStats;
         });
     };
 
@@ -248,9 +245,7 @@ export const useMissions = (
                 ...prev,
                 customMissions: [...prev.customMissions, newTask]
             };
-            const { updatedStats, newUnlock } = checkAchievements(nextStats);
-            if (newUnlock) setShowAchievementModal(newUnlock);
-            return updatedStats;
+            return nextStats;
         });
     };
 

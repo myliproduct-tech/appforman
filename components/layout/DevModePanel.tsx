@@ -12,7 +12,7 @@ interface DevModePanelProps {
     setStats: React.Dispatch<React.SetStateAction<UserStats>>;
     onRankUp: (rank: any) => void;
     onAchievementUnlock: (achievement: Achievement) => void;
-    checkAchievements: (stats: UserStats) => { updatedStats: UserStats, newUnlock: Achievement | null };
+    checkAchievements: (stats: UserStats) => { updatedStats: UserStats, newUnlocks: Achievement[] };
 }
 
 export const DevModePanel: React.FC<DevModePanelProps> = ({
@@ -112,8 +112,8 @@ export const DevModePanel: React.FC<DevModePanelProps> = ({
                                     }
 
                                     // Check achievements
-                                    const { updatedStats, newUnlock } = checkAchievements(nextStats);
-                                    if (newUnlock) onAchievementUnlock(newUnlock);
+                                    const { updatedStats, newUnlocks } = checkAchievements(nextStats);
+                                    newUnlocks.forEach(ach => onAchievementUnlock(ach));
 
                                     return updatedStats;
                                 });
