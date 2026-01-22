@@ -155,7 +155,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
         {/* Intel Report - Left side with gold border and pulse */}
         <div
           onClick={() => dispatch({ type: 'SET_INTEL_MODAL', value: true })}
-          className="bg-white/5 p-4 rounded-3xl border border-[#f6c453]/30 flex flex-col justify-between shadow-lg relative overflow-hidden cursor-pointer active:scale-95 transition-all group hover:bg-[#f6c453]/5 hover:border-[#f6c453]/40 tap-effect card-tactical animate-pulse"
+          className="bg-white/5 p-4 rounded-3xl border-2 border-[#f6c453]/40 flex flex-col justify-between shadow-lg relative overflow-hidden cursor-pointer active:scale-95 transition-all group hover:bg-[#f6c453]/5 hover:border-[#f6c453]/50 tap-effect card-tactical animate-pulse"
           data-tour="intel"
         >
           <div className="flex items-center gap-2 mb-2">
@@ -171,7 +171,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
         </div>
 
         {/* Streak Badge - Right side without gold border or pulse */}
-        <div className="bg-white/5 p-4 rounded-3xl border border-white/5 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:bg-[#f6c453]/5 hover:border-[#f6c453]/20 transition-all duration-300 tap-effect card-tactical" data-tour="streak">
+        <div className="bg-white/5 p-4 rounded-3xl border-2 border-white/20 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:bg-[#f6c453]/5 hover:border-[#f6c453]/30 transition-all duration-300 tap-effect card-tactical" data-tour="streak">
           <div className="flex items-center gap-2 mb-2">
             <div className="p-1.5 bg-[#f6c453]/10 rounded-lg group-hover:scale-110 group-hover:rotate-12 transition-transform">
               <Flame className="w-4 h-4 fill-[#f6c453] text-[#f6c453]" />
