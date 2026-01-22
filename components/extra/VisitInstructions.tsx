@@ -255,7 +255,7 @@ export const VisitInstructions: React.FC<VisitInstructionsProps> = ({
                         onClick={handleCopy}
                         className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all ${copied
                             ? 'bg-emerald-500/20 text-emerald-400 border-2 border-emerald-500/30'
-                            : 'bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white hover:scale-[1.02] shadow-lg'
+                            : 'accent-bg text-[#1f2933] hover:scale-[1.02] shadow-lg shadow-[#f6c453]/10'
                             }`}
                     >
                         {copied ? (
