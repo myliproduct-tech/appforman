@@ -268,7 +268,3 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
         </>
     );
 };
-document.body
-            )}
-
-{/* Date Picker Modal */ }
