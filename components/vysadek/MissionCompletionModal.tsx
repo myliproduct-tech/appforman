@@ -28,7 +28,8 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
     const [babyName, setBabyName] = useState('');
     const [birthDate, setBirthDate] = useState('');
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [birthTime, setBirthTime] = useState(new Date().toTimeString().slice(0, 5));
+    const [birthHour, setBirthHour] = useState(new Date().getHours().toString().padStart(2, '0'));
+    const [birthMinute, setBirthMinute] = useState(new Date().getMinutes().toString().padStart(2, '0'));
     const [isExporting, setIsExporting] = useState(false);
     const reportRef = useRef<HTMLDivElement>(null);
 
@@ -94,21 +95,17 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                     <X className="w-5 h-5 text-white" />
                 </button>
 
-                {/* Report Content */}
-                <div ref={reportRef} className="p-5 space-y-4">
+                <div ref={reportRef} className="p-4 space-y-3">
                     {/* Header */}
-                    <div className="text-center space-y-2">
+                    <div className="text-center space-y-1.5">
                         <div className="flex justify-center">
-                            <div className="p-3 bg-amber-500/20 rounded-2xl border-2 border-amber-500/40 animate-pulse">
-                                <Trophy className="w-10 h-10 text-amber-400" />
+                            <div className="p-2 bg-amber-500/20 rounded-xl border-2 border-amber-500/40 animate-pulse">
+                                <Trophy className="w-8 h-8 text-amber-400" />
                             </div>
                         </div>
-                        <h2 className="text-2xl font-black uppercase tracking-tighter text-amber-400 italic">
+                        <h2 className="text-xl font-black uppercase tracking-tighter text-amber-400 italic">
                             Mise Dokončena
                         </h2>
-                        <p className="text-[10px] text-white/60 font-bold uppercase tracking-widest">
-                            Black Box Report • Operace Partner v Akci
-                        </p>
                     </div>
 
                     {/* Baby Info Form */}
@@ -149,12 +146,33 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                                     <label className="text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 block">
                                         Čas narození
                                     </label>
-                                    <input
-                                        type="time"
-                                        value={birthTime}
-                                        onChange={(e) => setBirthTime(e.target.value)}
-                                        className="w-full bg-[#0f1419] border border-white/10 rounded-lg px-2 py-1.5 text-white focus:outline-none focus:ring-1 focus:ring-amber-500 transition-all text-[11px] appearance-none"
-                                    />
+                                    <div className="flex items-center gap-1 bg-[#0f1419] border border-white/10 rounded-lg px-2 py-1.5 focus-within:ring-1 focus-within:ring-amber-500 transition-all">
+                                        <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            value={birthHour}
+                                            onChange={(e) => {
+                                                const val = e.target.value.replace(/\D/g, '').slice(0, 2);
+                                                if (parseInt(val) > 23) return;
+                                                setBirthHour(val);
+                                            }}
+                                            className="w-5 bg-transparent text-white text-[11px] text-center outline-none font-bold"
+                                            placeholder="00"
+                                        />
+                                        <span className="text-white/20 text-[11px] font-bold">:</span>
+                                        <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            value={birthMinute}
+                                            onChange={(e) => {
+                                                const val = e.target.value.replace(/\D/g, '').slice(0, 2);
+                                                if (parseInt(val) > 59) return;
+                                                setBirthMinute(val);
+                                            }}
+                                            className="w-5 bg-transparent text-white text-[11px] text-center outline-none font-bold"
+                                            placeholder="00"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
