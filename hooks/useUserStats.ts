@@ -50,6 +50,7 @@ export const useUserStats = (currentUser: string | null) => {
         accountCreated: new Date().toISOString(),
         customGear: [],
         onboardingCompleted: false,
+        onboardingFinished: false,
         tourCompleted: {
             missions: false,
             achievements: false,
