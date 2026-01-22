@@ -216,13 +216,16 @@ export const useMissions = (
                 priority: 'highest' as const // Mark as highest priority
             };
 
+            // Remove from backup/postponed and history
             const newHistory = prev.missionHistory.filter(m => m.id !== task.id);
+            const newPostponed = prev.postponedMissions.filter(m => m.id !== task.id);
             const others = prev.customMissions.filter(m => m.id !== task.id);
 
             return {
                 ...prev,
                 customMissions: [...others, restoredTask],
-                missionHistory: newHistory
+                missionHistory: newHistory,
+                postponedMissions: newPostponed // Remove from backup (postponed missions)
             };
         });
     };
