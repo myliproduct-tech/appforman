@@ -207,8 +207,9 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         <div className="flex justify-center">
                             <Trophy className="w-10 h-10 text-amber-500" />
                         </div>
-                        <h2 className="text-xl md:text-2xl font-black uppercase tracking-[0.2em] text-amber-500 italic">
+                        <h2 className="text-xl md:text-2xl font-black uppercase tracking-[0.2em] text-amber-500 italic flex items-center justify-center gap-2">
                             MISE_DOKONČENA
+                            <span className="text-[10px] not-italic text-white/10 font-mono" data-html2canvas-ignore>v3.0</span>
                         </h2>
                         <div className="text-[7px] font-bold text-white/20 uppercase tracking-[0.3em]">
                             OFICIÁLNÍ_ZÁZNAM_OPERACE
