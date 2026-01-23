@@ -348,6 +348,12 @@ const App: React.FC = () => {
         // Skip tour without giving achievement - only mark as completed to hide it
         setStats(prev => ({ ...prev, onboardingCompleted: true, onboardingFinished: false }));
         setShowOnboarding(false);
+
+        // Still show pending achievements even if tour was skipped
+        setTimeout(() => {
+            pendingTourAchievements.forEach(ach => addToAchievementQueue(ach));
+            setPendingTourAchievements([]);
+        }, 200);
     };
 
     const handleRestartTour = () => {
