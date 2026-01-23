@@ -75,7 +75,7 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[200] bg-[#1f2933]/95 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[250] bg-[#1f2933]/95 flex items-center justify-center p-4">
             <div className="w-full max-w-md bg-[#2d3748] rounded-t-3xl shadow-2xl">
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-white/10">
