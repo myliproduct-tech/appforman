@@ -50,7 +50,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             const dateStr = birthDate || new Date().toISOString().split('T')[0];
 
             const canvas = await html2canvas(reportRef.current, {
-                scale: 1, // Maximum stability for low-end mobile browsers
+                scale: 2, // Increased for sharpness
                 backgroundColor: '#0f1419',
                 useCORS: true,
                 allowTaint: false,
@@ -60,14 +60,35 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                     const reportArea = clonedDoc.getElementById('mission-report-area');
                     if (reportArea) {
                         const s = reportArea.style;
-                        s.width = '400px';
+                        s.width = '420px'; // Slightly wider for better layout
                         s.margin = '0';
-                        s.padding = '20px';
+                        s.padding = '24px';
                         s.background = '#0f1419';
                         s.borderRadius = '0';
                     }
 
-                    // 2. TOTAL SANITIZATION: Iterate EVERY element and strip everything that can cause capture errors
+                    // 2. TIME DISPLAY FIX: Combine inputs into one text block
+                    const timeBlock = clonedDoc.getElementById('time-display-block');
+                    if (timeBlock) {
+                        const hourInput = timeBlock.querySelector('input:first-child') as HTMLInputElement;
+                        const minuteInput = timeBlock.querySelector('input:last-child') as HTMLInputElement;
+                        const h = hourInput?.value || '00';
+                        const m = minuteInput?.value || '00';
+
+                        const replacement = clonedDoc.createElement('div');
+                        replacement.innerText = `${h} : ${m}`;
+                        replacement.style.color = '#f6c453';
+                        replacement.style.fontSize = '24px';
+                        replacement.style.fontWeight = 'bold';
+                        replacement.style.textAlign = 'center';
+                        replacement.style.width = '100%';
+                        replacement.style.fontFamily = 'monospace';
+
+                        timeBlock.innerHTML = '';
+                        timeBlock.appendChild(replacement);
+                    }
+
+                    // 3. TOTAL SANITIZATION: Iterate EVERY element and strip everything that can cause capture errors
                     const allElements = clonedDoc.querySelectorAll('*');
                     allElements.forEach((el) => {
                         const s = (el as HTMLElement).style;
@@ -94,15 +115,15 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         }
                     });
 
-                    // 3. REMOVE SVGs completely (Security/Taint source)
+                    // 4. REMOVE SVGs completely (Security/Taint source)
                     const svgs = clonedDoc.querySelectorAll('svg');
                     svgs.forEach(svg => svg.remove());
 
-                    // 4. Hide interactive UI
+                    // 5. Hide interactive UI
                     const elementsToHide = clonedDoc.querySelectorAll('[data-html2canvas-ignore]');
                     elementsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
 
-                    // 5. Convert interactive elements to plain text (using simple safe styles)
+                    // 6. Convert other inputs (Unit Name) to plain text
                     const inputs = clonedDoc.querySelectorAll('input');
                     inputs.forEach(input => {
                         const val = (input as HTMLInputElement).value;
@@ -111,10 +132,10 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                             const replacement = clonedDoc.createElement('div');
                             replacement.innerText = val || '---';
                             replacement.style.color = '#f6c453';
-                            replacement.style.fontSize = '20px';
+                            replacement.style.fontSize = '22px';
                             replacement.style.fontWeight = 'bold';
                             replacement.style.textAlign = 'center';
-                            replacement.style.padding = '5px';
+                            replacement.style.padding = '10px';
                             parent.appendChild(replacement);
                             (input as HTMLElement).style.display = 'none';
                         }
@@ -129,7 +150,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                             const replacement = clonedDoc.createElement('div');
                             replacement.innerText = val;
                             replacement.style.color = '#f6c453';
-                            replacement.style.fontSize = '16px';
+                            replacement.style.fontSize = '18px';
                             replacement.style.fontWeight = 'bold';
                             replacement.style.textAlign = 'center';
                             parent.appendChild(replacement);
@@ -137,7 +158,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         }
                     });
 
-                    // 6. Stop all animations
+                    // 7. Stop all animations
                     const animated = clonedDoc.querySelectorAll('[class*="animate-"]');
                     animated.forEach(el => {
                         (el as HTMLElement).style.animation = 'none';
@@ -150,7 +171,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             const dataUrl = canvas.toDataURL('image/png', 1.0);
             const link = document.createElement('a');
             link.href = dataUrl;
-            link.download = `report-terminal-v26-${safeName}-${dateStr}.png`;
+            link.download = `report-terminal-v27-${safeName}-${dateStr}.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -158,8 +179,8 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             setTimeout(() => setIsExporting(false), 500);
 
         } catch (error: any) {
-            console.error('Total sanitization export failure:', error);
-            alert(`Ukládání selhalo (v2.6): ${error?.message || 'Chyba vnitřního vykreslování'}.\nVáš prohlížeč neumožňuje vytvořit obrázek z tohoto obsahu.`);
+            console.error('v2.7 export critical failure:', error);
+            alert(`Ukládání selhalo (v2.7): ${error?.message || 'Chyba vnitřního vykreslování'}.\nVáš prohlížeč neumožňuje vytvořit obrázek z tohoto obsahu.`);
             setIsExporting(false);
         }
     };
@@ -201,7 +222,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         <div className="space-y-4">
                             <div className="space-y-2">
                                 <label className="text-[8px] font-black uppercase tracking-[0.2em] text-white/30 flex items-center gap-1.5">
-                                    <Baby className="w-3 h-3 text-amber-500" /> VOLAČKA_JEDNOTKY
+                                    <Baby className="w-3 h-3 text-amber-500" /> IDENTIFIKACE_CÍLE
                                 </label>
                                 <input
                                     type="text"
@@ -233,7 +254,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                                         <Target className="w-3 h-3" /> ČAS_PŘÍCHODU
                                     </label>
                                     <div className="flex items-center justify-between bg-[#12161b] border border-white/5 rounded-xl px-3 py-2">
-                                        <div className="flex items-center gap-1 font-mono">
+                                        <div id="time-display-block" className="flex items-center gap-1 font-mono">
                                             <input
                                                 type="text"
                                                 inputMode="numeric"
