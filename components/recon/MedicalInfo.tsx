@@ -254,17 +254,20 @@ export const MedicalInfoModal: React.FC<MedicalInfoProps> = ({
                 document.body
             )}
 
-            {/* Date Picker Modal */}
-            <DatePickerModal
-                isOpen={showDatePicker}
-                onClose={() => setShowDatePicker(false)}
-                onSelect={(date) => {
-                    setNewCheckupDate(date);
-                    setShowDatePicker(false);
-                }}
-                initialDate={newCheckupDate}
-                title="Datum kontroly"
-            />
+            {/* Date Picker Modal - Also in Portal */}
+            {ReactDOM.createPortal(
+                <DatePickerModal
+                    isOpen={showDatePicker}
+                    onClose={() => setShowDatePicker(false)}
+                    onSelect={(date) => {
+                        setNewCheckupDate(date);
+                        setShowDatePicker(false);
+                    }}
+                    initialDate={newCheckupDate}
+                    title="Datum kontroly"
+                />,
+                document.body
+            )}
         </>
     );
 };
