@@ -91,7 +91,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         `;
                     }
 
-                    // 3. BULLETPROOF SYMMETRY (Forced with cssText !important)
+                    // 3. v3.4 AGGRESSIVE SYMMETRY (Total Reset)
                     // Fix Time
                     const timeBlock = clonedDoc.getElementById('time-display-block');
                     if (timeBlock) {
@@ -101,6 +101,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
 
                         const replacement = clonedDoc.createElement('div');
                         replacement.innerText = `${h} : ${m}`;
+                        // v3.4: TOTAL RESET of all spacing + forced identical styling
                         replacement.style.cssText = `
                             color: #f6c453 !important;
                             font-size: 18px !important;
@@ -110,12 +111,23 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                             line-height: 38px !important;
                             display: block !important;
                             text-align: center !important;
+                            margin: 0 !important;
                             margin-top: 8px !important;
+                            padding: 0 !important;
+                            border: none !important;
+                            box-sizing: border-box !important;
                             font-family: monospace !important;
+                            vertical-align: baseline !important;
                         `;
 
                         if (timeParent) {
-                            (timeParent as HTMLElement).style.cssText = "background: transparent !important; border: none !important; padding: 0 !important; display: block !important;";
+                            (timeParent as HTMLElement).style.cssText = `
+                                background: transparent !important;
+                                border: none !important;
+                                padding: 0 !important;
+                                margin: 0 !important;
+                                display: block !important;
+                            `;
                             timeBlock.innerHTML = '';
                             timeBlock.appendChild(replacement);
                         }
@@ -129,7 +141,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         if (parent) {
                             const replacement = clonedDoc.createElement('div');
                             replacement.innerText = text;
-                            // v3.3: Bulletproof Centering with cssText and line-height
+                            // v3.4: IDENTICAL styling to Time for perfect alignment
                             replacement.style.cssText = `
                                 color: #f6c453 !important;
                                 font-size: 18px !important;
@@ -139,8 +151,20 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                                 line-height: 38px !important;
                                 text-align: center !important;
                                 display: block !important;
+                                margin: 0 !important;
                                 margin-top: 8px !important;
+                                padding: 0 !important;
+                                border: none !important;
+                                box-sizing: border-box !important;
                                 font-family: monospace !important;
+                                vertical-align: baseline !important;
+                            `;
+
+                            // Also reset parent container
+                            (parent as HTMLElement).style.cssText = `
+                                margin: 0 !important;
+                                padding: 0 !important;
+                                border: none !important;
                             `;
 
                             btn.style.display = 'none';
@@ -208,7 +232,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             const dataUrl = canvas.toDataURL('image/png', 1.0);
             const link = document.createElement('a');
             link.href = dataUrl;
-            link.download = `report-terminal-v33-${safeName}-${dateStr}.png`;
+            link.download = `report-terminal-v34-${safeName}-${dateStr}.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -216,8 +240,8 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             setTimeout(() => setIsExporting(false), 500);
 
         } catch (error: any) {
-            console.error('v3.3 export critical failure:', error);
-            alert(`Ukládání selhalo (v3.3): ${error?.message || 'Chyba vnitřního vykreslování'}.\nVáš prohlížeč neumožňuje vytvořit obrázek z tohoto obsahu.`);
+            console.error('v3.4 export critical failure:', error);
+            alert(`Ukládání selhalo (v3.4): ${error?.message || 'Chyba vnitřního vykreslování'}.\nVáš prohlížeč neumožňuje vytvořit obrázek z tohoto obsahu.`);
             setIsExporting(false);
         }
     };
@@ -243,7 +267,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         </div>
                         <h2 className="text-xl md:text-2xl font-black uppercase tracking-[0.2em] text-amber-500 italic flex items-center justify-center gap-2">
                             MISE_DOKONČENA
-                            <span className="text-[10px] not-italic text-white/10 font-mono" data-html2canvas-ignore>v3.3</span>
+                            <span className="text-[10px] not-italic text-white/10 font-mono" data-html2canvas-ignore>v3.4</span>
                         </h2>
                         <div className="text-[7px] font-bold text-white/20 uppercase tracking-[0.3em]">
                             OFICIÁLNÍ_ZÁZNAM_OPERACE
