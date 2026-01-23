@@ -78,7 +78,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         const replacement = clonedDoc.createElement('div');
                         replacement.innerText = `${h} : ${m}`;
                         replacement.style.color = '#f6c453';
-                        replacement.style.fontSize = '22px'; // Smaller to match date
+                        replacement.style.fontSize = '18px'; // Perfectly matched with date
                         replacement.style.fontWeight = 'bold';
                         replacement.style.textAlign = 'center';
                         replacement.style.width = '100%';
@@ -178,7 +178,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             const dataUrl = canvas.toDataURL('image/png', 1.0);
             const link = document.createElement('a');
             link.href = dataUrl;
-            link.download = `report-terminal-v28-${safeName}-${dateStr}.png`;
+            link.download = `report-terminal-v29-${safeName}-${dateStr}.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -186,8 +186,8 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             setTimeout(() => setIsExporting(false), 500);
 
         } catch (error: any) {
-            console.error('v2.8 export critical failure:', error);
-            alert(`Ukládání selhalo (v2.8): ${error?.message || 'Chyba vnitřního vykreslování'}.\nVáš prohlížeč neumožňuje vytvořit obrázek z tohoto obsahu.`);
+            console.error('v2.9 export critical failure:', error);
+            alert(`Ukládání selhalo (v2.9): ${error?.message || 'Chyba vnitřního vykreslování'}.\nVáš prohlížeč neumožňuje vytvořit obrázek z tohoto obsahu.`);
             setIsExporting(false);
         }
     };
@@ -312,7 +312,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                                     <p className="text-sm font-black uppercase text-white italic">{currentRank.name}</p>
                                 </div>
                             </div>
-                            <div className="text-[8px] font-black text-amber-500 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20 flex items-center justify-center min-w-[70px]">POTVRZENO</div>
+                            <div className="text-[8px] font-black text-amber-500 bg-amber-500/10 px-3 h-6 rounded-full border border-amber-500/20 flex items-center justify-center min-w-[70px] leading-none">POTVRZENO</div>
                         </div>
                     </div>
 
