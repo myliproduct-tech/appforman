@@ -50,24 +50,29 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             const dateStr = birthDate || new Date().toISOString().split('T')[0];
 
             const canvas = await html2canvas(reportRef.current, {
-                scale: 1, // Fix: Use lower scale for mobile memory stability
+                scale: 2, // Reverting to 2 for better quality if memory allows, keeping it safe
                 backgroundColor: '#0f1419',
                 useCORS: true,
                 allowTaint: false,
                 logging: false,
                 onclone: (clonedDoc) => {
-                    // Hide non-exportable elements
+                    // 1. Force stable layout in clone
+                    const reportEl = clonedDoc.querySelector('[ref="reportRef"]') || clonedDoc.querySelector('div[class*="bg-[#0f1419]"]');
+                    if (reportEl) {
+                        (reportEl as HTMLElement).style.width = '375px';
+                        (reportEl as HTMLElement).style.margin = '0 auto';
+                    }
+
+                    // 2. Hide non-exportable elements
                     const elementsToHide = clonedDoc.querySelectorAll('[data-html2canvas-ignore]');
                     elementsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
 
-                    // CRITICAL FIX: SVG icons often cause "tainted canvas" error on mobile.
-                    // We hide all SVGs inside the clone to ensure the canvas is safe to read.
+                    // 3. REMOVE SVGs: Hiding them causes "createPattern" error with 0 width/height.
+                    // Removing them entirely is the safest way to avoid canvas tainting and rendering errors.
                     const svgs = clonedDoc.querySelectorAll('svg');
-                    svgs.forEach(svg => {
-                        (svg as any).style.display = 'none';
-                    });
+                    svgs.forEach(svg => svg.remove());
 
-                    // Replace inputs with text to avoid rendering issues
+                    // 4. Replace inputs with text
                     const inputs = clonedDoc.querySelectorAll('input');
                     inputs.forEach(input => {
                         const val = (input as HTMLInputElement).value;
@@ -84,7 +89,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         }
                     });
 
-                    // Replace specific buttons with simple text
+                    // 5. Replace buttons with text
                     const dateButtons = clonedDoc.querySelectorAll('button[type="button"]');
                     dateButtons.forEach(btn => {
                         const htmlBtn = btn as HTMLElement;
@@ -99,6 +104,13 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                             parent.appendChild(replacement);
                             htmlBtn.style.display = 'none';
                         }
+                    });
+
+                    // 6. Stop animations
+                    const pulses = clonedDoc.querySelectorAll('.animate-pulse');
+                    pulses.forEach(p => {
+                        (p as HTMLElement).classList.remove('animate-pulse');
+                        (p as HTMLElement).style.opacity = '1';
                     });
                 }
             });
