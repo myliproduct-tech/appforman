@@ -280,6 +280,7 @@ const App: React.FC = () => {
         if (stats.email && !stats.nightWatchTriggered) {
             const hour = new Date().getHours();
             if (hour >= 0 && hour < 4) {
+                console.log('🌙 Night Watch check - showOnboarding:', showOnboarding);
                 setStats(prev => {
                     const newStats = { ...prev, nightWatchTriggered: true };
                     const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
@@ -289,7 +290,7 @@ const App: React.FC = () => {
                 });
             }
         }
-    }, [stats.email, stats.nightWatchTriggered]);
+    }, [stats.email, stats.nightWatchTriggered, showOnboarding, missions.checkAchievements, handleAchievementUnlock]);
 
 
 
