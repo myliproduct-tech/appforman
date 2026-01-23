@@ -46,6 +46,7 @@ const App: React.FC = () => {
     const [showAchievementModal, setShowAchievementModal] = useState<Achievement | null>(null);
     const [showFailureModal, setShowFailureModal] = useState<Task | null>(null);
     const [showOnboarding, setShowOnboarding] = useState(false);
+    const [pendingTourAchievements, setPendingTourAchievements] = useState<Achievement[]>([]); // Achievements unlocked during tour
     const [isMissionsLoading, setIsMissionsLoading] = useState(false);
     const [isBooting, setIsBooting] = useState(true);
     const [isTabTransitioning, setIsTabTransitioning] = useState(false);
@@ -217,10 +218,20 @@ const App: React.FC = () => {
     const currentDayIndex = devMode.dayOffset;
     const currentWeekCount = devMode.currentWeek;
 
-    // Achievement unlock handler - prevent during onboarding
+    // Achievement unlock handler - save during tour, show after
     const handleAchievementUnlock = React.useCallback((achievement: Achievement | null) => {
-        // Don't show achievement modal during onboarding tour
-        if (showOnboarding || !achievement) return;
+        if (!achievement) return;
+
+        // If tour is active, save for later
+        if (showOnboarding) {
+            setPendingTourAchievements(prev => {
+                if (prev.some(a => a.id === achievement.id)) return prev;
+                return [...prev, achievement];
+            });
+            return;
+        }
+
+        // Otherwise show immediately
         addToAchievementQueue(achievement);
     }, [showOnboarding, addToAchievementQueue]);
 
@@ -325,6 +336,12 @@ const App: React.FC = () => {
             return updatedStats;
         });
         setShowOnboarding(false);
+
+        // Show all achievements that were unlocked during tour
+        setTimeout(() => {
+            pendingTourAchievements.forEach(ach => addToAchievementQueue(ach));
+            setPendingTourAchievements([]); // Clear pending
+        }, 200); // Small delay to ensure tour is fully closed
     };
 
     const handleSkipTour = () => {
