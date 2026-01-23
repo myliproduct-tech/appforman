@@ -50,15 +50,24 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             const dateStr = birthDate || new Date().toISOString().split('T')[0];
 
             const canvas = await html2canvas(reportRef.current, {
-                scale: 2,
+                scale: 1, // Fix: Use lower scale for mobile memory stability
                 backgroundColor: '#0f1419',
                 useCORS: true,
-                allowTaint: false, // Critical: fix for DOMException
+                allowTaint: false,
                 logging: false,
                 onclone: (clonedDoc) => {
+                    // Hide non-exportable elements
                     const elementsToHide = clonedDoc.querySelectorAll('[data-html2canvas-ignore]');
                     elementsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
 
+                    // CRITICAL FIX: SVG icons often cause "tainted canvas" error on mobile.
+                    // We hide all SVGs inside the clone to ensure the canvas is safe to read.
+                    const svgs = clonedDoc.querySelectorAll('svg');
+                    svgs.forEach(svg => {
+                        (svg as any).style.display = 'none';
+                    });
+
+                    // Replace inputs with text to avoid rendering issues
                     const inputs = clonedDoc.querySelectorAll('input');
                     inputs.forEach(input => {
                         const val = (input as HTMLInputElement).value;
@@ -69,17 +78,18 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                             replacement.style.color = '#f6c453';
                             replacement.style.fontSize = '20px';
                             replacement.style.fontWeight = '900';
-                            replacement.style.textTransform = 'uppercase';
                             replacement.style.fontFamily = 'monospace';
                             parent.appendChild(replacement);
                             (input as HTMLElement).style.display = 'none';
                         }
                     });
 
+                    // Replace specific buttons with simple text
                     const dateButtons = clonedDoc.querySelectorAll('button[type="button"]');
                     dateButtons.forEach(btn => {
-                        const val = btn.innerText || '---';
-                        const parent = btn.parentElement;
+                        const htmlBtn = btn as HTMLElement;
+                        const val = htmlBtn.innerText || '---';
+                        const parent = htmlBtn.parentElement;
                         if (parent) {
                             const replacement = clonedDoc.createElement('div');
                             replacement.innerText = val;
@@ -87,42 +97,33 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                             replacement.style.fontSize = '16px';
                             replacement.style.fontWeight = '900';
                             parent.appendChild(replacement);
-                            (btn as HTMLElement).style.display = 'none';
+                            htmlBtn.style.display = 'none';
                         }
-                    });
-
-                    const pulses = clonedDoc.querySelectorAll('.animate-pulse');
-                    pulses.forEach(p => {
-                        (p as HTMLElement).classList.remove('animate-pulse');
-                        (p as HTMLElement).style.opacity = '1';
                     });
                 }
             });
 
-            // Reliable Blob-based download for mobile and desktop
+            // Reliable download flow
             canvas.toBlob((blob) => {
-                if (!blob) throw new Error('Canvas to Blob failed');
+                if (!blob) throw new Error('Blob generation failed');
 
                 const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
+                const link = document.body.appendChild(document.createElement('a'));
                 link.href = url;
                 link.download = `cerna-skrinka-${safeName}-${dateStr}.png`;
-
-                // Trigger download
-                document.body.appendChild(link);
                 link.click();
-                document.body.removeChild(link);
 
-                // Cleanup after a delay to ensure mobile browser handles the download
+                // Cleanup
                 setTimeout(() => {
                     URL.revokeObjectURL(url);
+                    link.remove();
                     setIsExporting(false);
-                }, 200);
-            }, 'image/png', 1.0);
+                }, 500);
+            }, 'image/png');
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('Export failed:', error);
-            alert('Export se nezdařil. Zkuste prosím pořídit screenshot manuálně.');
+            alert(`Ukládání selhalo: ${error?.message || 'Chyba zabezpečení'}. Zkuste prosím pořídit screenshot manuálně.`);
             setIsExporting(false);
         }
     };
