@@ -50,10 +50,11 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             const dateStr = birthDate || new Date().toISOString().split('T')[0];
 
             const canvas = await html2canvas(reportRef.current, {
-                scale: window.devicePixelRatio > 1 ? 2 : 3,
+                scale: 2,
                 backgroundColor: '#0f1419',
                 useCORS: true,
-                allowTaint: true,
+                allowTaint: false, // Critical: fix for DOMException
+                logging: false,
                 onclone: (clonedDoc) => {
                     const elementsToHide = clonedDoc.querySelectorAll('[data-html2canvas-ignore]');
                     elementsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
@@ -98,16 +99,27 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                 }
             });
 
-            // Improved Download for Mobile
-            const dataUrl = canvas.toDataURL('image/png', 1.0);
-            const link = document.createElement('a');
-            link.href = dataUrl;
-            link.download = `cerna-skrinka-${safeName}-${dateStr}.png`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // Reliable Blob-based download for mobile and desktop
+            canvas.toBlob((blob) => {
+                if (!blob) throw new Error('Canvas to Blob failed');
 
-            setIsExporting(false);
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `cerna-skrinka-${safeName}-${dateStr}.png`;
+
+                // Trigger download
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Cleanup after a delay to ensure mobile browser handles the download
+                setTimeout(() => {
+                    URL.revokeObjectURL(url);
+                    setIsExporting(false);
+                }, 200);
+            }, 'image/png', 1.0);
+
         } catch (error) {
             console.error('Export failed:', error);
             alert('Export se nezdařil. Zkuste prosím pořídit screenshot manuálně.');
