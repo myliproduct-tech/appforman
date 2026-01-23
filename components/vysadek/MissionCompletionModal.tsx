@@ -50,7 +50,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             const dateStr = birthDate || new Date().toISOString().split('T')[0];
 
             const canvas = await html2canvas(reportRef.current, {
-                scale: 2, // Increased for sharpness
+                scale: 2, // Sharpness
                 backgroundColor: '#0f1419',
                 useCORS: true,
                 allowTaint: false,
@@ -60,54 +60,67 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                     const reportArea = clonedDoc.getElementById('mission-report-area');
                     if (reportArea) {
                         const s = reportArea.style;
-                        s.width = '420px'; // Slightly wider for better layout
+                        s.width = '420px';
                         s.margin = '0';
                         s.padding = '24px';
                         s.background = '#0f1419';
                         s.borderRadius = '0';
                     }
 
-                    // 2. TIME DISPLAY FIX: Combine inputs into one text block
+                    // 2. HARMONIZED EXPORT: Symmetrical Date and Time
+                    // Fix Time
                     const timeBlock = clonedDoc.getElementById('time-display-block');
                     if (timeBlock) {
-                        const hourInput = timeBlock.querySelector('input:first-child') as HTMLInputElement;
-                        const minuteInput = timeBlock.querySelector('input:last-child') as HTMLInputElement;
-                        const h = hourInput?.value || '00';
-                        const m = minuteInput?.value || '00';
+                        const h = (timeBlock.querySelector('input:first-child') as HTMLInputElement)?.value || '00';
+                        const m = (timeBlock.querySelector('input:last-child') as HTMLInputElement)?.value || '00';
+                        const timeParent = timeBlock.parentElement;
 
                         const replacement = clonedDoc.createElement('div');
                         replacement.innerText = `${h} : ${m}`;
                         replacement.style.color = '#f6c453';
-                        replacement.style.fontSize = '18px'; // Perfectly matched with date
+                        replacement.style.fontSize = '18px'; // Perfectly matched
                         replacement.style.fontWeight = 'bold';
                         replacement.style.textAlign = 'center';
-                        replacement.style.width = '100%';
+                        replacement.style.padding = '10px 0'; // Normalized padding
                         replacement.style.fontFamily = 'monospace';
 
-                        timeBlock.innerHTML = '';
-                        timeBlock.appendChild(replacement);
-
-                        // Remove border/background from parent container in export for cleaner look
-                        const timeParent = timeBlock.parentElement;
                         if (timeParent) {
                             timeParent.style.background = 'transparent';
                             timeParent.style.border = 'none';
+                            timeParent.style.padding = '0';
+                            timeParent.innerHTML = '';
+                            timeParent.appendChild(replacement);
                         }
                     }
 
-                    // 3. TOTAL SANITIZATION: Iterate EVERY element and strip everything that can cause capture errors
+                    // Fix Date
+                    const dateButtons = clonedDoc.querySelectorAll('button[type="button"]');
+                    dateButtons.forEach(btn => {
+                        const text = (btn as HTMLElement).innerText || '---';
+                        const parent = btn.parentElement;
+                        if (parent) {
+                            const replacement = clonedDoc.createElement('div');
+                            replacement.innerText = text;
+                            replacement.style.color = '#f6c453';
+                            replacement.style.fontSize = '18px'; // Perfectly matched
+                            replacement.style.fontWeight = 'bold';
+                            replacement.style.textAlign = 'center';
+                            replacement.style.padding = '10px 0'; // Normalized padding
+                            parent.innerHTML = '';
+                            parent.appendChild(replacement);
+                        }
+                    });
+
+                    // 3. TOTAL SANITIZATION
                     const allElements = clonedDoc.querySelectorAll('*');
                     allElements.forEach((el) => {
                         const s = (el as HTMLElement).style;
                         if (s) {
-                            // Strip problematic backgrounds (Gradients are the main culprit for createPattern)
                             s.backgroundImage = 'none';
                             if (s.background && s.background.includes('gradient')) {
                                 s.background = 'none';
                                 s.backgroundColor = '#0a0c10';
                             }
-
-                            // Strip all visual effects that trigger complex canvas patterns
                             s.boxShadow = 'none';
                             s.textShadow = 'none';
                             s.filter = 'none';
@@ -116,13 +129,11 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                             s.borderImage = 'none';
                             s.mask = 'none';
                             s.clipPath = 'none';
-
-                            // Ensure visibility
                             if (s.opacity === '0') s.opacity = '1';
                         }
                     });
 
-                    // 4. REMOVE SVGs completely (Security/Taint source)
+                    // 4. REMOVE SVGs
                     const svgs = clonedDoc.querySelectorAll('svg');
                     svgs.forEach(svg => svg.remove());
 
@@ -130,38 +141,23 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                     const elementsToHide = clonedDoc.querySelectorAll('[data-html2canvas-ignore]');
                     elementsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
 
-                    // 6. Convert other inputs (Unit Name) to plain text
-                    const inputs = clonedDoc.querySelectorAll('input');
-                    inputs.forEach(input => {
-                        const val = (input as HTMLInputElement).value;
-                        const parent = input.parentElement;
-                        if (parent) {
-                            const replacement = clonedDoc.createElement('div');
-                            replacement.innerText = val || '---';
-                            replacement.style.color = '#f6c453';
-                            replacement.style.fontSize = '22px';
-                            replacement.style.fontWeight = 'bold';
-                            replacement.style.textAlign = 'center';
-                            replacement.style.padding = '10px';
-                            parent.appendChild(replacement);
-                            (input as HTMLElement).style.display = 'none';
-                        }
-                    });
-
-                    const dateButtons = clonedDoc.querySelectorAll('button[type="button"]');
-                    dateButtons.forEach(btn => {
-                        const htmlBtn = btn as HTMLElement;
-                        const val = htmlBtn.innerText || '---';
-                        const parent = htmlBtn.parentElement;
-                        if (parent) {
-                            const replacement = clonedDoc.createElement('div');
-                            replacement.innerText = val;
-                            replacement.style.color = '#f6c453';
-                            replacement.style.fontSize = '18px';
-                            replacement.style.fontWeight = 'bold';
-                            replacement.style.textAlign = 'center';
-                            parent.appendChild(replacement);
-                            htmlBtn.style.display = 'none';
+                    // 6. Convert Identification input to text
+                    const allInputs = clonedDoc.querySelectorAll('input');
+                    allInputs.forEach(input => {
+                        if (input.style.display !== 'none') {
+                            const val = (input as HTMLInputElement).value;
+                            const parent = input.parentElement;
+                            if (parent) {
+                                const replacement = clonedDoc.createElement('div');
+                                replacement.innerText = val || '---';
+                                replacement.style.color = '#f6c453';
+                                replacement.style.fontSize = '22px';
+                                replacement.style.fontWeight = 'bold';
+                                replacement.style.textAlign = 'center';
+                                replacement.style.padding = '10px';
+                                parent.appendChild(replacement);
+                                (input as HTMLElement).style.display = 'none';
+                            }
                         }
                     });
 
@@ -178,7 +174,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             const dataUrl = canvas.toDataURL('image/png', 1.0);
             const link = document.createElement('a');
             link.href = dataUrl;
-            link.download = `report-terminal-v29-${safeName}-${dateStr}.png`;
+            link.download = `report-terminal-v30-${safeName}-${dateStr}.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -186,8 +182,8 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             setTimeout(() => setIsExporting(false), 500);
 
         } catch (error: any) {
-            console.error('v2.9 export critical failure:', error);
-            alert(`Ukládání selhalo (v2.9): ${error?.message || 'Chyba vnitřního vykreslování'}.\nVáš prohlížeč neumožňuje vytvořit obrázek z tohoto obsahu.`);
+            console.error('v3.0 export critical failure:', error);
+            alert(`Ukládání selhalo (v3.0): ${error?.message || 'Chyba vnitřního vykreslování'}.\nVáš prohlížeč neumožňuje vytvořit obrázek z tohoto obsahu.`);
             setIsExporting(false);
         }
     };
@@ -312,7 +308,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                                     <p className="text-sm font-black uppercase text-white italic">{currentRank.name}</p>
                                 </div>
                             </div>
-                            <div className="text-[8px] font-black text-amber-500 bg-amber-500/10 px-3 h-6 rounded-full border border-amber-500/20 flex items-center justify-center min-w-[70px] leading-none">POTVRZENO</div>
+                            <div className="text-[8px] font-black text-amber-500 bg-amber-500/10 px-3 h-7 rounded-full border border-amber-500/20 flex items-center justify-center min-w-[70px] leading-none pt-[1px]">POTVRZENO</div>
                         </div>
                     </div>
 
