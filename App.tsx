@@ -224,7 +224,6 @@ const App: React.FC = () => {
 
         // If onboarding not completed yet, save for later (even if tour hasn't started)
         if (!stats.onboardingCompleted) {
-            console.log('🏆 Achievement before/during onboarding, adding to pending:', achievement.title);
             setPendingTourAchievements(prev => {
                 if (prev.some(a => a.id === achievement.id)) return prev;
                 return [...prev, achievement];
@@ -280,7 +279,6 @@ const App: React.FC = () => {
         if (stats.email && !stats.nightWatchTriggered) {
             const hour = new Date().getHours();
             if (hour >= 0 && hour < 4) {
-                console.log('🌙 Night Watch check - showOnboarding:', showOnboarding);
                 setStats(prev => {
                     const newStats = { ...prev, nightWatchTriggered: true };
                     const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
