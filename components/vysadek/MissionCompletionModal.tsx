@@ -81,15 +81,17 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                     // 2. SELECT TARGET & BASE STYLE
                     const reportArea = clonedDoc.getElementById('mission-report-area');
                     if (reportArea) {
-                        const s = reportArea.style;
-                        s.width = '420px';
-                        s.margin = '0';
-                        s.padding = '24px';
-                        s.background = '#0f1419';
-                        s.borderRadius = '0';
+                        (reportArea as HTMLElement).style.cssText = `
+                            width: 420px !important;
+                            margin: 0 !important;
+                            padding: 24px !important;
+                            background: #0f1419 !important;
+                            border-radius: 0 !important;
+                            display: block !important;
+                        `;
                     }
 
-                    // 3. HIGH PRIORITY SYMMETRY (Applied after sanitization)
+                    // 3. BULLETPROOF SYMMETRY (Forced with cssText !important)
                     // Fix Time
                     const timeBlock = clonedDoc.getElementById('time-display-block');
                     if (timeBlock) {
@@ -99,21 +101,21 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
 
                         const replacement = clonedDoc.createElement('div');
                         replacement.innerText = `${h} : ${m}`;
-                        replacement.style.color = '#f6c453';
-                        replacement.style.fontSize = '18px';
-                        replacement.style.fontWeight = 'bold';
-                        replacement.style.width = '100%';
-                        replacement.style.height = '34px'; // Absolute forced height
-                        replacement.style.display = 'flex';
-                        replacement.style.alignItems = 'center';
-                        replacement.style.justifyContent = 'center';
-                        replacement.style.marginTop = '8px';
-                        replacement.style.fontFamily = 'monospace';
+                        replacement.style.cssText = `
+                            color: #f6c453 !important;
+                            font-size: 18px !important;
+                            font-weight: bold !important;
+                            width: 100% !important;
+                            height: 38px !important;
+                            line-height: 38px !important;
+                            display: block !important;
+                            text-align: center !important;
+                            margin-top: 8px !important;
+                            font-family: monospace !important;
+                        `;
 
                         if (timeParent) {
-                            timeParent.style.background = 'transparent';
-                            timeParent.style.border = 'none';
-                            timeParent.style.padding = '0';
+                            (timeParent as HTMLElement).style.cssText = "background: transparent !important; border: none !important; padding: 0 !important; display: block !important;";
                             timeBlock.innerHTML = '';
                             timeBlock.appendChild(replacement);
                         }
@@ -127,32 +129,42 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         if (parent) {
                             const replacement = clonedDoc.createElement('div');
                             replacement.innerText = text;
-                            replacement.style.color = '#f6c453';
-                            replacement.style.fontSize = '18px';
-                            replacement.style.fontWeight = 'bold';
-                            replacement.style.width = '100%';
-                            replacement.style.height = '34px'; // Identical to time
-                            replacement.style.display = 'flex';
-                            replacement.style.alignItems = 'center';
-                            replacement.style.justifyContent = 'center';
-                            replacement.style.marginTop = '8px';
+                            // v3.3: Bulletproof Centering with cssText and line-height
+                            replacement.style.cssText = `
+                                color: #f6c453 !important;
+                                font-size: 18px !important;
+                                font-weight: bold !important;
+                                width: 100% !important;
+                                height: 38px !important;
+                                line-height: 38px !important;
+                                text-align: center !important;
+                                display: block !important;
+                                margin-top: 8px !important;
+                                font-family: monospace !important;
+                            `;
 
                             btn.style.display = 'none';
                             parent.appendChild(replacement);
                         }
                     });
 
-                    // Fix Confirmed Badge Centering (Targeting by ID)
+                    // Fix Confirmed Badge Centering (Bulletproof)
                     const badge = clonedDoc.getElementById('confirmed-badge');
                     if (badge) {
-                        const s = (badge as HTMLElement).style;
-                        s.display = 'flex';
-                        s.alignItems = 'center';
-                        s.justifyContent = 'center';
-                        s.padding = '0';
-                        s.height = '28px';
-                        s.backgroundColor = 'rgba(246, 196, 83, 0.1)';
-                        s.border = '1px solid rgba(246, 196, 83, 0.2)';
+                        (badge as HTMLElement).style.cssText = `
+                            display: block !important;
+                            width: 70px !important;
+                            height: 28px !important;
+                            line-height: 28px !important;
+                            text-align: center !important;
+                            padding: 0 !important;
+                            background-color: rgba(246, 196, 83, 0.1) !important;
+                            border: 1px solid rgba(246, 196, 83, 0.2) !important;
+                            color: #f59e0b !important;
+                            font-weight: 900 !important;
+                            border-radius: 9999px !important;
+                            font-size: 8px !important;
+                        `;
                     }
 
                     // 4. REMOVE SVGs
@@ -196,7 +208,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             const dataUrl = canvas.toDataURL('image/png', 1.0);
             const link = document.createElement('a');
             link.href = dataUrl;
-            link.download = `report-terminal-v32-${safeName}-${dateStr}.png`;
+            link.download = `report-terminal-v33-${safeName}-${dateStr}.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -204,8 +216,8 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             setTimeout(() => setIsExporting(false), 500);
 
         } catch (error: any) {
-            console.error('v3.2 export critical failure:', error);
-            alert(`Ukládání selhalo (v3.2): ${error?.message || 'Chyba vnitřního vykreslování'}.\nVáš prohlížeč neumožňuje vytvořit obrázek z tohoto obsahu.`);
+            console.error('v3.3 export critical failure:', error);
+            alert(`Ukládání selhalo (v3.3): ${error?.message || 'Chyba vnitřního vykreslování'}.\nVáš prohlížeč neumožňuje vytvořit obrázek z tohoto obsahu.`);
             setIsExporting(false);
         }
     };
@@ -231,7 +243,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         </div>
                         <h2 className="text-xl md:text-2xl font-black uppercase tracking-[0.2em] text-amber-500 italic flex items-center justify-center gap-2">
                             MISE_DOKONČENA
-                            <span className="text-[10px] not-italic text-white/10 font-mono" data-html2canvas-ignore>v3.2</span>
+                            <span className="text-[10px] not-italic text-white/10 font-mono" data-html2canvas-ignore>v3.3</span>
                         </h2>
                         <div className="text-[7px] font-bold text-white/20 uppercase tracking-[0.3em]">
                             OFICIÁLNÍ_ZÁZNAM_OPERACE
