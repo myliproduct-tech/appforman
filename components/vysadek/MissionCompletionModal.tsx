@@ -50,50 +50,59 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             const dateStr = birthDate || new Date().toISOString().split('T')[0];
 
             const canvas = await html2canvas(reportRef.current, {
-                scale: 2,
+                scale: 1, // Maximum stability for low-end mobile browsers
                 backgroundColor: '#0f1419',
                 useCORS: true,
                 allowTaint: false,
                 logging: false,
                 onclone: (clonedDoc) => {
-                    // 1. Precise Target Area Identification & Selection
+                    // 1. SELECT TARGET
                     const reportArea = clonedDoc.getElementById('mission-report-area');
                     if (reportArea) {
-                        const style = reportArea.style;
-                        style.width = '375px';
-                        style.margin = '0 auto';
-                        style.padding = '20px';
-                        style.background = '#0f1419';
-                        style.borderRadius = '0';
+                        const s = reportArea.style;
+                        s.width = '400px';
+                        s.margin = '0';
+                        s.padding = '20px';
+                        s.background = '#0f1419';
+                        s.borderRadius = '0';
                     }
 
-                    // 2. SURGICAL SANITIZATION: Eliminate all complex properties that kill mobile browsers
+                    // 2. TOTAL SANITIZATION: Iterate EVERY element and strip everything that can cause capture errors
                     const allElements = clonedDoc.querySelectorAll('*');
                     allElements.forEach((el) => {
-                        const style = (el as HTMLElement).style;
-                        if (style) {
-                            // Remove gradients (The #1 cause of createPattern crash)
-                            if (style.backgroundImage && style.backgroundImage.includes('gradient')) {
-                                style.backgroundImage = 'none';
-                                style.backgroundColor = '#0a0c10';
+                        const s = (el as HTMLElement).style;
+                        if (s) {
+                            // Strip problematic backgrounds (Gradients are the main culprit for createPattern)
+                            s.backgroundImage = 'none';
+                            if (s.background && s.background.includes('gradient')) {
+                                s.background = 'none';
+                                s.backgroundColor = '#0a0c10';
                             }
-                            // Remove effects that hit performance
-                            style.boxShadow = 'none';
-                            style.backdropFilter = 'none';
-                            style.filter = 'none';
-                            style.textShadow = 'none';
+
+                            // Strip all visual effects that trigger complex canvas patterns
+                            s.boxShadow = 'none';
+                            s.textShadow = 'none';
+                            s.filter = 'none';
+                            s.backdropFilter = 'none';
+                            s.borderRadius = '0';
+                            s.borderImage = 'none';
+                            s.mask = 'none';
+                            s.clipPath = 'none';
+
+                            // Ensure visibility
+                            if (s.opacity === '0') s.opacity = '1';
                         }
                     });
 
-                    // 3. Remove SVGs completely (Security and Tainting prevention)
+                    // 3. REMOVE SVGs completely (Security/Taint source)
                     const svgs = clonedDoc.querySelectorAll('svg');
                     svgs.forEach(svg => svg.remove());
 
-                    // 4. Hide non-exportable UI
+                    // 4. Hide interactive UI
                     const elementsToHide = clonedDoc.querySelectorAll('[data-html2canvas-ignore]');
                     elementsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
 
-                    // 5. Burn Inputs to Text
+                    // 5. Convert interactive elements to plain text (using simple safe styles)
                     const inputs = clonedDoc.querySelectorAll('input');
                     inputs.forEach(input => {
                         const val = (input as HTMLInputElement).value;
@@ -103,15 +112,14 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                             replacement.innerText = val || '---';
                             replacement.style.color = '#f6c453';
                             replacement.style.fontSize = '20px';
-                            replacement.style.fontWeight = '900';
-                            replacement.style.fontFamily = 'monospace';
+                            replacement.style.fontWeight = 'bold';
                             replacement.style.textAlign = 'center';
+                            replacement.style.padding = '5px';
                             parent.appendChild(replacement);
                             (input as HTMLElement).style.display = 'none';
                         }
                     });
 
-                    // 6. Burn Buttons to Text
                     const dateButtons = clonedDoc.querySelectorAll('button[type="button"]');
                     dateButtons.forEach(btn => {
                         const htmlBtn = btn as HTMLElement;
@@ -122,38 +130,36 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                             replacement.innerText = val;
                             replacement.style.color = '#f6c453';
                             replacement.style.fontSize = '16px';
-                            replacement.style.fontWeight = '900';
+                            replacement.style.fontWeight = 'bold';
                             replacement.style.textAlign = 'center';
                             parent.appendChild(replacement);
                             htmlBtn.style.display = 'none';
                         }
                     });
 
-                    // 7. Cleanup animations
-                    const pulses = clonedDoc.querySelectorAll('.animate-pulse');
-                    pulses.forEach(p => {
-                        (p as HTMLElement).classList.remove('animate-pulse');
-                        (p as HTMLElement).style.opacity = '1';
+                    // 6. Stop all animations
+                    const animated = clonedDoc.querySelectorAll('[class*="animate-"]');
+                    animated.forEach(el => {
+                        (el as HTMLElement).style.animation = 'none';
+                        (el as HTMLElement).style.transition = 'none';
                     });
                 }
             });
 
-            // Final push: Use toDataURL for maximum compatibility on mobile
-            const dataUrl = canvas.toDataURL('image/png', 0.9);
+            // Reliable capture to image
+            const dataUrl = canvas.toDataURL('image/png', 1.0);
             const link = document.createElement('a');
             link.href = dataUrl;
-            link.download = `report-terminal-${safeName}-${dateStr}.png`;
+            link.download = `report-terminal-v26-${safeName}-${dateStr}.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
 
-            setTimeout(() => {
-                setIsExporting(false);
-            }, 500);
+            setTimeout(() => setIsExporting(false), 500);
 
         } catch (error: any) {
-            console.error('Terminal export critical failure:', error);
-            alert(`Kritická chyba exportu: ${error?.message || 'Zabezpečení prohlížeče'}.\nMobilní prohlížeč zablokoval vytvoření souboru.`);
+            console.error('Total sanitization export failure:', error);
+            alert(`Ukládání selhalo (v2.6): ${error?.message || 'Chyba vnitřního vykreslování'}.\nVáš prohlížeč neumožňuje vytvořit obrázek z tohoto obsahu.`);
             setIsExporting(false);
         }
     };
