@@ -224,6 +224,7 @@ const App: React.FC = () => {
 
         // If tour is active, save for later
         if (showOnboarding) {
+            console.log('🏆 Achievement during tour:', achievement.title);
             setPendingTourAchievements(prev => {
                 if (prev.some(a => a.id === achievement.id)) return prev;
                 return [...prev, achievement];
