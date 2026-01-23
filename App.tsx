@@ -222,9 +222,9 @@ const App: React.FC = () => {
     const handleAchievementUnlock = React.useCallback((achievement: Achievement | null) => {
         if (!achievement) return;
 
-        // If tour is active, save for later
-        if (showOnboarding) {
-            console.log('🏆 Achievement during tour:', achievement.title);
+        // If onboarding not completed yet, save for later (even if tour hasn't started)
+        if (!stats.onboardingCompleted) {
+            console.log('🏆 Achievement before/during onboarding, adding to pending:', achievement.title);
             setPendingTourAchievements(prev => {
                 if (prev.some(a => a.id === achievement.id)) return prev;
                 return [...prev, achievement];
@@ -234,7 +234,7 @@ const App: React.FC = () => {
 
         // Otherwise show immediately
         addToAchievementQueue(achievement);
-    }, [showOnboarding, addToAchievementQueue]);
+    }, [stats.onboardingCompleted, addToAchievementQueue]);
 
     // Consumables & Missions hooks
     const consumables = useConsumables(stats, setStats, effectiveDate);
