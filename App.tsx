@@ -80,6 +80,13 @@ const App: React.FC = () => {
         }
     }, [showAchievementModal, achievementQueue.length, showOnboarding]);
 
+    // Force close achievement modal when tour starts
+    useEffect(() => {
+        if (showOnboarding && showAchievementModal) {
+            setShowAchievementModal(null);
+        }
+    }, [showOnboarding, showAchievementModal]);
+
     // Initial boot sequence
     useEffect(() => {
         const timer = setTimeout(() => {
