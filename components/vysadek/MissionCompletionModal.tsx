@@ -50,29 +50,50 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             const dateStr = birthDate || new Date().toISOString().split('T')[0];
 
             const canvas = await html2canvas(reportRef.current, {
-                scale: 2, // Reverting to 2 for better quality if memory allows, keeping it safe
+                scale: 2,
                 backgroundColor: '#0f1419',
                 useCORS: true,
                 allowTaint: false,
                 logging: false,
                 onclone: (clonedDoc) => {
-                    // 1. Force stable layout in clone
-                    const reportEl = clonedDoc.querySelector('[ref="reportRef"]') || clonedDoc.querySelector('div[class*="bg-[#0f1419]"]');
-                    if (reportEl) {
-                        (reportEl as HTMLElement).style.width = '375px';
-                        (reportEl as HTMLElement).style.margin = '0 auto';
+                    // 1. Precise Target Area Identification & Selection
+                    const reportArea = clonedDoc.getElementById('mission-report-area');
+                    if (reportArea) {
+                        const style = reportArea.style;
+                        style.width = '375px';
+                        style.margin = '0 auto';
+                        style.padding = '20px';
+                        style.background = '#0f1419';
+                        style.borderRadius = '0';
                     }
 
-                    // 2. Hide non-exportable elements
-                    const elementsToHide = clonedDoc.querySelectorAll('[data-html2canvas-ignore]');
-                    elementsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
+                    // 2. SURGICAL SANITIZATION: Eliminate all complex properties that kill mobile browsers
+                    const allElements = clonedDoc.querySelectorAll('*');
+                    allElements.forEach((el) => {
+                        const style = (el as HTMLElement).style;
+                        if (style) {
+                            // Remove gradients (The #1 cause of createPattern crash)
+                            if (style.backgroundImage && style.backgroundImage.includes('gradient')) {
+                                style.backgroundImage = 'none';
+                                style.backgroundColor = '#0a0c10';
+                            }
+                            // Remove effects that hit performance
+                            style.boxShadow = 'none';
+                            style.backdropFilter = 'none';
+                            style.filter = 'none';
+                            style.textShadow = 'none';
+                        }
+                    });
 
-                    // 3. REMOVE SVGs: Hiding them causes "createPattern" error with 0 width/height.
-                    // Removing them entirely is the safest way to avoid canvas tainting and rendering errors.
+                    // 3. Remove SVGs completely (Security and Tainting prevention)
                     const svgs = clonedDoc.querySelectorAll('svg');
                     svgs.forEach(svg => svg.remove());
 
-                    // 4. Replace inputs with text
+                    // 4. Hide non-exportable UI
+                    const elementsToHide = clonedDoc.querySelectorAll('[data-html2canvas-ignore]');
+                    elementsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
+
+                    // 5. Burn Inputs to Text
                     const inputs = clonedDoc.querySelectorAll('input');
                     inputs.forEach(input => {
                         const val = (input as HTMLInputElement).value;
@@ -84,12 +105,13 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                             replacement.style.fontSize = '20px';
                             replacement.style.fontWeight = '900';
                             replacement.style.fontFamily = 'monospace';
+                            replacement.style.textAlign = 'center';
                             parent.appendChild(replacement);
                             (input as HTMLElement).style.display = 'none';
                         }
                     });
 
-                    // 5. Replace buttons with text
+                    // 6. Burn Buttons to Text
                     const dateButtons = clonedDoc.querySelectorAll('button[type="button"]');
                     dateButtons.forEach(btn => {
                         const htmlBtn = btn as HTMLElement;
@@ -101,12 +123,13 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                             replacement.style.color = '#f6c453';
                             replacement.style.fontSize = '16px';
                             replacement.style.fontWeight = '900';
+                            replacement.style.textAlign = 'center';
                             parent.appendChild(replacement);
                             htmlBtn.style.display = 'none';
                         }
                     });
 
-                    // 6. Stop animations
+                    // 7. Cleanup animations
                     const pulses = clonedDoc.querySelectorAll('.animate-pulse');
                     pulses.forEach(p => {
                         (p as HTMLElement).classList.remove('animate-pulse');
@@ -115,27 +138,22 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                 }
             });
 
-            // Reliable download flow
-            canvas.toBlob((blob) => {
-                if (!blob) throw new Error('Blob generation failed');
+            // Final push: Use toDataURL for maximum compatibility on mobile
+            const dataUrl = canvas.toDataURL('image/png', 0.9);
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = `report-terminal-${safeName}-${dateStr}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
 
-                const url = URL.createObjectURL(blob);
-                const link = document.body.appendChild(document.createElement('a'));
-                link.href = url;
-                link.download = `cerna-skrinka-${safeName}-${dateStr}.png`;
-                link.click();
-
-                // Cleanup
-                setTimeout(() => {
-                    URL.revokeObjectURL(url);
-                    link.remove();
-                    setIsExporting(false);
-                }, 500);
-            }, 'image/png');
+            setTimeout(() => {
+                setIsExporting(false);
+            }, 500);
 
         } catch (error: any) {
-            console.error('Export failed:', error);
-            alert(`Ukládání selhalo: ${error?.message || 'Chyba zabezpečení'}. Zkuste prosím pořídit screenshot manuálně.`);
+            console.error('Terminal export critical failure:', error);
+            alert(`Kritická chyba exportu: ${error?.message || 'Zabezpečení prohlížeče'}.\nMobilní prohlížeč zablokoval vytvoření souboru.`);
             setIsExporting(false);
         }
     };
@@ -152,7 +170,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                     <X className="w-5 h-5 text-white/50" />
                 </button>
 
-                <div ref={reportRef} className="p-4 md:p-6 space-y-4 md:space-y-6 bg-[#0f1419] relative overflow-hidden">
+                <div ref={reportRef} id="mission-report-area" className="p-4 md:p-6 space-y-4 md:space-y-6 bg-[#0f1419] relative overflow-hidden">
                     {/* Header */}
                     <div className="text-center space-y-2 relative pb-4">
                         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
