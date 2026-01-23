@@ -78,18 +78,22 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         const replacement = clonedDoc.createElement('div');
                         replacement.innerText = `${h} : ${m}`;
                         replacement.style.color = '#f6c453';
-                        replacement.style.fontSize = '18px'; // Perfectly matched
+                        replacement.style.fontSize = '18px';
                         replacement.style.fontWeight = 'bold';
                         replacement.style.textAlign = 'center';
-                        replacement.style.padding = '10px 0'; // Normalized padding
+                        replacement.style.width = '100%';
+                        replacement.style.height = '32px'; // Fixed height for vertical alignment
+                        replacement.style.lineHeight = '32px';
+                        replacement.style.marginTop = '8px'; // Uniform spacing from label
                         replacement.style.fontFamily = 'monospace';
 
                         if (timeParent) {
                             timeParent.style.background = 'transparent';
                             timeParent.style.border = 'none';
                             timeParent.style.padding = '0';
-                            timeParent.innerHTML = '';
-                            timeParent.appendChild(replacement);
+                            // Clear only the time block container, not the entire label+block area
+                            timeBlock.innerHTML = '';
+                            timeBlock.appendChild(replacement);
                         }
                     }
 
@@ -102,11 +106,16 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                             const replacement = clonedDoc.createElement('div');
                             replacement.innerText = text;
                             replacement.style.color = '#f6c453';
-                            replacement.style.fontSize = '18px'; // Perfectly matched
+                            replacement.style.fontSize = '18px';
                             replacement.style.fontWeight = 'bold';
                             replacement.style.textAlign = 'center';
-                            replacement.style.padding = '10px 0'; // Normalized padding
-                            parent.innerHTML = '';
+                            replacement.style.width = '100%';
+                            replacement.style.height = '32px'; // Identical height
+                            replacement.style.lineHeight = '32px';
+                            replacement.style.marginTop = '8px'; // Identical margin from label
+
+                            // Replace only the button, keep the label!
+                            btn.style.display = 'none';
                             parent.appendChild(replacement);
                         }
                     });
@@ -174,7 +183,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             const dataUrl = canvas.toDataURL('image/png', 1.0);
             const link = document.createElement('a');
             link.href = dataUrl;
-            link.download = `report-terminal-v30-${safeName}-${dateStr}.png`;
+            link.download = `report-terminal-v31-${safeName}-${dateStr}.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -182,8 +191,8 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
             setTimeout(() => setIsExporting(false), 500);
 
         } catch (error: any) {
-            console.error('v3.0 export critical failure:', error);
-            alert(`Ukládání selhalo (v3.0): ${error?.message || 'Chyba vnitřního vykreslování'}.\nVáš prohlížeč neumožňuje vytvořit obrázek z tohoto obsahu.`);
+            console.error('v3.1 export critical failure:', error);
+            alert(`Ukládání selhalo (v3.1): ${error?.message || 'Chyba vnitřního vykreslování'}.\nVáš prohlížeč neumožňuje vytvořit obrázek z tohoto obsahu.`);
             setIsExporting(false);
         }
     };
@@ -209,7 +218,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         </div>
                         <h2 className="text-xl md:text-2xl font-black uppercase tracking-[0.2em] text-amber-500 italic flex items-center justify-center gap-2">
                             MISE_DOKONČENA
-                            <span className="text-[10px] not-italic text-white/10 font-mono" data-html2canvas-ignore>v3.0</span>
+                            <span className="text-[10px] not-italic text-white/10 font-mono" data-html2canvas-ignore>v3.1</span>
                         </h2>
                         <div className="text-[7px] font-bold text-white/20 uppercase tracking-[0.3em]">
                             OFICIÁLNÍ_ZÁZNAM_OPERACE
@@ -309,7 +318,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                                     <p className="text-sm font-black uppercase text-white italic">{currentRank.name}</p>
                                 </div>
                             </div>
-                            <div className="text-[8px] font-black text-amber-500 bg-amber-500/10 px-3 h-7 rounded-full border border-amber-500/20 flex items-center justify-center min-w-[70px] leading-none pt-[1px]">POTVRZENO</div>
+                            <div className="text-[8px] font-black text-amber-500 bg-amber-500/10 px-3 h-7 rounded-full border border-amber-500/20 flex items-center justify-center min-w-[70px] leading-none pt-[1.5px]">POTVRZENO</div>
                         </div>
                     </div>
 
