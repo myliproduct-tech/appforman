@@ -61,8 +61,11 @@ const App: React.FC = () => {
         });
     }, []);
 
-    // Show next achievement from queue when modal closes
+    // Show next achievement from queue when modal closes (but NOT during tour)
     useEffect(() => {
+        // Don't show achievements during onboarding tour
+        if (showOnboarding) return;
+
         if (!showAchievementModal && achievementQueue.length > 0) {
             // Need a tiny delay to ensure React state batching is finished
             const timer = setTimeout(() => {
@@ -75,7 +78,7 @@ const App: React.FC = () => {
             }, 100);
             return () => clearTimeout(timer);
         }
-    }, [showAchievementModal, achievementQueue.length]);
+    }, [showAchievementModal, achievementQueue.length, showOnboarding]);
 
     // Initial boot sequence
     useEffect(() => {
