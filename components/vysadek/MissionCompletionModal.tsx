@@ -172,7 +172,7 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                         }
                     });
 
-                    // Fix Confirmed Badge Centering (Bulletproof)
+                    // Fix Confirmed Badge Centering (v3.4 Aggressive Reset)
                     const badge = clonedDoc.getElementById('confirmed-badge');
                     if (badge) {
                         (badge as HTMLElement).style.cssText = `
@@ -181,13 +181,16 @@ export const MissionCompletionModal: React.FC<MissionCompletionModalProps> = ({ 
                             height: 28px !important;
                             line-height: 28px !important;
                             text-align: center !important;
+                            margin: 0 !important;
                             padding: 0 !important;
-                            background-color: rgba(246, 196, 83, 0.1) !important;
                             border: 1px solid rgba(246, 196, 83, 0.2) !important;
+                            background-color: rgba(246, 196, 83, 0.1) !important;
                             color: #f59e0b !important;
                             font-weight: 900 !important;
                             border-radius: 9999px !important;
                             font-size: 8px !important;
+                            box-sizing: border-box !important;
+                            vertical-align: baseline !important;
                         `;
                     }
 
