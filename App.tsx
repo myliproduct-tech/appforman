@@ -304,7 +304,7 @@ const App: React.FC = () => {
                 newUnlocks.forEach(ach => handleAchievementUnlock(ach));
             }
         }
-    }, [stats.points, stats.missionHistory.length, stats.badges.length, stats.speedBuildScores, stats.email, showOnboarding, missions.checkAchievements, handleAchievementUnlock]);
+    }, [stats.points, stats.missionHistory.length, stats.badges.length, stats.speedBuildScores, (stats.manualEntriesRead || []).length, stats.email, showOnboarding, missions.checkAchievements, handleAchievementUnlock]);
 
     // Onboarding tour handlers
     useEffect(() => {
