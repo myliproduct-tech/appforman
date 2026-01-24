@@ -305,11 +305,20 @@ const AchievementModalComponent: React.FC<ModalProps> = ({ achievement, unlocked
                             {achievement.progress && stats && (() => {
                                 const progressData = achievement.progress(stats);
                                 const progressPercent = (progressData.current / progressData.total) * 100;
+
+                                // Check if this is a time-based achievement (for speed minigames)
+                                const isTimeBased = achievement.id === 'f1_mechanic' || achievement.id === 'diaper_ninja';
+
+                                // Format progress text
+                                const progressText = isTimeBased
+                                    ? `${(progressData.current / 10).toFixed(1)}s / ${(progressData.total / 10).toFixed(1)}s`
+                                    : `${progressData.current}/${progressData.total}`;
+
                                 return (
                                     <div className="bg-black/30 border-2 border-white/20 rounded-xl p-4">
                                         <div className="flex justify-between items-center mb-2">
                                             <p className="text-[10px] font-black uppercase text-white/50 tracking-widest">PROGRESS:</p>
-                                            <p className="text-xs font-mono text-[#f6c453]">{progressData.current}/{progressData.total}</p>
+                                            <p className="text-xs font-mono text-[#f6c453]">{progressText}</p>
                                         </div>
                                         <div className="w-full bg-black/50 rounded-full h-2 overflow-hidden">
                                             <div
