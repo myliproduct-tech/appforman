@@ -413,16 +413,6 @@ export const ACHIEVEMENTS: Achievement[] = [
     xpReward: 200,
     condition: (stats: UserStats) => (stats.backupContacts?.length || 0) >= 3,
     progress: (stats: UserStats) => ({ current: Math.min(stats.backupContacts?.length || 0, 3), total: 3 })
-  },
-  {
-    id: 'vehicle_configurator',
-    title: 'Vozová hradba',
-    description: 'Transportní modul je nakonfigurován pro maximální bezpečí.',
-    howToUnlock: 'Vybrat typ vozidla v sekci Logistika.',
-    icon: 'Settings',
-    rarity: 'common',
-    xpReward: 150,
-    condition: (stats: UserStats) => !!stats.vehicleModel
   }
 ];
 
