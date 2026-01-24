@@ -200,6 +200,12 @@ export const TabContent: React.FC<TabContentProps> = ({
                                 newUnlocks.forEach(ach => setShowAchievementModal(ach));
                                 return updatedStats;
                             })}
+                            onViewICE={() => setStats(prev => {
+                                const newStats = { ...prev, iceCardViewed: true };
+                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
+                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
+                                return updatedStats;
+                            })}
                         />
                     )}
                 </ErrorBoundary>

@@ -19,6 +19,7 @@ interface ICECardProps {
     onSaveBackupContacts?: (contacts: Contact[]) => void;
     userBloodType?: string;
     partnerBloodType?: string;
+    onView?: () => void;
 }
 
 export const ICECard: React.FC<ICECardProps> = ({
@@ -30,7 +31,8 @@ export const ICECard: React.FC<ICECardProps> = ({
     onSaveHospital,
     onSaveBackupContacts,
     userBloodType,
-    partnerBloodType
+    partnerBloodType,
+    onView
 }) => {
     const [showIceCard, setShowIceCard] = useState(false);
     const [iceTab, setIceTab] = useState<'target' | 'contacts' | 'card'>('target');
@@ -109,7 +111,10 @@ export const ICECard: React.FC<ICECardProps> = ({
         <section className={`glass-card p-0 rounded-[2.5rem] border-red-500/20 bg-red-500/5 transition-all duration-500 overflow-hidden relative shadow-[0_0_30px_rgba(239,68,68,0.1)]`}>
             {/* Main Trigger Button (Visible when closed) */}
             {!showIceCard && (
-                <div onClick={() => setShowIceCard(true)} className="p-8 flex items-center justify-between cursor-pointer active:bg-red-500/10 transition-colors group">
+                <div onClick={() => {
+                    setShowIceCard(true);
+                    if (onView) onView();
+                }} className="p-8 flex items-center justify-between cursor-pointer active:bg-red-500/10 transition-colors group">
                     <div className="flex items-center gap-5">
                         <div className="w-14 h-14 bg-red-500 rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/30 animate-pulse group-hover:scale-110 group-hover:rotate-6 transition-transform">
                             <Siren className="w-7 h-7 text-white" />

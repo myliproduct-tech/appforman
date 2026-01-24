@@ -59,6 +59,7 @@ export interface UserStats {
   manualViewsCount?: number; // New: Tracks how many times communication manual was opened
   manualEntriesRead?: number[]; // New: Tracks which manual entries were read/expanded (by index)
   emergencyProtocolsViewed?: boolean; // New: Tracks if emergency protocols were viewed
+  iceCardViewed?: boolean; // New: Tracks if ICE card was viewed
   nightWatchTriggered?: boolean; // New: Tracks if user opened app at night
   speedBuildScores?: Record<string, number>; // New: Sync of mini-game best scores
   soundIDStats?: {

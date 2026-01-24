@@ -332,7 +332,11 @@ export const ACHIEVEMENTS: Achievement[] = [
     icon: 'ShieldAlert',
     rarity: 'rare',
     xpReward: 200,
-    condition: (stats: UserStats) => !!stats.emergencyProtocolsViewed
+    condition: (stats: UserStats) => !!stats.emergencyProtocolsViewed && !!stats.iceCardViewed,
+    progress: (stats: UserStats) => ({
+      current: (stats.emergencyProtocolsViewed ? 1 : 0) + (stats.iceCardViewed ? 1 : 0),
+      total: 2
+    })
   },
   {
     id: 'final_countdown',
