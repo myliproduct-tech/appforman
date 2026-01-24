@@ -214,8 +214,13 @@ export const ACHIEVEMENTS: Achievement[] = [
     condition: (stats: UserStats) => !!stats.speedBuildScores?.['car-seat'] && stats.speedBuildScores['car-seat'] < 15,
     progress: (stats: UserStats) => {
       const bestTime = stats.speedBuildScores?.['car-seat'];
+      if (!bestTime) {
+        return { current: 0, total: 150 }; // No time yet - show 0.0s / 15.0s
+      }
+      // Inverted: better time (lower) = higher progress
+      const remaining = Math.max(0, 150 - Math.floor(bestTime * 10));
       return {
-        current: bestTime ? Math.floor(bestTime * 10) : 150, // Show time in tenths of seconds
+        current: remaining, // How much "better" than 15s you are
         total: 150 // 15.0 seconds
       };
     }
