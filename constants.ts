@@ -206,16 +206,19 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'f1_mechanic',
     title: 'F1 Mechanik',
-    description: 'Blesková instalace autosedačky pod 12 vteřin.',
-    howToUnlock: 'Dosáhnout času pod 12s v mini-hře Rychlé nasazení (Instalace autosedačky).',
+    description: 'Blesková instalace autosedačky pod 15 vteřin.',
+    howToUnlock: 'Dosáhnout času pod 15s v mini-hře Rychlé nasazení (Instalace autosedačky).',
     icon: 'Car',
     rarity: 'epic',
     xpReward: 350,
-    condition: (stats: UserStats) => !!stats.speedBuildScores?.['car-seat'] && stats.speedBuildScores['car-seat'] < 12,
-    progress: (stats: UserStats) => ({
-      current: stats.speedBuildScores?.['car-seat'] ? Math.floor(100 - (stats.speedBuildScores['car-seat'] / 12 * 100)) : 0,
-      total: 100
-    })
+    condition: (stats: UserStats) => !!stats.speedBuildScores?.['car-seat'] && stats.speedBuildScores['car-seat'] < 15,
+    progress: (stats: UserStats) => {
+      const bestTime = stats.speedBuildScores?.['car-seat'];
+      return {
+        current: bestTime ? Math.floor(bestTime * 10) : 150, // Show time in tenths of seconds
+        total: 150 // 15.0 seconds
+      };
+    }
   },
   {
     id: 'diaper_ninja',
