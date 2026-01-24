@@ -128,8 +128,8 @@ export const TabContent: React.FC<TabContentProps> = ({
                             onSaveHospital={(target) => setStats(prev => ({ ...prev, hospitalTarget: target }))}
                             onSaveBackupContacts={(contacts) => setStats(prev => {
                                 const newStats = { ...prev, backupContacts: contacts };
-                                const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-                                if (newUnlock) setShowAchievementModal(newUnlock);
+                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
+                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
                                 return updatedStats;
                             })}
                             onSavePartnerPhone={(phone) => setStats(prev => ({ ...prev, partnerPhone: phone }))}
@@ -140,8 +140,8 @@ export const TabContent: React.FC<TabContentProps> = ({
                             onSaveGbsStatus={(status) => setStats(prev => ({ ...prev, gbsStatus: status }))}
                             onSaveBabyNames={(names) => setStats(prev => {
                                 const newStats = { ...prev, babyNames: names };
-                                const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-                                if (newUnlock) setShowAchievementModal(newUnlock);
+                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
+                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
                                 return updatedStats;
                             })}
                             onLogBloodPressure={(sys, dia) => setStats(prev => ({ ...prev, bloodPressureLog: [...(prev.bloodPressureLog || []), { sys, dia, date: new Date().toISOString() }] }))}
@@ -151,8 +151,8 @@ export const TabContent: React.FC<TabContentProps> = ({
                                     ? prev.hospitalBagChecklist.filter(i => i !== id)
                                     : [...prev.hospitalBagChecklist, id];
                                 const newStats = { ...prev, hospitalBagChecklist: newChecklist };
-                                const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-                                if (newUnlock) setShowAchievementModal(newUnlock);
+                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
+                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
                                 return updatedStats;
                             })}
                             customHospitalBagGear={stats.customHospitalBagGear || []}
@@ -164,8 +164,8 @@ export const TabContent: React.FC<TabContentProps> = ({
                             }))}
                             onReportFirstKick={() => setStats(prev => {
                                 const newStats = { ...prev, firstKickDetected: true };
-                                const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-                                if (newUnlock) setShowAchievementModal(newUnlock);
+                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
+                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
                                 return updatedStats;
                             })}
                             onCompleteAllBag={handleCompleteAllHospitalBag}
@@ -179,8 +179,8 @@ export const TabContent: React.FC<TabContentProps> = ({
                             onSaveMedicalInfo={(info) => setStats(prev => ({ ...prev, medicalInfo: info }))}
                             onViewManual={() => setStats(prev => {
                                 const newStats = { ...prev, manualViewsCount: (prev.manualViewsCount || 0) + 1 };
-                                const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-                                if (newUnlock) setShowAchievementModal(newUnlock);
+                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
+                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
                                 return updatedStats;
                             })}
                             onEntryRead={(entryIndex) => setStats(prev => {
@@ -188,16 +188,16 @@ export const TabContent: React.FC<TabContentProps> = ({
                                 // Add entry if not already read
                                 if (!currentRead.includes(entryIndex)) {
                                     const newStats = { ...prev, manualEntriesRead: [...currentRead, entryIndex] };
-                                    const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-                                    if (newUnlock) setShowAchievementModal(newUnlock);
+                                    const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
+                                    newUnlocks.forEach(ach => setShowAchievementModal(ach));
                                     return updatedStats;
                                 }
                                 return prev;
                             })}
                             onViewEmergency={() => setStats(prev => {
                                 const newStats = { ...prev, emergencyProtocolsViewed: true };
-                                const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-                                if (newUnlock) setShowAchievementModal(newUnlock);
+                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
+                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
                                 return updatedStats;
                             })}
                         />
@@ -222,14 +222,14 @@ export const TabContent: React.FC<TabContentProps> = ({
                                     ? prev.gearChecklist.filter(i => i !== id)
                                     : [...prev.gearChecklist, id];
                                 const newStats = { ...prev, gearChecklist: newGearChecklist };
-                                const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-                                if (newUnlock) setShowAchievementModal(newUnlock);
+                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
+                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
                                 return updatedStats;
                             })}
                             onSaveBudget={(plan) => setStats(prev => {
                                 const newStats = { ...prev, budgetPlan: plan };
-                                const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-                                if (newUnlock) setShowAchievementModal(newUnlock);
+                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
+                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
                                 return updatedStats;
                             })}
                             onAddCustomGear={(item) => setStats(prev => ({ ...prev, customGear: [...(prev.customGear || []), item] }))}
@@ -242,8 +242,8 @@ export const TabContent: React.FC<TabContentProps> = ({
                             onConfirmVehicle={() => {
                                 setStats(prev => {
                                     const newStats = { ...prev, vehicleConfirmed: true };
-                                    const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
-                                    if (newUnlock) setShowAchievementModal(newUnlock);
+                                    const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
+                                    newUnlocks.forEach(ach => setShowAchievementModal(ach));
                                     return updatedStats;
                                 });
                             }}
