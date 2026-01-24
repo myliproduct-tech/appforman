@@ -405,9 +405,9 @@ export const Recon: React.FC<ReconProps> = ({ currentWeek, partnerName, userName
                     href="https://www.google.com/maps/search/nonstop+lékárna/@?hl=cs"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full bg-red-500/10 border border-red-500/20 text-red-400 py-5 rounded-3xl font-black uppercase text-xs tracking-widest shadow-lg shadow-red-500/5 hover:bg-red-500/20 transition-all active:scale-95 flex items-center justify-center gap-3 tap-effect btn-tactical"
+                    className="w-full bg-red-500/10 border border-red-500/20 text-red-400 py-4 xs:py-5 rounded-3xl font-black uppercase text-[10px] xs:text-xs tracking-widest shadow-lg shadow-red-500/5 hover:bg-red-500/20 transition-all active:scale-95 flex items-center justify-center gap-3 tap-effect btn-tactical"
                 >
-                    <Cross className="w-5 h-5" /> SOS Lékárna
+                    <Cross className="w-4 h-4 xs:w-5 xs:h-5" /> SOS Lékárna
                 </a>
 
                 <button
@@ -415,9 +415,9 @@ export const Recon: React.FC<ReconProps> = ({ currentWeek, partnerName, userName
                         dispatch({ type: 'TOGGLE_MODAL', modal: 'showCrisisProtocol' });
                         if (onViewEmergency) onViewEmergency();
                     }}
-                    className="w-full bg-red-500/10 border border-red-500/20 text-red-500 py-5 rounded-3xl font-black uppercase text-xs tracking-widest shadow-lg shadow-red-500/5 hover:bg-red-500/20 transition-all active:scale-95 flex items-center justify-center gap-3 tap-effect btn-tactical"
+                    className="w-full bg-red-500/10 border border-red-500/20 text-red-500 py-4 xs:py-5 rounded-3xl font-black uppercase text-[10px] xs:text-xs tracking-widest shadow-lg shadow-red-500/5 hover:bg-red-500/20 transition-all active:scale-95 flex items-center justify-center gap-3 tap-effect btn-tactical"
                 >
-                    <AlertTriangle className="w-5 h-5" /> Krizový Protokol
+                    <AlertTriangle className="w-4 h-4 xs:w-5 xs:h-5" /> Krizový Protokol
                 </button>
             </section>
 

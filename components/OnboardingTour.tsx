@@ -143,10 +143,10 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ steps, onComplet
             {/* Tour Card */}
             <div
                 ref={cardRef}
-                className={`fixed z-[10000] transition-all duration-300 ${isCentered ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' : ''}`}
+                className={`fixed z-[10000] transition-all duration-300 w-[92vw] max-w-[340px] ${isCentered ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' : ''}`}
                 style={isCentered ? {} : { top: `${position.top}px`, left: `${position.left}px` }}
             >
-                <div className="glass-card border-[#f6c453]/30 rounded-[2rem] p-6 w-[280px] xs:w-[300px] shadow-2xl">
+                <div className="glass-card border-[#f6c453]/30 rounded-[2rem] p-5 sm:p-6 shadow-2xl">
                     {/* Header */}
                     <div className="flex justify-between items-start mb-4">
                         <div className="flex-1">
@@ -173,31 +173,31 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ steps, onComplet
                     </p>
 
                     {/* Navigation */}
-                    <div className="flex justify-between items-center gap-3">
+                    <div className="flex flex-wrap sm:flex-nowrap justify-between items-center gap-2">
                         <button
                             onClick={handlePrev}
                             disabled={isFirst}
-                            className={`flex items-center gap-1 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${isFirst
+                            className={`flex items-center gap-1 px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all min-w-[70px] justify-center ${isFirst
                                 ? 'opacity-30 cursor-not-allowed'
-                                : 'hover:bg-white/10 opacity-60 hover:opacity-100'
+                                : 'hover:bg-white/10 opacity-60 hover:opacity-100 bg-white/5'
                                 }`}
                         >
                             <ChevronLeft className="w-3 h-3" />
-                            Zpět
+                            ZPĚT
                         </button>
 
                         <button
                             onClick={onSkip}
-                            className="px-2 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider opacity-40 hover:opacity-100 transition-all"
+                            className="px-2 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider opacity-40 hover:opacity-100 transition-all"
                         >
-                            Přeskočit
+                            PŘESKOČIT
                         </button>
 
                         <button
                             onClick={handleNext}
-                            className="flex items-center gap-1 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-[#bb8712] to-[#f6c453] text-[#1f2933] hover:scale-105 transition-all shadow-lg"
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-[#bb8712] to-[#f6c453] text-[#1f2933] hover:scale-105 transition-all shadow-lg min-w-[100px]"
                         >
-                            {isLast ? 'Dokončit' : 'Další'}
+                            {isLast ? 'DOKONČIT' : 'DALŠÍ'}
                             {!isLast && <ChevronRight className="w-3 h-3" />}
                         </button>
                     </div>

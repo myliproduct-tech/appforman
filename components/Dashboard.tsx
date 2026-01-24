@@ -139,7 +139,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
               <Shield className="w-6 h-6 text-[#f6c453]" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-black italic uppercase accent-text tracking-tight inline-block pr-3 group-hover:translate-x-1 transition-transform">
+              <h2 className="text-lg xs:text-xl sm:text-2xl font-black italic uppercase accent-text tracking-tight inline-block pr-3 group-hover:translate-x-1 transition-transform">
                 Centrum Velení
               </h2>
               <p className="text-[9px] sm:text-[10px] font-bold text-white/40 uppercase tracking-wider">
@@ -164,8 +164,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
             </div>
             <span className="text-[9px] uppercase font-black opacity-40 tracking-widest group-hover:opacity-60 transition-opacity">Intel</span>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-black uppercase tracking-tight accent-text">Týden {currentWeek}</span>
+          <div className="flex items-center justify-between mt-auto">
+            <span className="text-[9px] xs:text-[10px] font-black uppercase tracking-tight accent-text">Týden {currentWeek}</span>
             <ChevronRight className="w-3 h-3 text-[#f6c453] opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
           </div>
         </div>
@@ -178,9 +178,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
             </div>
             <span className="text-[9px] uppercase font-black opacity-40 tracking-widest group-hover:opacity-60 transition-opacity">Streak</span>
           </div>
-          <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-black accent-text italic group-hover:scale-110 transition-transform inline-block origin-left">{stats.streak}</span>
-            <span className="text-[10px] font-bold opacity-30 uppercase">Dní</span>
+          <div className="flex items-baseline gap-1 mt-auto">
+            <span className="text-xl xs:text-2xl font-black accent-text italic group-hover:scale-110 transition-transform inline-block origin-left">{stats.streak}</span>
+            <span className="text-[9px] xs:text-[10px] font-bold opacity-30 uppercase">Dní</span>
           </div>
         </div>
       </div>
@@ -214,7 +214,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
                 {isDeserter ? 'DEGRADACE' : `Level ${currentRank.level}`}
               </span>
             </div>
-            <h3 className={`text-xl font-black italic tracking-tight uppercase leading-none mb-2 ${isDeserter ? 'text-red-500' : 'accent-text'}`}>
+            <h3 className={`text-lg xs:text-xl font-black italic tracking-tight uppercase leading-none mb-2 ${isDeserter ? 'text-red-500' : 'accent-text'}`}>
               {currentRank.name}
             </h3>
             <p className={`text-[10px] leading-relaxed font-medium ${isDeserter ? 'text-red-200/60' : 'opacity-60'}`}>

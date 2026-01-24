@@ -26,8 +26,8 @@ export const ModalManager: React.FC<ModalManagerProps> = ({
     return (
         <>
             {showRankModal.show && showRankModal.rank && (
-                <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 animate-fade-in">
-                    <div className="bg-gradient-to-br from-[#1f2933] to-[#0f1419] p-8 rounded-3xl border-2 border-[#f6c453] max-w-sm mx-4 text-center animate-scale-in">
+                <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 animate-fade-in p-4">
+                    <div className="bg-gradient-to-br from-[#1f2933] to-[#0f1419] p-6 xs:p-8 rounded-3xl border-2 border-[#f6c453] w-full max-w-[340px] text-center animate-scale-in">
                         <Trophy className="w-16 h-16 mx-auto mb-4 text-[#f6c453] animate-bounce" />
                         <h2 className="text-2xl font-black uppercase mb-2 accent-text">Povýšení!</h2>
                         <p className="text-sm opacity-60 mb-4">Dosáhl jsi nové hodnosti</p>
@@ -53,8 +53,8 @@ export const ModalManager: React.FC<ModalManagerProps> = ({
             )}
 
             {showFailureModal && (
-                <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 animate-fade-in">
-                    <div className="bg-gradient-to-br from-rose-900/40 to-[#1f2933] p-8 rounded-3xl border-2 border-rose-500 max-w-sm mx-4 text-center animate-scale-in">
+                <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 animate-fade-in p-4">
+                    <div className="bg-gradient-to-br from-rose-900/40 to-[#1f2933] p-6 xs:p-8 rounded-3xl border-2 border-rose-500 w-full max-w-[340px] text-center animate-scale-in">
                         <div className="text-6xl mb-4">💔</div>
                         <h2 className="text-2xl font-black uppercase mb-2 text-rose-400">Mise Selhala</h2>
                         <p className="text-sm mb-2 font-bold">{showFailureModal.title}</p>

@@ -118,6 +118,7 @@
 .tap-effect {
     -webkit-tap-highlight-color: transparent;
 }
+
 /* Disable text selection and long-press menu */
 * {
     -webkit-user-select: none;
@@ -125,4 +126,25 @@
     -ms-user-select: none;
     user-select: none;
     -webkit-touch-callout: none;
+}
+
+/* Responsive Helpers */
+.glass-card {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+@media (max-width: 380px) {
+    .text-xs-mobile {
+        font-size: 0.65rem !important;
+    }
+
+    .px-mobile-sm {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+}
+
+.safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
 }
