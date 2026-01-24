@@ -27,8 +27,8 @@ interface CryPattern {
 interface GameStats {
     totalAttempts: number;
     correctAnswers: number;
-    streak: number;
-    bestStreak: number;
+    streakValue: number;  // Changed from 'streak' to match UserStats
+    bestStreakValue: number;  // Changed from 'bestStreak' to match UserStats
 }
 
 const CRY_PATTERNS: CryPattern[] = [
@@ -96,8 +96,8 @@ export const SoundID: React.FC<{
     const [stats, setStats] = useState<GameStats>({
         totalAttempts: 0,
         correctAnswers: 0,
-        streak: 0,
-        bestStreak: 0
+        streakValue: 0,
+        bestStreakValue: 0
     });
     const [showExplanation, setShowExplanation] = useState(false);
     const audioRef = React.useRef<HTMLAudioElement | null>(null);
@@ -171,8 +171,8 @@ export const SoundID: React.FC<{
         const newStats = {
             totalAttempts: stats.totalAttempts + 1,
             correctAnswers: stats.correctAnswers + (isCorrect ? 1 : 0),
-            streak: isCorrect ? stats.streak + 1 : 0,
-            bestStreak: isCorrect ? Math.max(stats.bestStreak, stats.streak + 1) : stats.bestStreak
+            streakValue: isCorrect ? stats.streakValue + 1 : 0,
+            bestStreakValue: isCorrect ? Math.max(stats.bestStreakValue, stats.streakValue + 1) : stats.bestStreakValue
         };
 
         setStats(newStats);
@@ -270,11 +270,11 @@ export const SoundID: React.FC<{
                                         <div className="text-xs text-white/60">Úspěšnost</div>
                                     </div>
                                     <div>
-                                        <div className="text-2xl font-black text-[#f6c453]">{stats.streak}</div>
+                                        <div className="text-2xl font-black text-[#f6c453]">{stats.streakValue}</div>
                                         <div className="text-xs text-white/60">Série</div>
                                     </div>
                                     <div>
-                                        <div className="text-2xl font-black text-[#f6c453]">{stats.bestStreak}</div>
+                                        <div className="text-2xl font-black text-[#f6c453]">{stats.bestStreakValue}</div>
                                         <div className="text-xs text-white/60">Rekord</div>
                                     </div>
                                 </div>
@@ -315,7 +315,7 @@ export const SoundID: React.FC<{
                     <div className="flex items-center gap-4">
                         <div className="text-right">
                             <div className="text-xs text-white/60">Série</div>
-                            <div className="text-lg font-black text-[#f6c453]">{stats.streak}</div>
+                            <div className="text-lg font-black text-[#f6c453]">{stats.streakValue}</div>
                         </div>
                         <div className="text-right">
                             <div className="text-xs text-white/60">Úspěšnost</div>
