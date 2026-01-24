@@ -435,7 +435,7 @@ const App: React.FC = () => {
     }
 
     return (
-        <div className={`min-h-screen bg-[#1f2933] text-white ${nightMode ? 'night-vision-mode' : ''} pb-20`}>
+        <div className={`min-h-screen bg-[#1f2933] text-white ${nightMode ? 'night-vision-mode' : ''} ${devMode.isDevMode ? 'dev-mode-selection' : ''} pb-20`}>
             {/* 1. Dev Mode Panel */}
             <DevModePanel
                 isDevMode={devMode.isDevMode}
