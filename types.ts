@@ -57,6 +57,7 @@ export interface UserStats {
   vysadekClicked?: boolean; // New: Track if user clicked Vysadek button
   notificationsEnabled?: boolean; // New: Toggle for browser notifications
   manualViewsCount?: number; // New: Tracks how many times communication manual was opened
+  manualEntriesRead?: number[]; // New: Tracks which manual entries were read/expanded (by index)
   emergencyProtocolsViewed?: boolean; // New: Tracks if emergency protocols were viewed
   nightWatchTriggered?: boolean; // New: Tracks if user opened app at night
   speedBuildScores?: Record<string, number>; // New: Sync of mini-game best scores
