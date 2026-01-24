@@ -245,7 +245,7 @@ const AchievementModalComponent: React.FC<ModalProps> = ({ achievement, unlocked
     };
 
     return (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-200" onClick={onClose}>
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-200" onClick={onClose}>
             <div className="w-full max-w-sm flex flex-col gap-6" onClick={e => e.stopPropagation()}>
 
                 {/* THE CARD (Ref Target) */}
