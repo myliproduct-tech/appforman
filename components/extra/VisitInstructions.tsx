@@ -128,27 +128,27 @@ export const VisitInstructions: React.FC<VisitInstructionsProps> = ({
                                 <button
                                     key={mode.id}
                                     onClick={() => handleModeSelect(mode.id)}
-                                    className={`w-full bg-gradient-to-br ${mode.gradient} border-2 ${mode.border} rounded-2xl p-5 text-left transition-all ${isSelected ? 'scale-[1.02] shadow-lg' : 'opacity-60 hover:opacity-100'
+                                    className={`w-full bg-gradient-to-br ${mode.gradient} border-2 ${mode.border} rounded-2xl p-4 text-left transition-all ${isSelected ? 'scale-[1.02] shadow-lg border-[#f6c453]/50' : 'opacity-60 hover:opacity-100'
                                         }`}
                                 >
                                     <div className="flex items-start gap-4">
-                                        <div className={`p-3 bg-${mode.color}-500/20 rounded-xl`}>
-                                            <Icon className={`w-6 h-6 text-${mode.color}-400`} />
+                                        <div className={`p-2.5 bg-${mode.color}-500/20 rounded-xl`}>
+                                            <Icon className={`w-5 h-5 text-${mode.color}-400`} />
                                         </div>
                                         <div className="flex-1">
-                                            <h4 className="text-lg font-black uppercase text-white tracking-tight mb-1">
+                                            <h4 className="text-base font-black uppercase text-white tracking-tight mb-0.5">
                                                 {mode.name}
                                             </h4>
-                                            <p className="text-xs text-white/60 uppercase tracking-wider mb-2">
+                                            <p className="text-[10px] text-white/60 uppercase tracking-wider mb-1">
                                                 {mode.subtitle}
                                             </p>
-                                            <p className="text-sm text-white/70">
+                                            <p className="text-xs text-white/70 leading-relaxed font-medium">
                                                 {mode.description}
                                             </p>
                                         </div>
                                         {isSelected && (
-                                            <div className={`p-2 bg-${mode.color}-500/30 rounded-lg`}>
-                                                <Check className={`w-5 h-5 text-${mode.color}-400`} />
+                                            <div className={`p-1.5 bg-${mode.color}-500/30 rounded-lg`}>
+                                                <Check className={`w-4 h-4 text-${mode.color}-400`} />
                                             </div>
                                         )}
                                     </div>
