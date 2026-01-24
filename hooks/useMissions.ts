@@ -55,7 +55,7 @@ export const useMissions = (
         }
 
         return { updatedStats: currentStats, newUnlocks: [] };
-    }, [stats.notificationsEnabled]);
+    }, [stats.notificationsEnabled, currentDayIndex]);
 
     // Prepare active missions list
     const dailyMissionsFiltered = todaysMissionsRaw

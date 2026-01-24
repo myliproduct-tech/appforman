@@ -290,7 +290,7 @@ const App: React.FC = () => {
     // Check for new achievements when stats change (but not during onboarding)
     // Centralized check - runs whenever points, history or time (week) change
     useEffect(() => {
-        if (stats.userName && !showOnboarding && stats.email) {
+        if (stats.userName && stats.email) {
             const { updatedStats, newUnlocks } = missions.checkAchievements(stats, currentWeekCount);
             if (newUnlocks.length > 0) {
                 setStats(updatedStats);
@@ -316,7 +316,9 @@ const App: React.FC = () => {
         stats.backupContacts,
         stats.manualViewsCount,
         stats.customMissions,
-        stats.budgetPlan
+        stats.budgetPlan,
+        missions.checkAchievements,
+        handleAchievementUnlock
     ]);
 
     // Onboarding tour handlers
