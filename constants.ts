@@ -164,18 +164,18 @@ export const ACHIEVEMENTS: Achievement[] = [
     id: 'prepper',
     title: 'Prepper',
     description: 'Máš kompletně sbalenou tašku do porodnice.',
-    howToUnlock: 'Zaškrtnout alespoň 15 položek v evakuačním batohu (Průzkum Bojiště → Evakuační Batoh).',
+    howToUnlock: 'Zaškrtnout všech 27 položek v evakuačním batohu (Průzkum Bojiště → Evakuační Batoh).',
     icon: 'Backpack',
     rarity: 'epic',
     xpReward: 400,
-    // Assuming we can check length against total items (approx 15 items in lists)
-    condition: (stats: UserStats) => stats.hospitalBagChecklist.length >= 15,
-    progress: (stats: UserStats) => ({ current: Math.min(stats.hospitalBagChecklist.length, 15), total: 15 })
+    // Requirement for all items in the default list (total 27)
+    condition: (stats: UserStats) => stats.hospitalBagChecklist.length >= 27,
+    progress: (stats: UserStats) => ({ current: Math.min(stats.hospitalBagChecklist.length, 27), total: 27 })
   },
   {
     id: 'mechanic',
     title: 'Mechanik',
-    description: 'Pořídil jsi kompletní výbavu (kočár, sedačka, postýlka...).',
+    description: 'Získal jsi podstatnou část výbavy (kočár, sedačka, postýlka...).',
     howToUnlock: 'Zaškrtnout alespoň 10 položek v taktickém inventáři (Kasa → Inventář).',
     icon: 'Wrench',
     rarity: 'epic',
