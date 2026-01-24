@@ -183,6 +183,17 @@ export const TabContent: React.FC<TabContentProps> = ({
                                 if (newUnlock) setShowAchievementModal(newUnlock);
                                 return updatedStats;
                             })}
+                            onEntryRead={(entryIndex) => setStats(prev => {
+                                const currentRead = prev.manualEntriesRead || [];
+                                // Add entry if not already read
+                                if (!currentRead.includes(entryIndex)) {
+                                    const newStats = { ...prev, manualEntriesRead: [...currentRead, entryIndex] };
+                                    const { updatedStats, newUnlock } = missions.checkAchievements(newStats);
+                                    if (newUnlock) setShowAchievementModal(newUnlock);
+                                    return updatedStats;
+                                }
+                                return prev;
+                            })}
                             onViewEmergency={() => setStats(prev => {
                                 const newStats = { ...prev, emergencyProtocolsViewed: true };
                                 const { updatedStats, newUnlock } = missions.checkAchievements(newStats);

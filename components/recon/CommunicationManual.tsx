@@ -6,9 +6,10 @@ import { CommunicationEntry } from '../../types';
 interface CommunicationManualProps {
     showModal?: boolean;
     onClose?: () => void;
+    onEntryRead?: (entryIndex: number) => void; // Callback when entry is expanded
 }
 
-export const CommunicationManual: React.FC<CommunicationManualProps> = ({ showModal: externalShowModal, onClose }) => {
+export const CommunicationManual: React.FC<CommunicationManualProps> = ({ showModal: externalShowModal, onClose, onEntryRead }) => {
     const [internalShowModal, setInternalShowModal] = useState(false);
     const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
 
@@ -22,7 +23,13 @@ export const CommunicationManual: React.FC<CommunicationManualProps> = ({ showMo
     };
 
     const toggleEntry = (idx: number) => {
-        setExpandedIdx(expandedIdx === idx ? null : idx);
+        const isExpanding = expandedIdx !== idx;
+        setExpandedIdx(isExpanding ? idx : null);
+
+        // Track that this entry was read when expanding
+        if (isExpanding && onEntryRead) {
+            onEntryRead(idx);
+        }
     };
 
     return (

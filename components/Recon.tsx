@@ -66,6 +66,7 @@ interface ReconProps {
     medicalInfo?: MedicalInfo;
     onSaveMedicalInfo?: (info: MedicalInfo) => void;
     onViewManual?: () => void;
+    onEntryRead?: (entryIndex: number) => void; // New: callback when manual entry is expanded
     onViewEmergency?: () => void;
 }
 
@@ -77,7 +78,7 @@ const MUSIC_GENRES = [
     { id: 'nature', label: 'Zvuky přírody', icon: 'Leaf' }
 ];
 
-export const Recon: React.FC<ReconProps> = ({ currentWeek, partnerName, userName, hospitalTarget = '', backupContacts = [], partnerPhone, pediatricianContact, visitorStatus = 'bunker', musicPreference, parkingInfo, gbsStatus = 'unknown', bloodPressureLog = [], amnioticFluidLog, hospitalBagChecklist = [], babyNames = [], firstKickDetected = false, onSaveHospital, onSaveBackupContacts, onSavePartnerPhone, onSavePediatrician, onSaveVisitorStatus, onSaveMusicPreference, onSaveParking, onSaveGbsStatus, onSaveBabyNames, onLogBloodPressure, onLogAmnioticFluid, onToggleHospitalBag, onReportFirstKick, customHospitalBagGear = [], onAddCustomHospitalBagGear, onDeleteCustomHospitalBagGear, onToggleCustomHospitalBagGear, isDevMode, onCompleteAllBag, onResetAllBag, tourCompleted = false, onCompleteTour, medicalInfo, onSaveMedicalInfo, onViewManual, onViewEmergency }) => {
+export const Recon: React.FC<ReconProps> = ({ currentWeek, partnerName, userName, hospitalTarget = '', backupContacts = [], partnerPhone, pediatricianContact, visitorStatus = 'bunker', musicPreference, parkingInfo, gbsStatus = 'unknown', bloodPressureLog = [], amnioticFluidLog, hospitalBagChecklist = [], babyNames = [], firstKickDetected = false, onSaveHospital, onSaveBackupContacts, onSavePartnerPhone, onSavePediatrician, onSaveVisitorStatus, onSaveMusicPreference, onSaveParking, onSaveGbsStatus, onSaveBabyNames, onLogBloodPressure, onLogAmnioticFluid, onToggleHospitalBag, onReportFirstKick, customHospitalBagGear = [], onAddCustomHospitalBagGear, onDeleteCustomHospitalBagGear, onToggleCustomHospitalBagGear, isDevMode, onCompleteAllBag, onResetAllBag, tourCompleted = false, onCompleteTour, medicalInfo, onSaveMedicalInfo, onViewManual, onEntryRead, onViewEmergency }) => {
     // Use reducer for all state management
     const { state, dispatch } = useReconReducer(
         hospitalTarget,
@@ -422,6 +423,7 @@ export const Recon: React.FC<ReconProps> = ({ currentWeek, partnerName, userName
             <CommunicationManual
                 showModal={showCommManual}
                 onClose={() => dispatch({ type: 'TOGGLE_MODAL', modal: 'showCommManual' })}
+                onEntryRead={onEntryRead}
             />
 
             {/* Crisis Protocol Modal */}
