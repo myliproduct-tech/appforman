@@ -145,7 +145,7 @@ export interface Achievement {
   howToUnlock: string; // Návod, jak odznak získat
   icon: string;
   rarity: BadgeRarity;
-  condition: (stats: UserStats) => boolean;
+  condition: (stats: UserStats, currentWeek?: number) => boolean;
   xpReward: number;
   progress?: (stats: UserStats) => { current: number; total: number }; // Volitelný progress pro achievementy s počítadlem
 }

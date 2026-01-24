@@ -23,14 +23,17 @@ export const useMissions = (
     const todaysMissionsRaw = getDailyMissions(currentDayIndex);
 
     // Achievement checker
-    const checkAchievements = React.useCallback((currentStats: UserStats): { updatedStats: UserStats, newUnlocks: Achievement[] } => {
+    const checkAchievements = React.useCallback((currentStats: UserStats, passedWeek?: number): { updatedStats: UserStats, newUnlocks: Achievement[] } => {
         let newUnlocks: Achievement[] = [];
         let newBadges = [...currentStats.badges];
         let xpGain = 0;
 
+        // Use passedWeek or calculate from stats/currentDayIndex
+        const week = passedWeek !== undefined ? passedWeek : (1 + Math.floor(currentDayIndex / 7));
+
         ACHIEVEMENTS.forEach(ach => {
             if (newBadges.some(b => b.id === ach.id)) return;
-            if (ach.condition(currentStats)) {
+            if (ach.condition(currentStats, week)) {
                 newUnlocks.push(ach);
                 newBadges.push({ id: ach.id, unlockedDate: new Date().toISOString() });
                 xpGain += ach.xpReward;

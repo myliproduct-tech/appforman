@@ -346,13 +346,15 @@ export const ACHIEVEMENTS: Achievement[] = [
     icon: 'Flag',
     rarity: 'epic',
     xpReward: 600,
-    condition: (stats: UserStats) => {
+    condition: (stats: UserStats, currentWeek?: number) => {
+      if (currentWeek !== undefined) return currentWeek >= 28;
+
       if (!stats.dueDate) return false;
       const due = new Date(stats.dueDate);
       const now = new Date();
       const diffDays = Math.ceil((due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-      const currentWeek = 40 - Math.ceil(diffDays / 7);
-      return currentWeek >= 28;
+      const week = 40 - Math.ceil(diffDays / 7);
+      return week >= 28;
     }
   },
   {

@@ -249,25 +249,20 @@ const App: React.FC = () => {
 
     // Sync missed missions when day changes or when switching tabs
     useEffect(() => {
-        if (stats.email) {
-            const failedRestoredMission = missions.syncMissedMissions(currentDayIndex);
-            // Show failure modal if a restored mission failed
-            if (failedRestoredMission) {
-                // Use setTimeout to ensure state update has completed
-                setTimeout(() => {
-                    setShowFailureModal(failedRestoredMission);
-                }, 150);
-            }
-
-            // Notify about new missions if enabled
-            if (stats.notificationsEnabled) {
-                notificationService.send(
-                    '📍 Nový den, nové rozkazy',
-                    'Máš k dispozici nové denní mise. Podívej se na Briefing!'
-                );
-            }
+        if (!currentUser) return;
+        const failedRestored = missions.syncMissedMissions(currentDayIndex);
+        if (failedRestored) {
+            setShowFailureModal(failedRestored);
         }
-    }, [currentDayIndex, stats.email, activeTab]);
+
+        // Notify about new missions if enabled
+        if (stats.notificationsEnabled) {
+            notificationService.send(
+                '📍 Nový den, nové rozkazy',
+                'Máš k dispozici nové denní mise. Podívej se na Briefing!'
+            );
+        }
+    }, [currentDayIndex, currentUser, activeTab]);
 
     // Logout handler
     const handleLogout = () => {
@@ -293,18 +288,16 @@ const App: React.FC = () => {
 
 
     // Check for new achievements when stats change (but not during onboarding)
-    // Centralized check - runs whenever points or history change
+    // Centralized check - runs whenever points, history or time (week) change
     useEffect(() => {
         if (stats.userName && !showOnboarding && stats.email) {
-            const { updatedStats, newUnlocks } = missions.checkAchievements(stats);
+            const { updatedStats, newUnlocks } = missions.checkAchievements(stats, currentWeekCount);
             if (newUnlocks.length > 0) {
-                // Update stats only if we haven't added these badges yet
-                // (missions.checkAchievements already filtered them based on stats.badges)
                 setStats(updatedStats);
                 newUnlocks.forEach(ach => handleAchievementUnlock(ach));
             }
         }
-    }, [stats.points, stats.missionHistory.length, stats.badges.length, stats.speedBuildScores, (stats.manualEntriesRead || []).length, stats.soundIDStats, stats.email, showOnboarding, missions.checkAchievements, handleAchievementUnlock]);
+    }, [stats.points, stats.missionHistory.length, stats.badges.length, stats.speedBuildScores, (stats.manualEntriesRead || []).length, stats.soundIDStats, stats.email, currentWeekCount, showOnboarding]);
 
     // Onboarding tour handlers
     useEffect(() => {
