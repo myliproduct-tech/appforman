@@ -126,34 +126,21 @@ export const TabContent: React.FC<TabContentProps> = ({
                             firstKickDetected={stats.firstKickDetected}
                             isDevMode={devMode.isDevMode}
                             onSaveHospital={(target) => setStats(prev => ({ ...prev, hospitalTarget: target }))}
-                            onSaveBackupContacts={(contacts) => setStats(prev => {
-                                const newStats = { ...prev, backupContacts: contacts };
-                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
-                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
-                                return updatedStats;
-                            })}
+                            onSaveBackupContacts={(contacts) => setStats(prev => ({ ...prev, backupContacts: contacts }))}
                             onSavePartnerPhone={(phone) => setStats(prev => ({ ...prev, partnerPhone: phone }))}
                             onSavePediatrician={(name, phone, address) => setStats(prev => ({ ...prev, pediatricianContact: { name, phone, address } }))}
                             onSaveVisitorStatus={(status) => setStats(prev => ({ ...prev, visitorStatus: status }))}
                             onSaveMusicPreference={(genre) => setStats(prev => ({ ...prev, musicPreference: genre }))}
                             onSaveParking={(info) => setStats(prev => ({ ...prev, parkingInfo: info }))}
                             onSaveGbsStatus={(status) => setStats(prev => ({ ...prev, gbsStatus: status }))}
-                            onSaveBabyNames={(names) => setStats(prev => {
-                                const newStats = { ...prev, babyNames: names };
-                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
-                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
-                                return updatedStats;
-                            })}
+                            onSaveBabyNames={(names) => setStats(prev => ({ ...prev, babyNames: names }))}
                             onLogBloodPressure={(sys, dia) => setStats(prev => ({ ...prev, bloodPressureLog: [...(prev.bloodPressureLog || []), { sys, dia, date: new Date().toISOString() }] }))}
                             onLogAmnioticFluid={(color) => setStats(prev => ({ ...prev, amnioticFluidLog: { time: new Date().toISOString(), color } }))}
                             onToggleHospitalBag={(id) => setStats(prev => {
                                 const newChecklist = prev.hospitalBagChecklist.includes(id)
                                     ? prev.hospitalBagChecklist.filter(i => i !== id)
                                     : [...prev.hospitalBagChecklist, id];
-                                const newStats = { ...prev, hospitalBagChecklist: newChecklist };
-                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
-                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
-                                return updatedStats;
+                                return { ...prev, hospitalBagChecklist: newChecklist };
                             })}
                             customHospitalBagGear={stats.customHospitalBagGear || []}
                             onAddCustomHospitalBagGear={(item) => setStats(prev => ({ ...prev, customHospitalBagGear: [...(prev.customHospitalBagGear || []), item] }))}
@@ -163,10 +150,7 @@ export const TabContent: React.FC<TabContentProps> = ({
                                 customHospitalBagGear: (prev.customHospitalBagGear || []).map(g => g.id === id ? { ...g, bought: !g.bought } : g)
                             }))}
                             onReportFirstKick={() => setStats(prev => {
-                                const newStats = { ...prev, firstKickDetected: true };
-                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
-                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
-                                return updatedStats;
+                                return { ...prev, firstKickDetected: true };
                             })}
                             onCompleteAllBag={handleCompleteAllHospitalBag}
                             onResetAllBag={handleResetAllHospitalBag}
@@ -178,33 +162,21 @@ export const TabContent: React.FC<TabContentProps> = ({
                             medicalInfo={stats.medicalInfo}
                             onSaveMedicalInfo={(info) => setStats(prev => ({ ...prev, medicalInfo: info }))}
                             onViewManual={() => setStats(prev => {
-                                const newStats = { ...prev, manualViewsCount: (prev.manualViewsCount || 0) + 1 };
-                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
-                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
-                                return updatedStats;
+                                return { ...prev, manualViewsCount: (prev.manualViewsCount || 0) + 1 };
                             })}
                             onEntryRead={(entryIndex) => setStats(prev => {
                                 const currentRead = prev.manualEntriesRead || [];
                                 // Add entry if not already read
                                 if (!currentRead.includes(entryIndex)) {
-                                    const newStats = { ...prev, manualEntriesRead: [...currentRead, entryIndex] };
-                                    const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
-                                    newUnlocks.forEach(ach => setShowAchievementModal(ach));
-                                    return updatedStats;
+                                    return { ...prev, manualEntriesRead: [...currentRead, entryIndex] };
                                 }
                                 return prev;
                             })}
                             onViewEmergency={() => setStats(prev => {
-                                const newStats = { ...prev, emergencyProtocolsViewed: true };
-                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
-                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
-                                return updatedStats;
+                                return { ...prev, emergencyProtocolsViewed: true };
                             })}
                             onViewICE={() => setStats(prev => {
-                                const newStats = { ...prev, iceCardViewed: true };
-                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
-                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
-                                return updatedStats;
+                                return { ...prev, iceCardViewed: true };
                             })}
                         />
                     )}

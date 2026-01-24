@@ -297,7 +297,25 @@ const App: React.FC = () => {
                 newUnlocks.forEach(ach => handleAchievementUnlock(ach));
             }
         }
-    }, [stats.points, stats.missionHistory.length, stats.badges.length, stats.speedBuildScores, (stats.manualEntriesRead || []).length, stats.soundIDStats, stats.email, currentWeekCount, showOnboarding]);
+    }, [
+        stats.points,
+        stats.missionHistory.length,
+        stats.badges.length,
+        stats.speedBuildScores,
+        (stats.manualEntriesRead || []).length,
+        stats.soundIDStats,
+        stats.email,
+        currentWeekCount,
+        showOnboarding,
+        stats.babyNames,
+        stats.iceCardViewed,
+        stats.emergencyProtocolsViewed,
+        stats.firstKickDetected,
+        stats.hospitalBagChecklist,
+        stats.gearChecklist,
+        stats.backupContacts,
+        stats.manualViewsCount
+    ]);
 
     // Onboarding tour handlers
     useEffect(() => {
