@@ -63,41 +63,35 @@ const getDeclension = (name: string, form: 'nom' | 'gen' | 'dat' | 'acc' | 'voc'
 export const localizeText = (text: string, partnerName: string): string => {
   if (!text) return "";
 
-  // Default to "Velitelka" if partnerName is empty, but if partnerName IS "Velitelka", we don't need to replace (optimization).
-  // But we DO need to replace "mamina" with "Velitelka" if the user chose "Velitelka".
   const name = partnerName && partnerName.trim() !== "" ? partnerName : "Velitelka";
-
-  // Helper to apply regex replacement with case handling
   let res = text;
 
-  // 1. Instrumental (7. pád) - s Velitelkou, s maminou -> s [jménem]
-  res = res.replace(/\b(Velitelkou|maminou)\b/g, getDeclension(name, 'ins'));
+  // Dictionary of words to replace with their declension form
+  const replacements: { pattern: string[], form: 'nom' | 'gen' | 'dat' | 'acc' | 'voc' | 'ins' }[] = [
+    { pattern: ['Velitelkou', 'maminou', 'maminkou', 'partnerkou'], form: 'ins' },
+    { pattern: ['Velitelku', 'maminu', 'maminku', 'partnerku'], form: 'acc' },
+    { pattern: ['Velitelce', 'mamině', 'mamince', 'partnerce'], form: 'dat' },
+    { pattern: ['Velitelky', 'maminy', 'maminky', 'partnerky'], form: 'gen' },
+    { pattern: ['Velitelko', 'mamino', 'maminko', 'partnerko'], form: 'voc' },
+    { pattern: ['Velitelka', 'mamina', 'maminka', 'partnerka'], form: 'nom' }
+  ];
 
-  // 2. Accusative (4. pád) - pro Velitelku, vidím maminu -> [jméno-u]
-  res = res.replace(/\b(Velitelku|maminu)\b/g, getDeclension(name, 'acc'));
+  replacements.forEach(({ pattern, form }) => {
+    const replacement = form === 'nom' ? name : getDeclension(name, form);
+    // Use a regex that handles Czech characters correctly by not relying solely on \b
+    // This lookbehind/lookahead approach ensures we only replace whole words
+    pattern.forEach(word => {
+      const regex = new RegExp(`(?<=^|[^a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ])${word}(?=[^a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]|$)`, 'g');
+      res = res.replace(regex, replacement);
 
-  // 3. Dative/Locative (3./6. pád) - k Velitelce, o mamině -> [jméno-ě/ce]
-  res = res.replace(/\b(Velitelce|mamině)\b/g, getDeclension(name, 'dat'));
-
-  // 4. Genitive (2. pád) - bez Velitelky, u maminy -> [jméno-y]
-  // Note: Also handles plural nom/acc in some contexts, but rare in this app's corpus.
-  res = res.replace(/\b(Velitelky|maminy)\b/g, getDeclension(name, 'gen'));
-
-  // 5. Vocative (5. pád) - Ahoj Velitelko, Ahoj mamino -> [jméno-o]
-  res = res.replace(/\b(Velitelko|mamino)\b/g, getDeclension(name, 'voc'));
-
-  // 6. Nominative (1. pád) - Velitelka, mamina -> [jméno]
-  // We handle lowercase 'mamina' separately to capitalization if needed, but usually we want to respect the user's name capitalization.
-  // If the sentence starts with Mamina, we replace with Name. If it's inside, we replace with Name.
-  res = res.replace(/\b(Velitelka|mamina)\b/g, name);
-
-  // Handle capitalized variations explicitly if regex flag 'i' isn't used to preserve intent
-  // (The above regexes don't use 'i' flag to avoid replacing "velitelkou" with "Maminou" inside a sentence if we want to keep casing logic, 
-  // but usually names are capitalized. Let's do a pass for lowercase "mamina" specifically if it wasn't caught).
-
-  // Fix lowercase 'mamina' variants if they weren't capitalized in source
-  res = res.replace(/\bmaminou\b/g, getDeclension(name, 'ins').toLowerCase()); // Keep lowercase if source was lowercase? 
-  // Actually, partner names are proper nouns, so they should be capitalized even if source "mamina" wasn't.
+      // Also handle lowercase variants if the word in pattern was capitalized
+      if (word[0] === word[0].toUpperCase()) {
+        const lowerWord = word.toLowerCase();
+        const lowerRegex = new RegExp(`(?<=^|[^a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ])${lowerWord}(?=[^a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]|$)`, 'g');
+        res = res.replace(lowerRegex, replacement);
+      }
+    });
+  });
 
   return res;
 };
