@@ -358,6 +358,8 @@ const App: React.FC = () => {
 
     const handleRestartTour = () => {
         setActiveTab('dashboard');
+        // Clear any pending achievements from previous tour run
+        setPendingTourAchievements([]);
         setShowOnboarding(true);
     };
 
