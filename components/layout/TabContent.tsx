@@ -199,17 +199,9 @@ export const TabContent: React.FC<TabContentProps> = ({
                                 const newGearChecklist = prev.gearChecklist.includes(id)
                                     ? prev.gearChecklist.filter(i => i !== id)
                                     : [...prev.gearChecklist, id];
-                                const newStats = { ...prev, gearChecklist: newGearChecklist };
-                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
-                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
-                                return updatedStats;
+                                return { ...prev, gearChecklist: newGearChecklist };
                             })}
-                            onSaveBudget={(plan) => setStats(prev => {
-                                const newStats = { ...prev, budgetPlan: plan };
-                                const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
-                                newUnlocks.forEach(ach => setShowAchievementModal(ach));
-                                return updatedStats;
-                            })}
+                            onSaveBudget={(plan) => setStats(prev => ({ ...prev, budgetPlan: plan }))}
                             onAddCustomGear={(item) => setStats(prev => ({ ...prev, customGear: [...(prev.customGear || []), item] }))}
                             onDeleteCustomGear={(id) => setStats(prev => ({ ...prev, customGear: (prev.customGear || []).filter(g => g.id !== id) }))}
                             onToggleCustomGear={(id) => setStats(prev => ({
@@ -217,14 +209,7 @@ export const TabContent: React.FC<TabContentProps> = ({
                                 customGear: (prev.customGear || []).map(g => g.id === id ? { ...g, bought: !g.bought } : g)
                             }))}
                             onSaveVehicle={(model) => setStats(prev => ({ ...prev, vehicleModel: model }))}
-                            onConfirmVehicle={() => {
-                                setStats(prev => {
-                                    const newStats = { ...prev, vehicleConfirmed: true };
-                                    const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
-                                    newUnlocks.forEach(ach => setShowAchievementModal(ach));
-                                    return updatedStats;
-                                });
-                            }}
+                            onConfirmVehicle={() => setStats(prev => ({ ...prev, vehicleConfirmed: true }))}
                             onUpdateConsumable={consumables.handleUpdateConsumable}
                             onAddCustomConsumable={consumables.handleAddCustomConsumable}
                             onDeleteConsumable={consumables.handleDeleteConsumable}

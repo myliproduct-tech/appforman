@@ -314,7 +314,9 @@ const App: React.FC = () => {
         stats.hospitalBagChecklist,
         stats.gearChecklist,
         stats.backupContacts,
-        stats.manualViewsCount
+        stats.manualViewsCount,
+        stats.customMissions,
+        stats.budgetPlan
     ]);
 
     // Onboarding tour handlers
