@@ -279,17 +279,17 @@ export const ACHIEVEMENTS: Achievement[] = [
     id: 'translator',
     title: 'Tlumočník',
     description: 'Úplné zvládnutí komunikačních protokolů Velitelky.',
-    howToUnlock: 'Přečíst celý Komunikační manuál (rozvinout všech 13 položek).',
+    howToUnlock: 'Přečíst celý Komunikační manuál (rozvinout všech 15 položek).',
     icon: 'MessageSquare',
     rarity: 'common',
     xpReward: 100,
     condition: (stats: UserStats) => {
       const readEntries = stats.manualEntriesRead || [];
-      return readEntries.length >= 13; // All 13 entries must be read
+      return readEntries.length >= 15; // All 15 entries must be read
     },
     progress: (stats: UserStats) => ({
-      current: Math.min((stats.manualEntriesRead || []).length, 13),
-      total: 13
+      current: Math.min((stats.manualEntriesRead || []).length, 15),
+      total: 15
     })
   },
   {
