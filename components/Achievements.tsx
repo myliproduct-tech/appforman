@@ -310,9 +310,17 @@ const AchievementModalComponent: React.FC<ModalProps> = ({ achievement, unlocked
                                 const isTimeBased = achievement.id === 'f1_mechanic' || achievement.id === 'diaper_ninja';
 
                                 // Format progress text
-                                const progressText = isTimeBased
-                                    ? `${(progressData.current / 10).toFixed(1)}s / ${(progressData.total / 10).toFixed(1)}s`
-                                    : `${progressData.current}/${progressData.total}`;
+                                let progressText;
+                                if (isTimeBased) {
+                                    // For time-based: current is inverted (150 - actual time)
+                                    const actualTime = (progressData.total - progressData.current) / 10;
+                                    const targetTime = progressData.total / 10;
+                                    progressText = progressData.current === 0
+                                        ? `0.0s / ${targetTime.toFixed(1)}s`
+                                        : `${actualTime.toFixed(1)}s / ${targetTime.toFixed(1)}s`;
+                                } else {
+                                    progressText = `${progressData.current}/${progressData.total}`;
+                                }
 
                                 return (
                                     <div className="bg-black/30 border-2 border-white/20 rounded-xl p-4">
