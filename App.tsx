@@ -319,20 +319,6 @@ const App: React.FC = () => {
             const newStats = { ...prev, onboardingCompleted: true, onboardingFinished: true };
             const { updatedStats, newUnlocks } = missions.checkAchievements(newStats);
             newUnlocks.forEach(ach => addToAchievementQueue(ach));
-
-            // Also show any achievements unlocked during tour (last 10 minutes)
-            const tenMinutesAgo = Date.now() - (10 * 60 * 1000);
-            const recentAchievements = stats.badges
-                .filter(badge => {
-                    const badgeDate = new Date(badge.unlockedDate || 0).getTime();
-                    // Show if unlocked recently AND not already in newUnlocks
-                    return badgeDate > tenMinutesAgo && !newUnlocks.some(u => u.id === badge.id);
-                })
-                .map(badge => ACHIEVEMENTS.find(ach => ach.id === badge.id))
-                .filter((ach): ach is Achievement => ach !== undefined);
-
-            recentAchievements.forEach(ach => addToAchievementQueue(ach));
-
             return updatedStats;
         });
         setShowOnboarding(false);
