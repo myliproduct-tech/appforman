@@ -102,11 +102,21 @@ export const SoundID: React.FC<{
     const [showExplanation, setShowExplanation] = useState(false);
     const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
-    // Load stats
+    // Load stats with migration for old format
     useEffect(() => {
         const saved = localStorage.getItem('soundIDStats');
         if (saved) {
-            setStats(JSON.parse(saved));
+            const parsed = JSON.parse(saved);
+            // Migrate old format (streak -> streakValue, bestStreak -> bestStreakValue)
+            const migratedStats = {
+                totalAttempts: parsed.totalAttempts || 0,
+                correctAnswers: parsed.correctAnswers || 0,
+                streakValue: parsed.streakValue !== undefined ? parsed.streakValue : (parsed.streak || 0),
+                bestStreakValue: parsed.bestStreakValue !== undefined ? parsed.bestStreakValue : (parsed.bestStreak || 0)
+            };
+            setStats(migratedStats);
+            // Save migrated format back to localStorage
+            localStorage.setItem('soundIDStats', JSON.stringify(migratedStats));
         }
     }, []);
 
