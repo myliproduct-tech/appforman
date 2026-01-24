@@ -119,11 +119,19 @@ export const ACHIEVEMENTS: Achievement[] = [
     rarity: 'rare',
     xpReward: 200,
     condition: (stats: UserStats) => {
-      const supplyCount = stats.missionHistory.filter(m => m.category === 'zásoby' || m.category === 'logistika').length;
+      const supplyCount = stats.missionHistory.filter(m =>
+        (m.category === 'zásoby' || m.category === 'logistika') &&
+        m.completed === true &&
+        !m.failed
+      ).length;
       return supplyCount >= 10;
     },
     progress: (stats: UserStats) => {
-      const supplyCount = stats.missionHistory.filter(m => m.category === 'zásoby' || m.category === 'logistika').length;
+      const supplyCount = stats.missionHistory.filter(m =>
+        (m.category === 'zásoby' || m.category === 'logistika') &&
+        m.completed === true &&
+        !m.failed
+      ).length;
       return { current: Math.min(supplyCount, 10), total: 10 };
     }
   },
@@ -137,9 +145,16 @@ export const ACHIEVEMENTS: Achievement[] = [
     xpReward: 150,
     // Note: This requires tracking intel opens, for now we approximate by level or manual trigger, 
     // OR simply change condition to "Survey/Recon" missions
-    condition: (stats: UserStats) => stats.missionHistory.filter(m => m.category === 'průzkum').length >= 5,
+    condition: (stats: UserStats) => {
+      const reconCount = stats.missionHistory.filter(m =>
+        m.category === 'průzkum' && m.completed === true && !m.failed
+      ).length;
+      return reconCount >= 5;
+    },
     progress: (stats: UserStats) => {
-      const reconCount = stats.missionHistory.filter(m => m.category === 'průzkum').length;
+      const reconCount = stats.missionHistory.filter(m =>
+        m.category === 'průzkum' && m.completed === true && !m.failed
+      ).length;
       return { current: Math.min(reconCount, 5), total: 5 };
     }
   },
