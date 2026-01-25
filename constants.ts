@@ -361,12 +361,12 @@ export const ACHIEVEMENTS: Achievement[] = [
     id: 'promotion',
     title: 'Povýšení',
     description: 'Za mimořádné zásluhy a nasbírané zkušenosti.',
-    howToUnlock: 'Dosáhnout celkem 2500 XP.',
+    howToUnlock: 'Dosáhnout celkem 10000 XP.',
     icon: 'TrendingUp',
     rarity: 'rare',
     xpReward: 300,
-    condition: (stats: UserStats) => stats.points >= 2500,
-    progress: (stats: UserStats) => ({ current: Math.min(stats.points, 2500), total: 2500 })
+    condition: (stats: UserStats) => stats.points >= 10000,
+    progress: (stats: UserStats) => ({ current: Math.min(stats.points, 10000), total: 10000 })
   },
   {
     id: 'name_confirmed',
@@ -754,15 +754,15 @@ export const HOSPITAL_BAG_CHECKLIST = [
 
 export const RANKS = [
   { level: 1, minPoints: 0, icon: "👶", name: "CIVILNÍ KONTAKT", status: "Cíl detekován. Prvotní šok zjištěn. Zahajuji sledování situace.", message: "Vítej v programu, civilisto. Tvoje cesta teprve začíná." },
-  { level: 2, minPoints: 150, icon: "🎖️", name: "REKRUT JEDNOTKY \"TÁTA\"", status: "Přijat do výcvikového tábora. Učíš se základní zkratky a termíny.", message: "Pozor! Byl jsi přijat do výcviku. Tady končí legrace, rekrute." },
-  { level: 3, minPoints: 450, icon: "🔭", name: "OPERÁTOR PRŮZKUMU", status: "Aktivní vyhledávání informací a mapování terénu (prodejny, recenze).", message: "Dobrá práce. Máš oči všude. Průzkum je základ úspěchu." },
-  { level: 4, minPoints: 900, icon: "📦", name: "SPECIALISTA LOGISTIKY", status: "Správa zásobování. Dokážeš bezchybně doručit jakoukoliv surovinu, kterou ONA vyžádá.", message: "Logistika vyhrává války. Tvoje schopnost sehnat okurky ve 2 ráno je legendární." },
-  { level: 5, minPoints: 1500, icon: "⚙️", name: "ANALYTIK KONFIGURACÍ", status: "Expert na technické parametry (kočárky, autosedačky, monitory dechu).", message: "Rozumíš technice lépe než manuálům. Kočárek složíš i poslepu." },
-  { level: 6, minPoints: 2300, icon: "🧠", name: "TAKTICKÝ PORADCE", status: "Pokročilé znalosti procesů v těle Velitelky. Jsi připraven na krizové scénáře.", message: "Tvé rady jsou nyní brány vážně. Jsi oporou v týlu nepřítele (hormonů)." },
-  { level: 7, minPoints: 3300, icon: "🚁", name: "VELITEL VÝSADKOVÉHO TÝMU", status: "Příprava k akci vrcholí. Logistické cesty do porodnice jsou schváleny a prověřeny.", message: "Tým je připraven k výsadku. Znáš trasu, znáš plán. Jsi připraven." },
-  { level: 8, minPoints: 4500, icon: "🛡️", name: "STRÁŽCE SEKTORU", status: "Maximální pohotovost 24/7. Tvá trpělivost a podpora jsou hlavní obrannou linií.", message: "Jsi majákem v bouři. Tvoje trpělivost je štítem celé rodiny." },
-  { level: 9, minPoints: 6000, icon: "🎖️", name: "ELITNÍ VETERÁN", status: "Poslední fáze před nasazením. Nic tě nepřekvapí. Jsi v nejlepší formě života.", message: "Viděl jsi všechno. Jsi připraven na to hlavní. Teď už není cesty zpět." },
-  { level: 10, minPoints: 8000, icon: "👑", name: "GENERÁL TATÍNEK", status: "MISE SPLNĚNA. Junior je na základně. Máš nejvyšší velení a respekt celého štábu.", message: "POZOR! GENERÁL NA SCÉNĚ! Dokázal jsi to. Jsi Táta. Nejvyšší pocta, jakou muž může získat." }
+  { level: 2, minPoints: 500, icon: "🎖️", name: "REKRUT JEDNOTKY \"TÁTA\"", status: "Přijat do výcvikového tábora. Učíš se základní zkratky a termíny.", message: "Pozor! Byl jsi přijat do výcviku. Tady končí legrace, rekrute." },
+  { level: 3, minPoints: 1500, icon: "🔭", name: "OPERÁTOR PRŮZKUMU", status: "Aktivní vyhledávání informací a mapování terénu (prodejny, recenze).", message: "Dobrá práce. Máš oči všude. Průzkum je základ úspěchu." },
+  { level: 4, minPoints: 3000, icon: "📦", name: "SPECIALISTA LOGISTIKY", status: "Správa zásobování. Dokážeš bezchybně doručit jakoukoliv surovinu, kterou ONA vyžádá.", message: "Logistika vyhrává války. Tvoje schopnost sehnat okurky ve 2 ráno je legendární." },
+  { level: 5, minPoints: 5500, icon: "⚙️", name: "ANALYTIK KONFIGURACÍ", status: "Expert na technické parametry (kočárky, autosedačky, monitory dechu).", message: "Rozumíš technice lépe než manuálům. Kočárek složíš i poslepu." },
+  { level: 6, minPoints: 9000, icon: "🧠", name: "TAKTICKÝ PORADCE", status: "Pokročilé znalosti procesů v těle Velitelky. Jsi připraven na krizové scénáře.", message: "Tvé rady jsou nyní brány vážně. Jsi oporou v týlu nepřítele (hormonů)." },
+  { level: 7, minPoints: 13000, icon: "🚁", name: "VELITEL VÝSADKOVÉHO TÝMU", status: "Příprava k akci vrcholí. Logistické cesty do porodnice jsou schváleny a prověřeny.", message: "Tým je připraven k výsadku. Znáš trasu, znáš plán. Jsi připraven." },
+  { level: 8, minPoints: 17500, icon: "🛡️", name: "STRÁŽCE SEKTORU", status: "Maximální pohotovost 24/7. Tvá trpělivost a podpora jsou hlavní obrannou linií.", message: "Jsi majákem v bouři. Tvoje trpělivost je štítem celé rodiny." },
+  { level: 9, minPoints: 21000, icon: "🎖️", name: "ELITNÍ VETERÁN", status: "Poslední fáze před nasazením. Nic tě nepřekvapí. Jsi v nejlepší formě života.", message: "Viděl jsi všechno. Jsi připraven na to hlavní. Teď už není cesty zpět." },
+  { level: 10, minPoints: 25000, icon: "👑", name: "GENERÁL TATÍNEK", status: "MISE SPLNĚNA. Junior je na základně. Máš nejvyšší velení a respekt celého štábu.", message: "POZOR! GENERÁL NA SCÉNĚ! Dokázal jsi to. Jsi Táta. Nejvyšší pocta, jakou muž může získat." }
 ];
 
 export const DESERTER_RANK = {
