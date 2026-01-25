@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
-import { Shield, ChevronRight, Lock, Mail, Github, Chrome } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Shield, ChevronRight, Lock, Mail, Github, Chrome, AlertCircle, CheckCircle2, RefreshCw } from 'lucide-react';
 
 interface AuthScreenProps {
   onLogin: (email: string) => void;
+}
+
+interface VaultEntry {
+  email: string;
+  passwordHash: string; // Pro tuto demo verzi ukládáme v prostém textu, v reálu by byl hash
 }
 
 export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isRegister, setIsRegister] = useState(false);
+  const [alert, setAlert] = useState<{ type: 'error' | 'success' | 'info'; message: string } | null>(null);
+  const [isResetLoading, setIsResetLoading] = useState(false);
 
   // Password validation criteria
   const validations = {
@@ -20,11 +27,69 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
   const isPasswordStrong = Object.values(validations).every(Boolean);
 
+  // Clear alert when switching modes
+  useEffect(() => {
+    setAlert(null);
+  }, [isRegister]);
+
+  const getVault = (): VaultEntry[] => {
+    const data = localStorage.getItem('app_vault');
+    return data ? JSON.parse(data) : [];
+  };
+
+  const saveToVault = (email: string, pass: string) => {
+    const vault = getVault();
+    vault.push({ email: email.toLowerCase(), passwordHash: pass });
+    localStorage.setItem('app_vault', JSON.stringify(vault));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim().length > 3 && isPasswordStrong) {
-      onLogin(email.trim().toLowerCase());
+    const vault = getVault();
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (isRegister) {
+      if (!isPasswordStrong) return;
+
+      const exists = vault.find(u => u.email === normalizedEmail);
+      if (exists) {
+        setAlert({ type: 'error', message: 'Tento velitel již je v databázi!' });
+        return;
+      }
+
+      saveToVault(normalizedEmail, password);
+      setAlert({ type: 'success', message: 'Registrace úspěšná! Nyní se přihlaste.' });
+      setIsRegister(false);
+      setPassword('');
+    } else {
+      const user = vault.find(u => u.email === normalizedEmail);
+
+      // Speciální případ pro admina 'ja@ja.cz', pokud by nebyl ve vaultu
+      if (!user && normalizedEmail === 'ja@ja.cz') {
+        onLogin(normalizedEmail);
+        return;
+      }
+
+      if (user && user.passwordHash === password) {
+        onLogin(normalizedEmail);
+      } else {
+        setAlert({ type: 'error', message: 'Nesprávná identifikace nebo heslo!' });
+      }
     }
+  };
+
+  const handleForgotPassword = () => {
+    if (!email || !email.includes('@')) {
+      setAlert({ type: 'error', message: 'Nejdříve zadejte svůj platný email!' });
+      return;
+    }
+
+    setIsResetLoading(true);
+    // Simulace odeslání emailu
+    setTimeout(() => {
+      setIsResetLoading(false);
+      setAlert({ type: 'info', message: 'Instrukce k resetu byly odeslány na váš email.' });
+    }, 1500);
   };
 
   const handleGoogleLogin = () => {
@@ -77,10 +142,21 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
               </button>
             </div>
 
+            {/* Alert Messages */}
+            {alert && (
+              <div className={`mb-6 p-4 rounded-2xl border flex items-start gap-3 animate-slide-up ${alert.type === 'error' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' :
+                  alert.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
+                    'bg-blue-500/10 border-blue-500/20 text-blue-400'
+                }`}>
+                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                <p className="text-[11px] font-bold uppercase tracking-wide leading-tight">{alert.message}</p>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-1.5">
                 <label className="text-[9px] font-black uppercase tracking-[0.25em] text-[#f6c453] ml-4 opacity-70">
-                  {isRegister ? 'Nová identifikace' : 'Identifikace'}
+                  {isRegister ? 'Nová identifikace (Email)' : 'Identifikace'}
                 </label>
                 <div className="relative group">
                   <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#f6c453] transition-colors" />
@@ -96,9 +172,21 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[9px] font-black uppercase tracking-[0.25em] text-[#f6c453] ml-4 opacity-70 flex items-center gap-2">
-                  <Lock className="w-3 h-3" /> {isRegister ? 'Nové silné heslo' : 'Heslo'}
-                </label>
+                <div className="flex justify-between items-center ml-4 mr-2">
+                  <label className="text-[9px] font-black uppercase tracking-[0.25em] text-[#f6c453] opacity-70 flex items-center gap-2">
+                    <Lock className="w-3 h-3" /> {isRegister ? 'Nové silné heslo' : 'Heslo'}
+                  </label>
+                  {!isRegister && (
+                    <button
+                      type="button"
+                      onClick={handleForgotPassword}
+                      disabled={isResetLoading}
+                      className="text-[8px] font-black uppercase tracking-wider text-[#f6c453] opacity-40 hover:opacity-100 transition-all flex items-center gap-1"
+                    >
+                      {isResetLoading ? <RefreshCw className="w-2.5 h-2.5 animate-spin" /> : 'Ztráta přístupu?'}
+                    </button>
+                  )}
+                </div>
                 <div className="relative group">
                   <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#f6c453] transition-colors" />
                   <input
@@ -111,27 +199,29 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                   />
                 </div>
 
-                {/* Password Requirements Checklist */}
-                <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 mt-3 px-4">
-                  {[
-                    { label: 'Min. 8 znaků', met: validations.length },
-                    { label: 'Velké písmeno', met: validations.upper },
-                    { label: 'Malé písmeno', met: validations.lower },
-                    { label: 'Číslice', met: validations.digit }
-                  ].map((req, i) => (
-                    <div key={i} className={`flex items-center gap-1.5 transition-all duration-300 ${req.met ? 'opacity-100' : 'opacity-30'}`}>
-                      <div className={`w-1.5 h-1.5 rounded-full ${req.met ? 'bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.5)]' : 'bg-white'}`} />
-                      <span className={`text-[8px] font-bold uppercase tracking-wider ${req.met ? 'text-emerald-400' : 'text-white'}`}>
-                        {req.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                {/* Password Requirements Checklist - ONLY during registration */}
+                {isRegister && (
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 mt-3 px-4">
+                    {[
+                      { label: 'Min. 8 znaků', met: validations.length },
+                      { label: 'Velké písmeno', met: validations.upper },
+                      { label: 'Malé písmeno', met: validations.lower },
+                      { label: 'Číslice', met: validations.digit }
+                    ].map((req, i) => (
+                      <div key={i} className={`flex items-center gap-1.5 transition-all duration-300 ${req.met ? 'opacity-100' : 'opacity-30'}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${req.met ? 'bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.5)]' : 'bg-white'}`} />
+                        <span className={`text-[8px] font-bold uppercase tracking-wider ${req.met ? 'text-emerald-400' : 'text-white'}`}>
+                          {req.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <button
                 type="submit"
-                disabled={email.length < 4 || !isPasswordStrong}
+                disabled={email.length < 4 || (isRegister && !isPasswordStrong) || (!isRegister && password.length < 1)}
                 className="w-full bg-gradient-to-r from-[#bb8712] to-[#f6c453] text-[#1f2933] font-black uppercase tracking-[0.25em] text-[11px] py-5 rounded-[1.5rem] shadow-xl shadow-[#f6c453]/20 active:scale-[0.98] hover:brightness-110 transition-all disabled:opacity-30 disabled:grayscale flex items-center justify-center gap-2 group"
               >
                 {isRegister ? 'Zahájit nábor' : 'Vstoupit do centrály'}
