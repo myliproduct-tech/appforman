@@ -43,6 +43,16 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     localStorage.setItem('app_vault', JSON.stringify(vault));
   };
 
+  // Cleanup Vault on mount: keep only 'ja@ja.cz'
+  useEffect(() => {
+    const vault = getVault();
+    const cleanedVault = vault.filter(u => u.email === 'ja@ja.cz');
+    if (vault.length !== cleanedVault.length) {
+      localStorage.setItem('app_vault', JSON.stringify(cleanedVault));
+      console.log('🧹 Vault vyčištěn: Ponechán pouze ja@ja.cz');
+    }
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const vault = getVault();
@@ -58,9 +68,12 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
       }
 
       saveToVault(normalizedEmail, password);
-      setAlert({ type: 'success', message: 'Registrace úspěšná! Nyní se přihlaste.' });
-      setIsRegister(false);
-      setPassword('');
+      setAlert({ type: 'success', message: 'Registrace úspěšná! Vstupuji do systému...' });
+
+      // AUTO-LOGIN po registraci
+      setTimeout(() => {
+        onLogin(normalizedEmail);
+      }, 1000);
     } else {
       const user = vault.find(u => u.email === normalizedEmail);
 
@@ -145,8 +158,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
             {/* Alert Messages */}
             {alert && (
               <div className={`mb-6 p-4 rounded-2xl border flex items-start gap-3 animate-slide-up ${alert.type === 'error' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' :
-                  alert.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
-                    'bg-blue-500/10 border-blue-500/20 text-blue-400'
+                alert.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
+                  'bg-blue-500/10 border-blue-500/20 text-blue-400'
                 }`}>
                 <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
                 <p className="text-[11px] font-bold uppercase tracking-wide leading-tight">{alert.message}</p>
