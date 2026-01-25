@@ -156,7 +156,7 @@ export const AchievementModal: React.FC<AchievementModalProps> = ({ achievement:
                 {/* Printable Card */}
                 <div
                     ref={cardRef}
-                    className={`relative aspect-square rounded-[3rem] bg-[#1f2933] border-4 p-8 flex flex-col items-center justify-center text-center overflow-hidden shadow-2xl transition-all duration-500 ${isUnlocked ? 'border-[#f6c453]/50' : 'border-white/10 bg-slate-900'}`}
+                    className={`relative min-h-[400px] rounded-[3rem] bg-[#1f2933] border-4 p-8 pt-12 pb-24 flex flex-col items-center justify-start text-center overflow-hidden shadow-2xl transition-all duration-500 ${isUnlocked ? 'border-[#f6c453]/50' : 'border-white/10 bg-slate-900'}`}
                 >
                     {/* Decorative Elements */}
                     {isUnlocked && (
