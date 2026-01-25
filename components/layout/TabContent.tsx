@@ -254,6 +254,7 @@ export const TabContent: React.FC<TabContentProps> = ({
                 <ErrorBoundary sectionName="Achievementy">
                     <Achievements
                         stats={stats}
+                        onClose={() => setActiveTab('dashboard')}
                     />
                 </ErrorBoundary>
             )}
