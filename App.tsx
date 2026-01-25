@@ -317,6 +317,12 @@ const App: React.FC = () => {
         stats.manualViewsCount,
         stats.customMissions,
         stats.budgetPlan,
+        stats.vehicleConfirmed,
+        stats.completedTasks.length,
+        stats.onboardingFinished,
+        stats.streak,
+        stats.customGear,
+        stats.nightWatchTriggered,
         missions.checkAchievements,
         handleAchievementUnlock
     ]);
