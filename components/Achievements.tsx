@@ -171,7 +171,7 @@ export const AchievementModal: React.FC<AchievementModalProps> = ({ achievement:
 
     return (
         <div className="fixed inset-0 z-[70] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in">
-            <div className="w-full max-w-sm">
+            <div className="w-full max-w-lg">
                 {/* Printable Card */}
                 <div
                     ref={cardRef}
