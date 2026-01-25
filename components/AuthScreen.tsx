@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Shield, ChevronRight, Lock } from 'lucide-react';
+import { Shield, ChevronRight, Lock, Mail, Github, Chrome } from 'lucide-react';
 
 interface AuthScreenProps {
   onLogin: (email: string) => void;
@@ -8,6 +7,7 @@ interface AuthScreenProps {
 
 export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
+  const [isRegister, setIsRegister] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,66 +16,141 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    // Simulace Gmail přihlášení pro demo účely
+    onLogin('pilot.gmail@example.com');
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[#1f2933] relative overflow-hidden">
-      {/* Background FX */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#f6c453] opacity-[0.03] rounded-full blur-[100px]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500 opacity-[0.03] rounded-full blur-[100px]"></div>
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#1f2933] relative overflow-hidden">
+      {/* Background FX - Tactical scanning effect */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#f6c453] opacity-[0.05] rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-indigo-500 opacity-[0.05] rounded-full blur-[120px]"></div>
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.02]"></div>
       </div>
 
       <div className="w-full max-w-sm space-y-8 relative z-10 animate-fade-in">
-        <div className="text-center space-y-2">
-          <div className="w-24 h-24 bg-[#2d3748] rounded-[2rem] mx-auto flex items-center justify-center border border-[#f6c453]/20 shadow-[0_0_50px_rgba(246,196,83,0.1)] mb-6">
-            <Shield className="w-10 h-10 accent-text" strokeWidth={2} />
+        {/* Logo Section */}
+        <div className="text-center space-y-3">
+          <div className="relative inline-block">
+            <div className="w-24 h-24 bg-[#2d3748] rounded-[2.5rem] mx-auto flex items-center justify-center border-2 border-[#f6c453]/20 shadow-[0_0_60px_rgba(246,196,83,0.15)] relative z-10 overflow-hidden group">
+              <Shield className="w-12 h-12 accent-text group-hover:scale-110 transition-transform duration-500" strokeWidth={1.5} />
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#f6c453]/10 to-transparent"></div>
+            </div>
+            <div className="absolute -inset-2 bg-[#f6c453]/5 blur-xl rounded-full animate-pulse"></div>
           </div>
-          <h1 className="text-3xl font-black accent-text uppercase italic tracking-tighter">Partner v Akci</h1>
-          <p className="text-[#f5f7fa] opacity-50 text-sm font-medium tracking-wide">
-            Systém pro řízení rodinné operace
+          <div className="space-y-1">
+            <h1 className="text-4xl font-black accent-text uppercase italic tracking-tighter leading-none">Partner v Akci</h1>
+            <p className="text-[#f6c453] text-[10px] font-black uppercase tracking-[0.4em] opacity-60">Operativní Centrála</p>
+          </div>
+        </div>
+
+        {/* Auth Content */}
+        <div className="glass-card p-1 rounded-[3rem] border-[#f6c453]/10 shadow-2xl overflow-hidden">
+          <div className="bg-[#1f2933]/40 backdrop-blur-xl p-8 rounded-[2.9rem]">
+
+            {/* Mode Toggle Tabs */}
+            <div className="flex bg-[#2d3748]/50 p-1 rounded-2xl mb-8 border border-white/5">
+              <button
+                onClick={() => setIsRegister(false)}
+                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!isRegister ? 'bg-[#f6c453] text-[#1f2933] shadow-lg' : 'text-white/40 hover:text-white/60'}`}
+              >
+                Přihlásit
+              </button>
+              <button
+                onClick={() => setIsRegister(true)}
+                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${isRegister ? 'bg-[#f6c453] text-[#1f2933] shadow-lg' : 'text-white/40 hover:text-white/60'}`}
+              >
+                Registrovat
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-1.5">
+                <label className="text-[9px] font-black uppercase tracking-[0.25em] text-[#f6c453] ml-4 opacity-70">
+                  {isRegister ? 'Nová identifikace' : 'Identifikace'}
+                </label>
+                <div className="relative group">
+                  <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#f6c453] transition-colors" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="velitel@rodina.cz"
+                    className="w-full bg-[#161c22]/50 border border-white/10 rounded-[1.5rem] pl-14 pr-6 py-5 text-[#f5f7fa] placeholder:opacity-20 focus:outline-none focus:ring-2 focus:ring-[#f6c453]/50 focus:bg-[#161c22] transition-all font-medium text-sm"
+                    required
+                  />
+                </div>
+              </div>
+
+              {!isRegister && (
+                <div className="space-y-1.5 opacity-40">
+                  <label className="text-[9px] font-black uppercase tracking-[0.25em] text-white/40 ml-4 flex items-center gap-2">
+                    <Lock className="w-3 h-3" /> Přístupový kód
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                    <input
+                      type="password"
+                      placeholder="••••••••"
+                      className="w-full bg-[#161c22]/30 border border-white/5 rounded-[1.5rem] pl-14 pr-6 py-5 text-white/20 placeholder:opacity-10 cursor-not-allowed"
+                      disabled
+                    />
+                  </div>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={email.length < 4}
+                className="w-full bg-gradient-to-r from-[#bb8712] to-[#f6c453] text-[#1f2933] font-black uppercase tracking-[0.25em] text-[11px] py-5 rounded-[1.5rem] shadow-xl shadow-[#f6c453]/20 active:scale-[0.98] hover:brightness-110 transition-all disabled:opacity-30 disabled:grayscale flex items-center justify-center gap-2 group"
+              >
+                {isRegister ? 'Zahájit nábor' : 'Vstoupit do centrály'}
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </form>
+
+            {/* Social Auth */}
+            <div className="mt-8 space-y-6">
+              <div className="relative flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-white/5"></div>
+                </div>
+                <span className="relative px-4 bg-transparent text-[8px] font-black uppercase tracking-[0.3em] text-white/20">nebo taktický přístup</span>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3">
+                <button
+                  onClick={handleGoogleLogin}
+                  className="w-full bg-white/5 hover:bg-white/10 border border-white/10 py-4 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] group"
+                >
+                  <div className="w-5 h-5 flex items-center justify-center bg-white rounded-full p-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                    <Chrome className="w-full h-full text-[#4285F4]" strokeWidth={3} />
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Pokračovat přes Gmail</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer info */}
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-center gap-6 opacity-30">
+            <div className="flex flex-col items-center gap-1">
+              <Shield className="w-4 h-4" />
+              <span className="text-[7px] font-black uppercase tracking-widest">Secure</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <Lock className="w-4 h-4" />
+              <span className="text-[7px] font-black uppercase tracking-widest">Privacy</span>
+            </div>
+          </div>
+          <p className="text-[9px] text-white/20 uppercase tracking-[0.4em] font-medium">
+            E-2-E Encryption • Offline First Protocol
           </p>
         </div>
-
-        <div className="glass-card p-8 rounded-[2.5rem] border-white/5 shadow-2xl">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#f6c453] ml-2">
-                Identifikace (Email)
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="velitel@rodina.cz"
-                className="w-full bg-[#1f2933] border border-white/10 rounded-2xl px-6 py-4 text-[#f5f7fa] placeholder:opacity-20 focus:outline-none focus:ring-2 focus:ring-[#f6c453] transition-all font-medium"
-                required
-              />
-            </div>
-            
-            <div className="space-y-2 opacity-50 pointer-events-none">
-               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#f5f7fa]/40 ml-2 flex items-center gap-2">
-                <Lock className="w-3 h-3" /> Přístupový kód
-              </label>
-               <input
-                type="password"
-                placeholder="Volitelné"
-                className="w-full bg-[#1f2933] border border-white/5 rounded-2xl px-6 py-4 text-[#f5f7fa] placeholder:opacity-20"
-                disabled
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={email.length < 4}
-              className="w-full bg-gradient-to-r from-[#bb8712] to-[#f6c453] text-[#1f2933] font-black uppercase tracking-[0.2em] text-xs py-5 rounded-2xl shadow-lg shadow-[#f6c453]/10 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              Vstoupit do systému <ChevronRight className="w-4 h-4" />
-            </button>
-          </form>
-        </div>
-
-        <p className="text-center text-[10px] text-[#f5f7fa] opacity-20 uppercase tracking-widest">
-          Secure Connection • Encrypted Local Storage
-        </p>
       </div>
     </div>
   );

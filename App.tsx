@@ -30,11 +30,14 @@ const App: React.FC = () => {
     // AUTO-LOGIN LOGIC
     const [currentUser, setCurrentUser] = useState<string | null>(() => {
         const saved = localStorage.getItem('currentUser');
+        /* 
+        // Deaktivováno pro testování nové přihlašovací obrazovky
         if (!saved) {
             const adminEmail = 'ja@ja.cz';
             localStorage.setItem('currentUser', adminEmail);
             return adminEmail;
-        }
+        } 
+        */
         return saved;
     });
 
