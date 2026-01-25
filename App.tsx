@@ -27,7 +27,20 @@ import { useMissions } from './hooks/useMissions';
 import { notificationService } from './services/NotificationService';
 
 const App: React.FC = () => {
-    // AUTO-LOGIN LOGIC
+    // Auth and Vault management
+    useEffect(() => {
+        // 1. Vault Cleanup: keep only 'ja@ja.cz'
+        const rawVault = localStorage.getItem('app_vault');
+        if (rawVault) {
+            const vault = JSON.parse(rawVault);
+            const cleanedVault = vault.filter((u: any) => u.email === 'ja@ja.cz');
+            if (vault.length !== cleanedVault.length) {
+                localStorage.setItem('app_vault', JSON.stringify(cleanedVault));
+                console.log('🧹 Vault vyčištěn: Ponechán pouze ja@ja.cz');
+            }
+        }
+    }, []);
+
     const [currentUser, setCurrentUser] = useState<string | null>(() => {
         const saved = localStorage.getItem('currentUser');
         /* 

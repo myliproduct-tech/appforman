@@ -43,16 +43,6 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     localStorage.setItem('app_vault', JSON.stringify(vault));
   };
 
-  // Cleanup Vault on mount: keep only 'ja@ja.cz'
-  useEffect(() => {
-    const vault = getVault();
-    const cleanedVault = vault.filter(u => u.email === 'ja@ja.cz');
-    if (vault.length !== cleanedVault.length) {
-      localStorage.setItem('app_vault', JSON.stringify(cleanedVault));
-      console.log('🧹 Vault vyčištěn: Ponechán pouze ja@ja.cz');
-    }
-  }, []);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const vault = getVault();
