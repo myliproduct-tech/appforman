@@ -412,7 +412,14 @@ const App: React.FC = () => {
 
     // Auth screen check
     if (!currentUser) {
-        return <AuthScreen onLogin={(email) => setCurrentUser(email)} />;
+        return (
+            <AuthScreen
+                onLogin={(email) => {
+                    localStorage.setItem('currentUser', email);
+                    setCurrentUser(email);
+                }}
+            />
+        );
     }
 
     // Onboarding process check
