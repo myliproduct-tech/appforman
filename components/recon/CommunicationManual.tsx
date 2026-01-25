@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { MessageSquare, XIcon, MessageSquareCode, ChevronRight, Info, ChevronDown } from 'lucide-react';
 import { COMMUNICATION_MANUAL } from '../../constants';
 import { CommunicationEntry } from '../../types';
+import { localizeText } from '../../utils';
 
 interface CommunicationManualProps {
+    partnerName: string; // Added prop
     showModal?: boolean;
     onClose?: () => void;
     onEntryRead?: (entryIndex: number) => void; // Callback when entry is expanded
 }
 
-export const CommunicationManual: React.FC<CommunicationManualProps> = ({ showModal: externalShowModal, onClose, onEntryRead }) => {
+export const CommunicationManual: React.FC<CommunicationManualProps> = ({ partnerName, showModal: externalShowModal, onClose, onEntryRead }) => {
     const [internalShowModal, setInternalShowModal] = useState(false);
     const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
 
@@ -66,7 +68,7 @@ export const CommunicationManual: React.FC<CommunicationManualProps> = ({ showMo
                                                     <MessageSquareCode className={`w-4 h-4 ${expandedIdx === idx ? 'text-[#f6c453]' : 'text-white/40'}`} />
                                                 </div>
                                                 <span className={`text-xs font-bold leading-relaxed ${expandedIdx === idx ? 'text-[#f6c453]' : 'text-white/70 group-hover:text-white'}`}>
-                                                    "{entry.situation}"
+                                                    "{localizeText(entry.situation, partnerName)}"
                                                 </span>
                                             </div>
                                             {expandedIdx === idx ? (
@@ -84,7 +86,7 @@ export const CommunicationManual: React.FC<CommunicationManualProps> = ({ showMo
                                                     <span className="text-[10px] font-black uppercase tracking-widest text-[#f6c453]">Skutečný význam</span>
                                                 </div>
                                                 <p className="text-sm leading-relaxed text-white/90 font-medium pl-4 border-l-2 border-[#f6c453]/20">
-                                                    {entry.meaning}
+                                                    {localizeText(entry.meaning, partnerName)}
                                                 </p>
                                             </div>
                                         )}
@@ -101,7 +103,7 @@ export const CommunicationManual: React.FC<CommunicationManualProps> = ({ showMo
                                     <div>
                                         <h5 className="text-[10px] font-black uppercase tracking-widest text-[#f6c453] mb-1">Taktický tip pro tátu</h5>
                                         <p className="text-[11px] text-white/70 italic leading-relaxed font-semibold">
-                                            Většina těchto vět nevyžaduje technické řešení. Vyžadují jen přítomnost, naslouchání a potvrzení, že to, co partnerka cítí, je naprosto v pořádku.
+                                            {localizeText("Většina těchto vět nevyžaduje technické řešení. Vyžadují jen přítomnost, naslouchání a potvrzení, že to, co partnerka cítí, je naprosto v pořádku.", partnerName)}
                                         </p>
                                     </div>
                                 </div>

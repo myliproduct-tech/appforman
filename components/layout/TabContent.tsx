@@ -84,7 +84,7 @@ export const TabContent: React.FC<TabContentProps> = ({
                         </>
                     ) : (
                         <Missions
-                            dailyMissions={missions.todaysMissionsRaw.filter((task: any) => !stats.completedDailyMissionIds.includes(task.id))}
+                            dailyMissions={missions.activeMissions}
                             postponedMissions={stats.postponedMissions}
                             missionHistory={stats.missionHistory}
                             customMissions={stats.customMissions || []}

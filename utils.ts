@@ -38,15 +38,11 @@ const getDeclension = (name: string, form: 'nom' | 'gen' | 'dat' | 'acc' | 'voc'
     const base = n.slice(0, -1);
     switch (form) {
       case 'nom': return n;
-      case 'gen': return (last === 'e' ? n : base + 'e'); // Lucie -> Lucie, Růže -> Růže
-      case 'dat': return (last === 'e' ? n : base + 'i'); // Lucii
-      case 'acc': return n; // Lucii? No, Lucie -> Lucii (acc). Wait, vzor Růže: Růži.
-        // Let's simplify: Names like Lucie often behave like Růže. 
-        // Acc: Růži. Gen: Růže. Dat: Růži.
-        // This is complex. Let's fallback to indeclinable for safety if not ending in 'a'.
-        return n;
-      case 'voc': return (last === 'e' ? 'Lucie' : 'Růže'); // Vocative is mostly same or 'i'
-      case 'ins': return base + 'í'; // Lucií
+      case 'gen': return n; // Lucie -> Lucie, Růže -> Růže
+      case 'dat': return base + 'i'; // Lucie -> Lucii, Růže -> Růži
+      case 'acc': return base + 'i'; // Lucie -> Lucii, Růže -> Růži
+      case 'voc': return n; // Lucie -> Lucie!
+      case 'ins': return base + 'í'; // Lucie -> Lucií
     }
   }
 
@@ -61,7 +57,7 @@ const getDeclension = (name: string, form: 'nom' | 'gen' | 'dat' | 'acc' | 'voc'
  * respecting Czech grammatical cases.
  */
 export const localizeText = (text: string, partnerName: string): string => {
-  if (!text) return "";
+  if (!text || typeof text !== 'string') return text || "";
 
   const name = partnerName && partnerName.trim() !== "" ? partnerName : "Velitelka";
   let res = text;
@@ -78,18 +74,18 @@ export const localizeText = (text: string, partnerName: string): string => {
 
   replacements.forEach(({ pattern, form }) => {
     const replacement = form === 'nom' ? name : getDeclension(name, form);
-    // Use a regex that handles Czech characters correctly by not relying solely on \b
-    // This lookbehind/lookahead approach ensures we only replace whole words
-    pattern.forEach(word => {
-      const regex = new RegExp(`(?<=^|[^a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ])${word}(?=[^a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]|$)`, 'g');
-      res = res.replace(regex, replacement);
 
-      // Also handle lowercase variants if the word in pattern was capitalized
-      if (word[0] === word[0].toUpperCase()) {
-        const lowerWord = word.toLowerCase();
-        const lowerRegex = new RegExp(`(?<=^|[^a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ])${lowerWord}(?=[^a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]|$)`, 'g');
-        res = res.replace(lowerRegex, replacement);
-      }
+    pattern.forEach(word => {
+      // Ensure we check both Capitalized and lowercased versions of the word
+      const variants = new Set([
+        word.charAt(0).toUpperCase() + word.slice(1),
+        word.charAt(0).toLowerCase() + word.slice(1)
+      ]);
+
+      variants.forEach(variant => {
+        const regex = new RegExp(`(^|[^a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ])${variant}([^a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]|$)`, 'g');
+        res = res.replace(regex, (match, p1, p2) => `${p1}${replacement}${p2}`);
+      });
     });
   });
 

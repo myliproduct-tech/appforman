@@ -61,6 +61,35 @@ export const Missions: React.FC<MissionsProps> = ({
     const { mode: archiveMode } = state.archive;
     const { isExporting } = state.ui;
 
+    // Localize all mission lists
+    const localizedDailyMissions = React.useMemo(() =>
+        dailyMissions.map(m => ({
+            ...m,
+            title: localizeText(m.title, partnerName),
+            description: localizeText(m.description, partnerName)
+        })), [dailyMissions, partnerName]);
+
+    const localizedPostponedMissions = React.useMemo(() =>
+        postponedMissions.map(m => ({
+            ...m,
+            title: localizeText(m.title, partnerName),
+            description: localizeText(m.description, partnerName)
+        })), [postponedMissions, partnerName]);
+
+    const localizedCustomMissions = React.useMemo(() =>
+        customMissions.map(m => ({
+            ...m,
+            title: localizeText(m.title, partnerName),
+            description: localizeText(m.description, partnerName)
+        })), [customMissions, partnerName]);
+
+    const localizedHistory = React.useMemo(() =>
+        missionHistory.map(m => ({
+            ...m,
+            title: localizeText(m.title, partnerName),
+            description: localizeText(m.description, partnerName)
+        })), [missionHistory, partnerName]);
+
     const formattedDate = (() => {
         if (!simulatedDate) return 'Dnešní mise';
         const date = new Date(simulatedDate);
@@ -73,7 +102,7 @@ export const Missions: React.FC<MissionsProps> = ({
     // except if we need stats for other things (we don't appear to)
 
 
-    const filteredHistory = missionHistory.filter(task => {
+    const filteredHistory = localizedHistory.filter(task => {
         if (task.failed) return false;
         if (filterCategory !== 'all' && task.category !== filterCategory) return false;
 
@@ -85,15 +114,8 @@ export const Missions: React.FC<MissionsProps> = ({
         return true;
     });
 
-    const missedMissionsRaw = React.useMemo(() => {
-        return missionHistory.filter(m => m.failed).map(m => ({
-            ...m,
-            title: localizeText(m.title, partnerName),
-            description: localizeText(m.description, partnerName)
-        }));
-    }, [missionHistory, partnerName]);
-
-    const filteredMissed = missedMissionsRaw.filter(task => {
+    const filteredMissed = localizedHistory.filter(task => {
+        if (!task.failed) return false;
         if (filterCategory !== 'all' && task.category !== filterCategory) return false;
 
         const { week, month } = getTaskWebData(task.completedDate, simulatedDate, dayIndex);
@@ -239,7 +261,7 @@ export const Missions: React.FC<MissionsProps> = ({
                             ) : (
                                 <>
                                     {/* Daily Missions */}
-                                    {dailyMissions.map((mission) => (
+                                    {localizedDailyMissions.map((mission) => (
                                         <MissionTaskCard
                                             key={mission.id}
                                             task={mission}
@@ -249,7 +271,7 @@ export const Missions: React.FC<MissionsProps> = ({
                                     ))}
 
                                     {/* Scheduled Custom Missions for Today */}
-                                    {customMissions
+                                    {localizedCustomMissions
                                         .filter(m => m.scheduledDate === simulatedDate)
                                         .map((mission) => (
                                             <MissionTaskCard
@@ -278,7 +300,7 @@ export const Missions: React.FC<MissionsProps> = ({
                 {
                     activeTab === 'postponed' && (
                         <>
-                            {postponedMissions.map((mission) => (
+                            {localizedPostponedMissions.map((mission) => (
                                 <MissionTaskCard
                                     key={mission.id}
                                     task={mission}

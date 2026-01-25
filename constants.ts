@@ -608,12 +608,12 @@ export const GEAR_CHECKLIST = [
   {
     category: "Logistika: Velitelka",
     items: [
-      { id: "g54", label: "Vitamíny pro partnerku (Kyselina listová/Hořčík)", week: 1, endWeek: 40, tip: "Kyselina listová je základ; hořčík (magnesium) zase pomáhá proti křečím v nohách a tvrdnutí břicha.", condition: "Vždy NOVÁ!" },
+      { id: "g54", label: "Vitamíny pro Velitelku (Kyselina listová/Hořčík)", week: 1, endWeek: 40, tip: "Kyselina listová je základ; hořčík (magnesium) zase pomáhá proti křečím v nohách a tvrdnutí břicha.", condition: "Vždy NOVÁ!" },
       { id: "g52", label: "Ovulační testy (Detekce okna)", week: 1, endWeek: 4, tip: "Slouží k přesnému určení startu mise (početí); po potvrzení těhotenství už je nekupuj.", condition: "Vždy NOVÁ!" },
       { id: "g53", label: "Těhotenský test (Digitální)", week: 4, endWeek: 6, tip: "Nejspolehlivější detekce; digitální displej eliminuje hádání „je tam ta čárka nebo ne?“.", condition: "Vždy NOVÁ!" },
       { id: "g51", label: "Čaj pro těhotné ženy", week: 6, endWeek: 40, tip: "Podporuje hydrataci a minerály; hlídej, aby neobsahoval bylinky, které můžou vyvolat kontrakce (např. šalvěj).", condition: "Vždy NOVÁ!" },
       { id: "g50", label: "Olejíček na strie (Péče o kůži)", week: 10, endWeek: 14, tip: "Promazávat se musí hned, jak začne růst břicho; kůže musí být pružná, aby nepopraskala.", condition: "Vždy NOVÁ!" },
-      { id: "g16", label: "Kojící polštář (Podpora stability)", week: 18, endWeek: 22, tip: "Využijete ho už před porodem; mamince pomůže najít pohodlnou polohu při spaní na boku.", condition: "Bazar / Nové" },
+      { id: "g16", label: "Kojící polštář (Podpora stability)", week: 18, endWeek: 22, tip: "Využijete ho už před porodem; Velitelce pomůže najít pohodlnou polohu při spaní na boku.", condition: "Bazar / Nové" },
       { id: "g18", label: "Kojící podprsenky (2-3 ks)", week: 30, endWeek: 32, tip: "Kupuj je až ke konci; prsa se zvětší i o dvě čísla a kostice by mohly blokovat mlékovody.", condition: "Vždy NOVÁ!" },
       { id: "g17", label: "Vložky do podprsenky (Absorpce)", week: 34, endWeek: 36, tip: "Jednorázové jsou praktičtější na cesty, pratelné jsou příjemnější na kůži (neškrábou).", condition: "Vždy NOVÁ!" },
       { id: "g21", label: "Mastička na bradavky (Purelan)", week: 34, endWeek: 36, tip: "Čistý lanolin; je to zázrak na hojení, který miminku nijak neškodí při krmení.", condition: "Vždy NOVÁ!" }
@@ -758,7 +758,7 @@ export const RANKS = [
   { level: 3, minPoints: 450, icon: "🔭", name: "OPERÁTOR PRŮZKUMU", status: "Aktivní vyhledávání informací a mapování terénu (prodejny, recenze).", message: "Dobrá práce. Máš oči všude. Průzkum je základ úspěchu." },
   { level: 4, minPoints: 900, icon: "📦", name: "SPECIALISTA LOGISTIKY", status: "Správa zásobování. Dokážeš bezchybně doručit jakoukoliv surovinu, kterou ONA vyžádá.", message: "Logistika vyhrává války. Tvoje schopnost sehnat okurky ve 2 ráno je legendární." },
   { level: 5, minPoints: 1500, icon: "⚙️", name: "ANALYTIK KONFIGURACÍ", status: "Expert na technické parametry (kočárky, autosedačky, monitory dechu).", message: "Rozumíš technice lépe než manuálům. Kočárek složíš i poslepu." },
-  { level: 6, minPoints: 2300, icon: "🧠", name: "TAKTICKÝ PORADCE", status: "Pokročilé znalosti procesů v těle maminy. Jsi připraven na krizové scénáře.", message: "Tvé rady jsou nyní brány vážně. Jsi oporou v týlu nepřítele (hormonů)." },
+  { level: 6, minPoints: 2300, icon: "🧠", name: "TAKTICKÝ PORADCE", status: "Pokročilé znalosti procesů v těle Velitelky. Jsi připraven na krizové scénáře.", message: "Tvé rady jsou nyní brány vážně. Jsi oporou v týlu nepřítele (hormonů)." },
   { level: 7, minPoints: 3300, icon: "🚁", name: "VELITEL VÝSADKOVÉHO TÝMU", status: "Příprava k akci vrcholí. Logistické cesty do porodnice jsou schváleny a prověřeny.", message: "Tým je připraven k výsadku. Znáš trasu, znáš plán. Jsi připraven." },
   { level: 8, minPoints: 4500, icon: "🛡️", name: "STRÁŽCE SEKTORU", status: "Maximální pohotovost 24/7. Tvá trpělivost a podpora jsou hlavní obrannou linií.", message: "Jsi majákem v bouři. Tvoje trpělivost je štítem celé rodiny." },
   { level: 9, minPoints: 6000, icon: "🎖️", name: "ELITNÍ VETERÁN", status: "Poslední fáze před nasazením. Nic tě nepřekvapí. Jsi v nejlepší formě života.", message: "Viděl jsi všechno. Jsi připraven na to hlavní. Teď už není cesty zpět." },

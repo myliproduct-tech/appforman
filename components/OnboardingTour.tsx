@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 import { Tab } from '../types';
+import { localizeText } from '../utils';
 
 export interface TourStep {
     target: string; // CSS selector or element ID
@@ -13,12 +14,13 @@ export interface TourStep {
 
 interface OnboardingTourProps {
     steps: TourStep[];
+    partnerName: string; // Added prop
     onComplete: () => void;
     onSkip: () => void;
     onNavigate?: (tab: Tab) => void;
 }
 
-export const OnboardingTour: React.FC<OnboardingTourProps> = ({ steps, onComplete, onSkip, onNavigate }) => {
+export const OnboardingTour: React.FC<OnboardingTourProps> = ({ steps, partnerName, onComplete, onSkip, onNavigate }) => {
     const [currentStep, setCurrentStep] = React.useState(0);
     const [position, setPosition] = React.useState({ top: 0, left: 0 });
     const [spotlightRect, setSpotlightRect] = React.useState({ top: 0, left: 0, width: 0, height: 0 });
@@ -156,7 +158,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ steps, onComplet
                                 </span>
                             </div>
                             <h3 className="text-lg font-black accent-text uppercase tracking-tight leading-tight">
-                                {step.title}
+                                {localizeText(step.title, partnerName)}
                             </h3>
                         </div>
                         <button
@@ -169,7 +171,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ steps, onComplet
 
                     {/* Content */}
                     <p className="text-[11px] leading-relaxed opacity-80 mb-6 whitespace-pre-line">
-                        {step.content}
+                        {localizeText(step.content, partnerName)}
                     </p>
 
                     {/* Navigation */}

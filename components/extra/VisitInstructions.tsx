@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { X, Lock, Users, PartyPopper, Copy, Check, Share2, Clock, Hand, Cigarette, Heart, Sparkles, ShieldAlert } from 'lucide-react';
+import { localizeText } from '../../utils';
 
 type VisitMode = 'bunker' | 'family' | 'open';
 
 interface VisitInstructionsProps {
     onClose: () => void;
+    partnerName: string; // Added prop
     initialMode?: VisitMode;
     onSaveMode?: (mode: VisitMode) => void;
 }
@@ -55,6 +57,7 @@ const VISIT_RULES = [
 
 export const VisitInstructions: React.FC<VisitInstructionsProps> = ({
     onClose,
+    partnerName,
     initialMode = 'family',
     onSaveMode
 }) => {
@@ -71,12 +74,12 @@ export const VisitInstructions: React.FC<VisitInstructionsProps> = ({
         if (!mode) return '';
 
         let message = `🏥 Návštěvy u nás 🏥\n\n`;
-        message += `${mode.description}\n\n`;
+        message += `${localizeText(mode.description, partnerName)}\n\n`;
 
         if (selectedMode !== 'bunker') {
             message += `📋 Pravidla návštěv:\n`;
             VISIT_RULES.forEach(rule => {
-                message += `${rule.emoji} ${rule.text}\n`;
+                message += `${rule.emoji} ${localizeText(rule.text, partnerName)}\n`;
             });
             message += `\nDěkujeme za pochopení! ❤️`;
         } else {
@@ -143,7 +146,7 @@ export const VisitInstructions: React.FC<VisitInstructionsProps> = ({
                                                 {mode.subtitle}
                                             </p>
                                             <p className="text-xs text-white/70 leading-relaxed font-medium">
-                                                {mode.description}
+                                                {localizeText(mode.description, partnerName)}
                                             </p>
                                         </div>
                                         {isSelected && (
@@ -203,12 +206,12 @@ export const VisitInstructions: React.FC<VisitInstructionsProps> = ({
                     <div className="space-y-4 pb-20">
                         <div className="p-5 rounded-2xl bg-[#f6c453]/5 border border-[#f6c453]/20">
                             <p className="text-xs italic text-white/70 leading-relaxed">
-                                "Moc rádi vás uvidíme, ale teď potřebujeme čas se sžít. Ozveme se, až budeme připraveni na návštěvy."
+                                {localizeText("\"Moc rádi vás uvidíme, ale teď potřebujeme čas se sžít. Ozveme se, až budeme připraveni na návštěvy.\"", partnerName)}
                             </p>
                         </div>
                         <div className="p-5 rounded-2xl bg-[#f6c453]/5 border border-[#f6c453]/20">
                             <p className="text-xs italic text-white/70 leading-relaxed">
-                                "Díky za pochopení, že teď návštěvy omezujeme jen na nejbližší rodinu."
+                                {localizeText("\"Díky za pochopení, že teď návštěvy omezujeme jen na nejbližší rodinu.\"", partnerName)}
                             </p>
                         </div>
                     </div>
@@ -229,7 +232,7 @@ export const VisitInstructions: React.FC<VisitInstructionsProps> = ({
                                         className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-xl"
                                     >
                                         <span className="text-2xl">{rule.emoji}</span>
-                                        <p className="text-sm text-white/80 flex-1">{rule.text}</p>
+                                        <p className="text-sm text-white/80 flex-1">{localizeText(rule.text, partnerName)}</p>
                                     </div>
                                 );
                             })}

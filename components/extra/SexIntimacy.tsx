@@ -1,11 +1,13 @@
 import React from 'react';
 import { X, Heart, AlertCircle, CheckCircle, Info } from 'lucide-react';
+import { localizeText } from '../../utils';
 
 interface SexIntimacyProps {
     onClose: () => void;
+    partnerName: string; // Added prop
 }
 
-export const SexIntimacy: React.FC<SexIntimacyProps> = ({ onClose }) => {
+export const SexIntimacy: React.FC<SexIntimacyProps> = ({ onClose, partnerName }) => {
     return (
         <div className="fixed inset-0 z-[80] bg-[#1f2933] overflow-y-auto animate-fade-in p-4">
             <div className="max-w-2xl mx-auto min-h-full flex flex-col py-8">
@@ -94,7 +96,7 @@ export const SexIntimacy: React.FC<SexIntimacyProps> = ({ onClose }) => {
                             <div className="bg-white/5 p-4 rounded-2xl">
                                 <h4 className="text-sm font-black text-[#f6c453]/80 mb-2">1. Trimestr (1-12 týdnů)</h4>
                                 <p className="text-sm text-white/70 leading-relaxed">
-                                    Partnerka může mít nevolnost, únavu a citlivá prsa. Buď trpělivý a nabídni jiné formy intimity (objetí, masáže).
+                                    {localizeText("Partnerka může mít nevolnost, únavu a citlivá prsa. Buď trpělivý a nabídni jiné formy intimity (objetí, masáže).", partnerName)}
                                 </p>
                             </div>
                             <div className="bg-white/5 p-4 rounded-2xl">
@@ -106,7 +108,7 @@ export const SexIntimacy: React.FC<SexIntimacyProps> = ({ onClose }) => {
                             <div className="bg-white/5 p-4 rounded-2xl">
                                 <h4 className="text-sm font-black text-[#f6c453]/80 mb-2">3. Trimestr (27-40 týdnů)</h4>
                                 <p className="text-sm text-white/70 leading-relaxed">
-                                    Rostoucí bříško může být nepohodlné. Zkuste polohy na boku nebo partnerka nahoře. Komunikujte, co je pohodlné.
+                                    {localizeText("Rostoucí bříško může být nepohodlné. Zkuste polohy na boku nebo partnerka nahoře. Komunikujte, co je pohodlné.", partnerName)}
                                 </p>
                             </div>
                         </div>

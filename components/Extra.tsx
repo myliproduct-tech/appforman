@@ -55,7 +55,10 @@ export const Extra: React.FC<ExtraProps> = ({
 
     // If Visit Instructions is shown
     if (showVisitInstructions) {
-        return <VisitInstructions onClose={() => setShowVisitInstructions(false)} />;
+        return <VisitInstructions
+            onClose={() => setShowVisitInstructions(false)}
+            partnerName={userStats?.partnerName || ''}
+        />;
     }
 
     // If Baby Names is shown
@@ -76,7 +79,10 @@ export const Extra: React.FC<ExtraProps> = ({
 
     // If Sex & Intimacy is shown
     if (showSexIntimacy) {
-        return <SexIntimacy onClose={() => setShowSexIntimacy(false)} />;
+        return <SexIntimacy
+            onClose={() => setShowSexIntimacy(false)}
+            partnerName={userStats?.partnerName || ''}
+        />;
     }
 
     // Training Camp Menu

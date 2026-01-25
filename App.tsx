@@ -508,6 +508,7 @@ const App: React.FC = () => {
             {showOnboarding && (
                 <OnboardingTour
                     steps={ONBOARDING_STEPS}
+                    partnerName={stats.partnerName}
                     onComplete={handleCompleteTour}
                     onSkip={handleSkipTour}
                     onNavigate={setActiveTab}

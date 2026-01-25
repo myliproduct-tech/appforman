@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { BriefcaseMedical, XIcon, CheckSquare, Square, Trophy, Zap, RotateCcw, ChevronRight, Plus, Trash2 } from 'lucide-react';
 import { HOSPITAL_BAG_CHECKLIST } from '../../constants';
 import { CustomGearItem } from '../../types';
+import { localizeText } from '../../utils';
 
 interface HospitalBagProps {
+    partnerName: string; // Added prop
     hospitalBagChecklist: string[];
     onToggleHospitalBag?: (id: string) => void;
     customHospitalBagGear?: CustomGearItem[];
@@ -16,6 +18,7 @@ interface HospitalBagProps {
 }
 
 export const HospitalBag: React.FC<HospitalBagProps> = ({
+    partnerName,
     hospitalBagChecklist,
     onToggleHospitalBag,
     customHospitalBagGear = [],
@@ -156,7 +159,7 @@ export const HospitalBag: React.FC<HospitalBagProps> = ({
                                                 <ChevronRight className={`w-4 h-4 transition-transform duration-300 ${isCollapsed ? 'rotate-0' : 'rotate-90'} opacity-40`} />
                                                 <BriefcaseMedical className={`w-4 h-4 transition-colors ${isDone ? 'text-emerald-500' : 'text-[#f6c453]'}`} />
                                                 <h3 className={`text-[11px] font-black uppercase tracking-[0.15em] transition-colors ${isDone ? 'text-emerald-400' : 'text-white/80'}`}>
-                                                    {category.category}
+                                                    {localizeText(category.category, partnerName)}
                                                 </h3>
                                             </div>
                                             <div className="flex items-center gap-3">
@@ -185,7 +188,7 @@ export const HospitalBag: React.FC<HospitalBagProps> = ({
                                                                 <Square className="w-5 h-5 opacity-20 text-white" />
                                                             )}
                                                             <span className={`text-xs font-bold transition-all ${isChecked ? 'text-emerald-400/60 line-through' : 'text-[#f5f7fa]'}`}>
-                                                                {item.label}
+                                                                {localizeText(item.label, partnerName)}
                                                             </span>
                                                         </div>
                                                     );

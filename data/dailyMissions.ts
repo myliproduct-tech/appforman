@@ -1219,10 +1219,10 @@ const DAILY_MISSIONS_DATABASE: Record<number, Omit<Task, 'id' | 'completed' | 'i
     { title: "Prověrka transportní kapacity", description: "Udržuj nádrž auta nad 50 % a zkontroluj tlak v pneu. Taška u dveří, telefony nabité.", category: 'logistika', points: 40 }
   ],
   283: [
-    { title: "Gastronomický bonus", description: "Objednej partnerce její nejoblíbenější jídlo. Brzy bude vaším jídlem studené kafe a rychlá sváča.", category: 'zásoby', points: 40 }
+    { title: "Gastronomický bonus", description: "Objednej mamině její nejoblíbenější jídlo. Brzy bude vaším jídlem studené kafe a rychlá sváča.", category: 'zásoby', points: 40 }
   ],
   284: [
-    { title: "Gravitační podpora", description: "Vezmi maminu na lehkou procházku. Gravitace pomáhá hlavě miminka naléhat na porodní cesty.", category: 'logistika', points: 30 }
+    { title: "Gravitační podpora", description: "Vezmi Velitelku na lehkou procházku. Gravitace pomáhá hlavě miminka naléhat na porodní cesty.", category: 'logistika', points: 30 }
   ],
   285: [
     { title: "Digitální čistka", description: "Smaž z mobilu zbytečné fotky a videa. Budeš potřebovat stovky GB volného místa na dokumentaci Juniora.", category: 'servis', points: 30 }
@@ -1231,13 +1231,13 @@ const DAILY_MISSIONS_DATABASE: Record<number, Omit<Task, 'id' | 'completed' | 'i
     { title: "Údržba výstroje", description: "Zkus si nanečisto zapnutí autosedačky do auta, abys ve stresu nebo v noci nebojoval s mechanikou.", category: 'servis', points: 40 }
   ],
   287: [
-    { title: "Psychická stabilizace", description: "Být skála – neřeš detaily, nekritizuj a buď maximálně trpělivý. Maminka je pod tlakem z přenášení.", category: 'medik', points: 50 }
+    { title: "Psychická stabilizace", description: "Být skála – neřeš detaily, nekritizuj a buď maximálně trpělivý. Velitelka je pod tlakem z přenášení.", category: 'medik', points: 50 }
   ],
   288: [
-    { title: "Nutriční stimulace", description: "Pokud to zdravotní stav partnerky dovolí, zkuste pálivé jídle. Může to reflexivně rozhýbat dělohu.", category: 'medik', points: 30 }
+    { title: "Nutriční stimulace", description: "Pokud to zdravotní stav Velitelky dovolí, zkuste pálivé jídle. Může to reflexivně rozhýbat dělohu.", category: 'medik', points: 30 }
   ],
   289: [
-    { title: "Regenerace dolních končetin", description: "Udělej mamině důkladnou masáž nohou a chodidel. Ulevíš jí od otoků a pomůžeš jí se uvolnit.", category: 'medik', points: 40 }
+    { title: "Regenerace dolních končetin", description: "Udej mamině důkladnou masáž nohou a chodidel. Ulevíš jí od otoků a pomůžeš jí se uvolnit.", category: 'medik', points: 40 }
   ],
   290: [
     { title: "Instalace odposlechu", description: "Vybal monitor dechu a chůvičku, vyzkoušej dosah. Musíš je umět ovládat i potmě a v únavě.", category: 'hardware', points: 40 }
@@ -1246,7 +1246,7 @@ const DAILY_MISSIONS_DATABASE: Record<number, Omit<Task, 'id' | 'completed' | 'i
     { title: "Zásoby pro posádku", description: "Kup zásoby jídla do jedné ruky (tyčinky, kapsičky) a doplň zásoby kávy pro sebe na první dny.", category: 'zásoby', points: 30 }
   ],
   292: [
-    { title: "Vertikální pohyb", description: "Pokud se partnerka cítí dobře, vyjděte si pár pater schodů. Působí to jako přirozený vyvolávač.", category: 'logistika', points: 40 }
+    { title: "Vertikální pohyb", description: "Pokud se Velitelka cítí dobře, vyjděte si pár pater schodů. Působí to jako přirozený vyvolávač.", category: 'logistika', points: 40 }
   ],
   293: [
     { title: "Finální briefing", description: "Zopakujte si cestu do porodnice, kde se v noci parkuje a kde je přesně zvonek na příjem.", category: 'briefing', points: 50 }
@@ -1259,7 +1259,7 @@ const DAILY_MISSIONS_DATABASE: Record<number, Omit<Task, 'id' | 'completed' | 'i
 const OVERDUE_MISSIONS: Omit<Task, 'id' | 'completed' | 'isDaily'>[] = [
   { title: "Logistika komfortu", description: "Přines do nemocnice cokoli, co zlepší prostředí – vlastní polštář, oblíbené pití nebo knížku. Nemocniční setup je strohý.", category: 'logistika', points: 30 },
   { title: "Emocionální kotva", description: "Buď k dispozici pro ventilaci frustrace. Přenášení v nemocnici je psychicky náročné. Jen poslouchej a buď tam.", category: 'medik', points: 40 },
-  { title: "Psychická bariéra", description: "Filtruj dotazy rodiny a okolí. Ty jsi ten, kdo podává hlášení. Velitelce dopřej komunikační klid na odpočinek.", category: 'briefing', points: 30 },
+  { title: "Psychická bariéra", description: "Filtruj dotazy rodiny a okolí. Ty jsi ten, kdo podává hlášení. Mamině dopřej komunikační klid na odpočinek.", category: 'briefing', points: 30 },
   { title: "Zabezpečení základny", description: "Ujisti se, že doma je vše v režimu 'Ready'. Čisté povlečení, vysypané koše, lednice připravená na návrat.", category: 'údržba', points: 25 },
   { title: "Kurýrní služba", description: "Ověř, zda nechybí něco z výbavy nebo hygieny. Cokoli zapomenuté musíš doručit v prioritním režimu.", category: 'transport', points: 30 },
   { title: "Morální podpora systému", description: "Přenášení je vyčerpávající. Oceň její sílu a trpělivost. Jsi v tom s ní až do finálního vítězství.", category: 'medik', points: 40 }

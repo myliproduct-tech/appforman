@@ -215,10 +215,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
               </span>
             </div>
             <h3 className={`text-lg xs:text-xl font-black italic tracking-tight uppercase leading-none mb-2 ${isDeserter ? 'text-red-500' : 'accent-text'}`}>
-              {currentRank.name}
+              {localizeText(currentRank.name, stats.partnerName)}
             </h3>
             <p className={`text-[10px] leading-relaxed font-medium ${isDeserter ? 'text-red-200/60' : 'opacity-60'}`}>
-              {currentRank.status}
+              {localizeText(currentRank.status, stats.partnerName)}
             </p>
           </div>
           <div className="flex flex-col items-end gap-2">
@@ -266,7 +266,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
           {(WEEKLY_INTEL[currentWeek] || "Data corrupted.").split('\n').filter(line => line.trim().length > 0).map((line, i) => (
             <div key={i} className="flex gap-3 text-[#f5f7fa]">
               <span className="text-[#f6c453]/50 font-mono text-xs pt-1">{'>>'}</span>
-              <p className="text-sm leading-relaxed font-medium opacity-90">{line}</p>
+              <p className="text-sm leading-relaxed font-medium opacity-90">{localizeText(line, stats.partnerName)}</p>
             </div>
           ))}
         </div>
@@ -366,16 +366,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
             (PARTNER_RECON[currentWeek] || PARTNER_RECON[40] || "Data missing").split('\n').map((line, i) => {
               if (line.trim().length === 0) return null;
               const isHeader = line.startsWith('-');
+              const localizedLine = localizeText(line, stats.partnerName);
 
               return (
                 <div key={i} className={`text-[#f5f7fa] ${isHeader ? 'pl-0 mt-4' : 'pl-4'}`}>
                   {isHeader ? (
                     <p className="text-[#f6c453] font-black uppercase text-[10px] tracking-widest mb-1 opacity-80">
-                      {line.replace('-', '').trim().split(':')[0]}
+                      {localizedLine.replace('-', '').trim().split(':')[0]}
                     </p>
                   ) : null}
                   <p className={`text-sm leading-relaxed font-medium ${isHeader ? 'text-white' : 'opacity-80'}`}>
-                    {isHeader ? line.split(':')[1] : line}
+                    {isHeader ? localizedLine.split(':')[1] : localizedLine}
                   </p>
                 </div>
               );

@@ -390,6 +390,7 @@ export const Recon: React.FC<ReconProps> = ({ currentWeek, partnerName, userName
                 />
 
                 <HospitalBag
+                    partnerName={partnerName}
                     hospitalBagChecklist={hospitalBagChecklist}
                     onToggleHospitalBag={onToggleHospitalBag}
                     customHospitalBagGear={customHospitalBagGear}
@@ -423,6 +424,7 @@ export const Recon: React.FC<ReconProps> = ({ currentWeek, partnerName, userName
 
             {/* Communication Manual Modal */}
             <CommunicationManual
+                partnerName={partnerName}
                 showModal={showCommManual}
                 onClose={() => dispatch({ type: 'TOGGLE_MODAL', modal: 'showCommManual' })}
                 onEntryRead={onEntryRead}
