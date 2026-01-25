@@ -41,6 +41,56 @@ async function ensureDataDir() {
     }
 }
 
+// --- Vault Management (Auth) ---
+const VAULT_FILE = path.join(DATA_DIR, 'vault.json');
+
+async function getVaultData() {
+    try {
+        const data = await fs.readFile(VAULT_FILE, 'utf8');
+        return JSON.parse(data);
+    } catch {
+        return [];
+    }
+}
+
+async function saveVaultData(vault) {
+    await fs.writeFile(VAULT_FILE, JSON.stringify(vault, null, 2));
+}
+
+// Get entire vault (for app startup/sync)
+app.get('/api/vault', async (req, res) => {
+    try {
+        const vault = await getVaultData();
+        res.json(vault);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to read vault' });
+    }
+});
+
+// Update vault (register new user)
+app.post('/api/vault', async (req, res) => {
+    try {
+        const { email, passwordHash } = req.body;
+        if (!email || !passwordHash) {
+            return res.status(400).json({ error: 'Email and password required' });
+        }
+
+        const vault = await getVaultData();
+        const exists = vault.find(u => u.email === email.toLowerCase());
+
+        if (exists) {
+            exists.passwordHash = passwordHash; // Update if exists (or handle differently)
+        } else {
+            vault.push({ email: email.toLowerCase(), passwordHash });
+        }
+
+        await saveVaultData(vault);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update vault' });
+    }
+});
+
 // API Routes
 // Get user stats
 app.get('/api/stats/:email', async (req, res) => {

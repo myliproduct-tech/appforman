@@ -36,20 +36,42 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     setShowGdpr(false);
   }, [isRegister]);
 
-  const getVault = (): VaultEntry[] => {
-    const data = localStorage.getItem('app_vault');
-    return data ? JSON.parse(data) : [];
+  const getVault = async (): Promise<VaultEntry[]> => {
+    try {
+      const response = await fetch('/api/vault');
+      const data = await response.json();
+      return data || [];
+    } catch (error) {
+      // Fallback to local storage if server fails
+      const data = localStorage.getItem('app_vault');
+      return data ? JSON.parse(data) : [];
+    }
   };
 
-  const saveToVault = (email: string, pass: string) => {
-    const vault = getVault();
-    vault.push({ email: email.toLowerCase(), passwordHash: pass });
+  const saveToVault = async (email: string, pass: string) => {
+    const normalizedEmail = email.toLowerCase();
+
+    // Save to server
+    try {
+      await fetch('/api/vault', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: normalizedEmail, passwordHash: pass })
+      });
+    } catch (error) {
+      console.error('❌ Failed to save vault to server', error);
+    }
+
+    // Save locally as backup
+    const localVault = localStorage.getItem('app_vault');
+    const vault = localVault ? JSON.parse(localVault) : [];
+    vault.push({ email: normalizedEmail, passwordHash: pass });
     localStorage.setItem('app_vault', JSON.stringify(vault));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const vault = getVault();
+    const vault = await getVault();
     const normalizedEmail = email.trim().toLowerCase();
 
     if (isRegister) {
@@ -61,7 +83,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
         return;
       }
 
-      saveToVault(normalizedEmail, password);
+      await saveToVault(normalizedEmail, password);
       setAlert({ type: 'success', message: 'Registrace úspěšná! Vstupuji do systému...' });
 
       // AUTO-LOGIN po registraci

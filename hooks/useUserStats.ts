@@ -64,31 +64,69 @@ export const useUserStats = (currentUser: string | null) => {
 
     const [stats, setStats] = useState<UserStats>(initialStats);
 
-    // Load data from localStorage when user changes
+    // 1. Initial Load: Server (Primary) -> LocalStorage (Secondary)
     useEffect(() => {
-        if (currentUser) {
-            const storageKey = `partner_app_data_${currentUser}`;
-            const saved = localStorage.getItem(storageKey);
-            if (saved) {
+        if (!currentUser) return;
+
+        const loadData = async () => {
+            // Try server first
+            try {
+                const response = await fetch(`/api/stats/${encodeURIComponent(currentUser)}`);
+                const serverData = await response.json();
+
+                if (serverData) {
+                    setStats({ ...initialStats, ...serverData, email: currentUser });
+                    // Sync local storage with fresh server data
+                    localStorage.setItem(`partner_app_data_${currentUser}`, JSON.stringify(serverData));
+                    return;
+                }
+            } catch (error) {
+                console.warn('📡 Server unreachable, falling back to local storage');
+            }
+
+            // Fallback to local storage
+            const localKey = `partner_app_data_${currentUser}`;
+            const localSaved = localStorage.getItem(localKey);
+            if (localSaved) {
                 try {
-                    const parsed = JSON.parse(saved);
+                    const parsed = JSON.parse(localSaved);
                     setStats({ ...initialStats, ...parsed, email: currentUser });
                 } catch (e) {
-                    console.error('Failed to parse saved data', e);
+                    console.error('Failed to parse local data', e);
                     setStats({ ...initialStats, email: currentUser });
                 }
             } else {
                 setStats({ ...initialStats, email: currentUser });
             }
-        }
+        };
+
+        loadData();
     }, [currentUser]);
 
-    // Save data to localStorage whenever stats change
+    // 2. Periodic Save: Save to both Server and LocalStorage
     useEffect(() => {
-        if (stats.email) {
-            const storageKey = `partner_app_data_${stats.email}`;
-            localStorage.setItem(storageKey, JSON.stringify(stats));
-        }
+        if (!stats.email) return;
+
+        const saveData = async () => {
+            const dataStr = JSON.stringify(stats);
+
+            // Save locally immediately
+            localStorage.setItem(`partner_app_data_${stats.email}`, dataStr);
+
+            // Save to server
+            try {
+                await fetch(`/api/stats/${encodeURIComponent(stats.email)}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: dataStr
+                });
+            } catch (error) {
+                console.error('❌ Failed to push stats to server', error);
+            }
+        };
+
+        // Debounce saving slightly if needed, but for now direct is fine
+        saveData();
     }, [stats]);
 
     return { stats, setStats, initialStats };
