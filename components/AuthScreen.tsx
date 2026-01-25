@@ -7,11 +7,12 @@ interface AuthScreenProps {
 
 export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isRegister, setIsRegister] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim().length > 3) {
+    if (email.trim().length > 3 && password.length >= 4) {
       onLogin(email.trim().toLowerCase());
     }
   };
@@ -84,26 +85,26 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                 </div>
               </div>
 
-              {!isRegister && (
-                <div className="space-y-1.5 opacity-40">
-                  <label className="text-[9px] font-black uppercase tracking-[0.25em] text-white/40 ml-4 flex items-center gap-2">
-                    <Lock className="w-3 h-3" /> Přístupový kód
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
-                    <input
-                      type="password"
-                      placeholder="••••••••"
-                      className="w-full bg-[#161c22]/30 border border-white/5 rounded-[1.5rem] pl-14 pr-6 py-5 text-white/20 placeholder:opacity-10 cursor-not-allowed"
-                      disabled
-                    />
-                  </div>
+              <div className="space-y-1.5">
+                <label className="text-[9px] font-black uppercase tracking-[0.25em] text-[#f6c453] ml-4 opacity-70 flex items-center gap-2">
+                  <Lock className="w-3 h-3" /> {isRegister ? 'Nové heslo' : 'Heslo'}
+                </label>
+                <div className="relative group">
+                  <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#f6c453] transition-colors" />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-[#161c22]/50 border border-white/10 rounded-[1.5rem] pl-14 pr-6 py-5 text-[#f5f7fa] placeholder:opacity-20 focus:outline-none focus:ring-2 focus:ring-[#f6c453]/50 focus:bg-[#161c22] transition-all font-medium text-sm"
+                    required
+                  />
                 </div>
-              )}
+              </div>
 
               <button
                 type="submit"
-                disabled={email.length < 4}
+                disabled={email.length < 4 || password.length < 4}
                 className="w-full bg-gradient-to-r from-[#bb8712] to-[#f6c453] text-[#1f2933] font-black uppercase tracking-[0.25em] text-[11px] py-5 rounded-[1.5rem] shadow-xl shadow-[#f6c453]/20 active:scale-[0.98] hover:brightness-110 transition-all disabled:opacity-30 disabled:grayscale flex items-center justify-center gap-2 group"
               >
                 {isRegister ? 'Zahájit nábor' : 'Vstoupit do centrály'}
