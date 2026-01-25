@@ -261,7 +261,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                       {showGdpr && (
                         <div className="bg-[#161c22]/50 p-4 rounded-xl border border-white/5 animate-slide-up mb-4">
                           <p className="text-[8px] leading-relaxed text-white/50 font-medium tracking-wide">
-                            Vaše data jsou uložena výhradně lokálně ve vašem zařízení. Aplikace Partner v Akci neshromažďuje ani neodesílá žádné osobní údaje na externí servery. Smazáním dat v nastavení nebo odinstalací aplikace dojde k trvalému odstranění všech uložených informací.
+                            Vaše data jsou bezpečně uložena na našem serveru pro účely synchronizace mezi vašimi zařízeními. Aplikace Partner v Akci dbá na ochranu soukromí a vaše údaje neposkytuje třetím stranám. Smazáním účtu v nastavení dojde k trvalému odstranění všech vašich dat ze serveru.
                           </p>
                         </div>
                       )}
