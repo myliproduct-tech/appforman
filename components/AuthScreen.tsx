@@ -67,8 +67,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     } else {
       const user = vault.find(u => u.email === normalizedEmail);
 
-      // Speciální případ pro admina 'ja@ja.cz', pokud by nebyl ve vaultu
-      if (!user && normalizedEmail === 'ja@ja.cz') {
+      // Speciální případ pro admina 'myli.product@gmail.com', pokud by nebyl ve vaultu
+      if (!user && normalizedEmail === 'myli.product@gmail.com') {
         onLogin(normalizedEmail);
         return;
       }

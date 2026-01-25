@@ -33,7 +33,7 @@ const App: React.FC = () => {
         /* 
         // Deaktivováno pro testování nové přihlašovací obrazovky
         if (!saved) {
-            const adminEmail = 'ja@ja.cz';
+            const adminEmail = 'myli.product@gmail.com';
             localStorage.setItem('currentUser', adminEmail);
             return adminEmail;
         } 
