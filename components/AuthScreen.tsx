@@ -16,6 +16,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   const [isRegister, setIsRegister] = useState(false);
   const [alert, setAlert] = useState<{ type: 'error' | 'success' | 'info'; message: string } | null>(null);
   const [isResetLoading, setIsResetLoading] = useState(false);
+  const [gdprAccepted, setGdprAccepted] = useState(false);
+  const [showGdpr, setShowGdpr] = useState(false);
 
   // Password validation criteria
   const validations = {
@@ -30,6 +32,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   // Clear alert when switching modes
   useEffect(() => {
     setAlert(null);
+    setGdprAccepted(false);
+    setShowGdpr(false);
   }, [isRegister]);
 
   const getVault = (): VaultEntry[] => {
@@ -49,7 +53,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     const normalizedEmail = email.trim().toLowerCase();
 
     if (isRegister) {
-      if (!isPasswordStrong) return;
+      if (!isPasswordStrong || !gdprAccepted) return;
 
       const exists = vault.find(u => u.email === normalizedEmail);
       if (exists) {
@@ -204,27 +208,65 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
                 {/* Password Requirements Checklist - ONLY during registration */}
                 {isRegister && (
-                  <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 mt-3 px-4">
-                    {[
-                      { label: 'Min. 8 znaků', met: validations.length },
-                      { label: 'Velké písmeno', met: validations.upper },
-                      { label: 'Malé písmeno', met: validations.lower },
-                      { label: 'Číslice', met: validations.digit }
-                    ].map((req, i) => (
-                      <div key={i} className={`flex items-center gap-1.5 transition-all duration-300 ${req.met ? 'opacity-100' : 'opacity-30'}`}>
-                        <div className={`w-1.5 h-1.5 rounded-full ${req.met ? 'bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.5)]' : 'bg-white'}`} />
-                        <span className={`text-[8px] font-bold uppercase tracking-wider ${req.met ? 'text-emerald-400' : 'text-white'}`}>
-                          {req.label}
+                  <>
+                    <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 mt-3 px-4">
+                      {[
+                        { label: 'Min. 8 znaků', met: validations.length },
+                        { label: 'Velké písmeno', met: validations.upper },
+                        { label: 'Malé písmeno', met: validations.lower },
+                        { label: 'Číslice', met: validations.digit }
+                      ].map((req, i) => (
+                        <div key={i} className={`flex items-center gap-1.5 transition-all duration-300 ${req.met ? 'opacity-100' : 'opacity-30'}`}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${req.met ? 'bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.5)]' : 'bg-white'}`} />
+                          <span className={`text-[8px] font-bold uppercase tracking-wider ${req.met ? 'text-emerald-400' : 'text-white'}`}>
+                            {req.label}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* GDPR Section */}
+                    <div className="mt-6 space-y-3 px-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowGdpr(!showGdpr)}
+                        className="w-full flex items-center justify-between py-2 border-b border-white/5 group"
+                      >
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#f6c453]/60 group-hover:text-[#f6c453] transition-colors">Právní protokol (GDPR)</span>
+                        <ChevronRight className={`w-3 h-3 text-[#f6c453]/40 transition-transform ${showGdpr ? 'rotate-90' : ''}`} />
+                      </button>
+
+                      {showGdpr && (
+                        <div className="bg-[#161c22]/50 p-4 rounded-xl border border-white/5 animate-slide-up mb-4">
+                          <p className="text-[8px] leading-relaxed text-white/50 font-medium tracking-wide">
+                            Vaše data jsou uložena výhradně lokálně ve vašem zařízení. Aplikace Partner v Akci neshromažďuje ani neodesílá žádné osobní údaje na externí servery. Smazáním dat v nastavení nebo odinstalací aplikace dojde k trvalému odstranění všech uložených informací.
+                          </p>
+                        </div>
+                      )}
+
+                      <label className="flex items-start gap-3 cursor-pointer group">
+                        <div className="relative flex items-center mt-0.5">
+                          <input
+                            type="checkbox"
+                            checked={gdprAccepted}
+                            onChange={(e) => setGdprAccepted(e.target.checked)}
+                            className="peer sr-only"
+                          />
+                          <div className="w-4 h-4 border-2 border-[#f6c453]/20 rounded transition-all peer-checked:bg-[#f6c453] peer-checked:border-[#f6c453] shadow-[0_0_10px_rgba(246,196,83,0)] peer-checked:shadow-[0_0_15px_rgba(246,196,83,0.3)]"></div>
+                          <CheckCircle2 className="absolute inset-0 w-4 h-4 text-[#1f2933] scale-0 peer-checked:scale-100 transition-transform" />
+                        </div>
+                        <span className="text-[9px] font-bold text-white/40 group-hover:text-white/60 transition-colors leading-tight">
+                          Potvrzuji seznámení se s protokolem o ochraně dat
                         </span>
-                      </div>
-                    ))}
-                  </div>
+                      </label>
+                    </div>
+                  </>
                 )}
               </div>
 
               <button
                 type="submit"
-                disabled={email.length < 4 || (isRegister && !isPasswordStrong) || (!isRegister && password.length < 1)}
+                disabled={email.length < 4 || (isRegister && (!isPasswordStrong || !gdprAccepted)) || (!isRegister && password.length < 1)}
                 className="w-full bg-gradient-to-r from-[#bb8712] to-[#f6c453] text-[#1f2933] font-black uppercase tracking-[0.25em] text-[11px] py-5 rounded-[1.5rem] shadow-xl shadow-[#f6c453]/20 active:scale-[0.98] hover:brightness-110 transition-all disabled:opacity-30 disabled:grayscale flex items-center justify-center gap-2 group"
               >
                 {isRegister ? 'Zahájit nábor' : 'Vstoupit do centrály'}
