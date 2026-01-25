@@ -17,27 +17,6 @@ export const Achievements: React.FC<AchievementsProps> = ({ stats, onClose }) =>
     const totalCount = ACHIEVEMENTS.length;
     const progressPercent = Math.round((unlockedCount / totalCount) * 100);
 
-    const handleDownload = async () => {
-        if (cardRef.current && !isGeneratingImage) {
-            setIsGeneratingImage(true);
-            try {
-                const canvas = await html2canvas(cardRef.current, {
-                    backgroundColor: '#1f2933',
-                    scale: 2,
-                    useCORS: true
-                });
-                const link = document.createElement('a');
-                link.download = `Achievement-${selectedAchievement?.title || 'Badge'}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            } catch (err) {
-                console.error('Failed to generate image:', err);
-            } finally {
-                setIsGeneratingImage(false);
-            }
-        }
-    };
-
     const getIcon = (iconName: string, isUnlocked: boolean) => {
         const icons: Record<string, any> = {
             Trophy, Medal, Sprout, Flame, Bot, Star, Crown, Package, Search, Backpack, Wrench, Car, Milk, Waves, BookOpen, Volume2, Headphones, Moon, ShieldCheck, ShieldAlert, Flag, TrendingUp, Zap, Tag, Wallet, FileText, UserPlus, Settings, Heart
