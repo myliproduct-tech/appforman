@@ -67,11 +67,19 @@ Splň mise pro získání XP a postupu v hodnosti!
         placement: 'top',
     },
     {
+        target: '[data-tour="menu-button"]',
+        title: '🍔 HLAVNÍ MENU',
+        content: `Tady najdeš nastavení, hlášení chyb a další možnosti.
+
+Z menu můžeš také **kdykoliv manuálně spustit krizový režim Výsadek**, pokud jej potřebuješ dříve nebo se tlačítko nezobrazilo automaticky.`,
+        placement: 'top',
+    },
+    {
         target: 'body',
         title: '🚨 OPERACE VÝSADEK',
-        content: `Od 36. týdne se ti na hlavní obrazovce aktivuje červené tlačítko **VÝSADEK**.
-        
-Je to tvůj krizový režim pro den D. Všechny důležité nástroje (například měření kontrakcí) a kontakty budeš mít okamžitě po ruce!`,
+        content: `Od 36. týdne se ti na hlavní obrazovce aktivuje červené tlačítko **VÝSADEK**. 
+
+Je to tvůj krizový režim pro den D. Všechny důležité nástroje a kontakty budeš mít okamžitě po ruce! (Pamatuj, že jej lze spustit i přes Menu).`,
         placement: 'center',
     },
     {
