@@ -91,6 +91,11 @@ const App: React.FC = () => {
         }
     }, [showOnboarding, showAchievementModal]);
 
+    // Custom Hooks
+    const { stats, setStats } = useUserStats(currentUser);
+    const devMode = useDevMode();
+    const effectiveDate = devMode.getEffectiveDate(stats.dueDate);
+
     // Initial boot sequence
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -98,6 +103,32 @@ const App: React.FC = () => {
         }, 2200);
         return () => clearTimeout(timer);
     }, []);
+
+    // Conditional mobile console (Eruda) loading
+    useEffect(() => {
+        if (currentUser === 'myli.product@gmail.com') {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/eruda';
+            script.onload = () => {
+                if ((window as any).eruda) {
+                    (window as any).eruda.init();
+                    console.log('🛠️ Dev Console initialized for admin');
+                }
+            };
+            document.body.appendChild(script);
+
+            return () => {
+                // We don't necessarily need to remove it, but we could
+            };
+        }
+    }, [currentUser]);
+
+    // Force disable dev mode if user is not admin
+    useEffect(() => {
+        if (currentUser !== 'myli.product@gmail.com' && devMode.isDevMode) {
+            devMode.setIsDevMode(false);
+        }
+    }, [currentUser, devMode.isDevMode]);
 
     // Register Service Worker for PWA
     useEffect(() => {
@@ -151,7 +182,7 @@ const App: React.FC = () => {
 
             // Create and play silent audio to unlock audio context on mobile
             const silentAudio = new Audio();
-            silentAudio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhAC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAA4T/jRkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+xBkAA/wAABpAAAACAAADSAAAAATEFT0pdAAAH0AAACwAAAAETEFT0pdgAAB9AAALAABhAFT0pdgAAH0AAAsAAGEAVPSl2AAAH0AAAwAAYQBU9KXYAAAfQAACwAAYQBU9KYQAAB9AAALAABhAFT0pdAAAH0AAAsAAGEAVNSl0AAAfQAACwAAYQBU1KXQAAUAAALAABhAFTUpdAAABQAAAsAAGEAVNSl0AAAFAAACwAAYQBU1KXQAAAUAAALAABhAFTUpdAAAFAAACwAAYQBU1KXQAAAUAAALAAA';
+            silentAudio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhAC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAA4T/jRkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+xBkAA/wAABpAAAACAAADSAAAAATEFT0pdAAAH0AAACwAAAAETEFT0pdgAAB9AAALAABhAFT0pdgAAH0AAAsAAGEAVPSl2AAAH0AAAwAAYQBU9KXQAAAfQAACwAAYQBU9KYQAAB9AAALAABhAFT0pdAAAH0AAAsAAGEAVNSl0AAAfQAACwAAYQBU1KXQAAUAAALAABhAFTUpdAAABQAAAsAAGEAVNSl0AAAFAAACwAAYQBU1KXQAAAUAAALAABhAFTUpdAAAFAAACwAAYQBU1KXQAAAUAAALAAA';
             silentAudio.play().then(() => {
                 console.log('🔊 Audio unlocked for mobile');
                 unlocked = true;
@@ -190,11 +221,6 @@ const App: React.FC = () => {
         const saved = localStorage.getItem('nightMode');
         return saved ? JSON.parse(saved) : false;
     });
-
-    // Custom Hooks
-    const { stats, setStats } = useUserStats(currentUser);
-    const devMode = useDevMode();
-    const effectiveDate = devMode.getEffectiveDate(stats.dueDate);
 
     // Sync dayOffset with real calendar progress when NOT in dev mode
     useEffect(() => {
@@ -452,18 +478,20 @@ const App: React.FC = () => {
 
     return (
         <div className={`min-h-screen bg-[#1f2933] text-white ${nightMode ? 'night-vision-mode' : ''} ${devMode.isDevMode ? 'dev-mode-selection' : ''} pb-20`}>
-            {/* 1. Dev Mode Panel */}
-            <DevModePanel
-                isDevMode={devMode.isDevMode}
-                dayOffset={devMode.dayOffset}
-                setDayOffset={devMode.setDayOffset}
-                setIsDevMode={devMode.setIsDevMode}
-                stats={stats}
-                setStats={setStats}
-                onRankUp={(rank) => setShowRankModal({ show: true, rank })}
-                onAchievementUnlock={setShowAchievementModal}
-                checkAchievements={missions.checkAchievements}
-            />
+            {/* 1. Dev Mode Panel - Admin Only */}
+            {currentUser === 'myli.product@gmail.com' && (
+                <DevModePanel
+                    isDevMode={devMode.isDevMode}
+                    dayOffset={devMode.dayOffset}
+                    setDayOffset={devMode.setDayOffset}
+                    setIsDevMode={devMode.setIsDevMode}
+                    stats={stats}
+                    setStats={setStats}
+                    onRankUp={(rank) => setShowRankModal({ show: true, rank })}
+                    onAchievementUnlock={setShowAchievementModal}
+                    checkAchievements={missions.checkAchievements}
+                />
+            )}
 
             {/* 2. Main Content Tabs */}
             <TabContent
@@ -562,8 +590,8 @@ const App: React.FC = () => {
                 </div>
             )}
 
-            {/* 7. Hidden Dev Trigger */}
-            {!devMode.isDevMode && (
+            {/* 7. Hidden Dev Trigger - Admin Only */}
+            {currentUser === 'myli.product@gmail.com' && !devMode.isDevMode && (
                 <button
                     onClick={() => devMode.setIsDevMode(true)}
                     className="fixed top-4 right-4 opacity-0 hover:opacity-100 transition-opacity z-50"
