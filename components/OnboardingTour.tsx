@@ -139,17 +139,17 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ steps, partnerNa
 
     return (
         <>
-            {/* Dimmed Overlay */}
-            <div className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-[9998] animate-fade-in transition-all duration-500" onClick={onSkip} />
+            {/* Solid Overlay without blur to keep target sharp */}
+            <div className="fixed inset-0 bg-black/60 z-[9998] animate-fade-in transition-opacity duration-300" onClick={onSkip} />
 
             {/* Tour Card */}
             <div
                 ref={cardRef}
-                className={`fixed z-[10000] w-[92vw] max-w-[340px] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isCentered ? 'top-1/2 left-1/2' : 'top-0 left-0'}`}
+                className={`fixed z-[10000] w-[92vw] max-w-[340px] transition-all duration-300 ease-out will-change-transform ${isCentered ? 'top-1/2 left-1/2' : 'top-0 left-0'}`}
                 style={{
                     transform: isCentered
-                        ? 'translate3d(-50%, -50%, 0) scale(1)'
-                        : `translate3d(${position.left}px, ${position.top}px, 0) scale(1)`,
+                        ? 'translate3d(-50%, -50%, 0)'
+                        : `translate3d(${position.left}px, ${position.top}px, 0)`,
                     opacity: position.top === 0 && !isCentered ? 0 : 1
                 }}
             >
@@ -213,21 +213,23 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ steps, partnerNa
                 </div>
             </div>
 
-            {/* Spotlight effect */}
+            {/* Spotlight effect - sharp cut out using box-shadow */}
             {!isCentered && spotlightRect.width > 0 && (
                 <div
-                    className="fixed z-[9999] pointer-events-none border-2 border-[#f6c453] rounded-2xl"
+                    className="fixed z-[9999] pointer-events-none border-2 border-[#f6c453] rounded-2xl will-change-transform"
                     style={{
                         top: 0,
                         left: 0,
                         width: `${spotlightRect.width}px`,
                         height: `${spotlightRect.height}px`,
                         transform: `translate3d(${spotlightRect.left}px, ${spotlightRect.top}px, 0)`,
-                        boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.6), 0 0 40px rgba(246, 196, 83, 0.3)',
-                        transition: 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                        boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.6)',
+                        transition: 'all 0.3s ease-out',
                     }}
                 >
-                    <div className="absolute inset-0 rounded-2xl animate-pulse-slow border border-[#f6c453]/50" />
+                    <div className="absolute inset-0 rounded-2xl animate-pulse-slow border border-[#f6c453]/40" />
+                    {/* Inner highlight for clarity */}
+                    <div className="absolute inset-0 rounded-2xl shadow-[inset_0_0_20px_rgba(246,196,83,0.1)]" />
                 </div>
             )}
         </>
