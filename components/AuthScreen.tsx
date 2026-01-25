@@ -10,9 +10,19 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [isRegister, setIsRegister] = useState(false);
 
+  // Password validation criteria
+  const validations = {
+    length: password.length >= 8,
+    upper: /[A-Z]/.test(password),
+    lower: /[a-z]/.test(password),
+    digit: /[0-9]/.test(password)
+  };
+
+  const isPasswordStrong = Object.values(validations).every(Boolean);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim().length > 3 && password.length >= 4) {
+    if (email.trim().length > 3 && isPasswordStrong) {
       onLogin(email.trim().toLowerCase());
     }
   };
@@ -87,7 +97,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
               <div className="space-y-1.5">
                 <label className="text-[9px] font-black uppercase tracking-[0.25em] text-[#f6c453] ml-4 opacity-70 flex items-center gap-2">
-                  <Lock className="w-3 h-3" /> {isRegister ? 'Nové heslo' : 'Heslo'}
+                  <Lock className="w-3 h-3" /> {isRegister ? 'Nové silné heslo' : 'Heslo'}
                 </label>
                 <div className="relative group">
                   <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#f6c453] transition-colors" />
@@ -100,11 +110,28 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                     required
                   />
                 </div>
+
+                {/* Password Requirements Checklist */}
+                <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 mt-3 px-4">
+                  {[
+                    { label: 'Min. 8 znaků', met: validations.length },
+                    { label: 'Velké písmeno', met: validations.upper },
+                    { label: 'Malé písmeno', met: validations.lower },
+                    { label: 'Číslice', met: validations.digit }
+                  ].map((req, i) => (
+                    <div key={i} className={`flex items-center gap-1.5 transition-all duration-300 ${req.met ? 'opacity-100' : 'opacity-30'}`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${req.met ? 'bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.5)]' : 'bg-white'}`} />
+                      <span className={`text-[8px] font-bold uppercase tracking-wider ${req.met ? 'text-emerald-400' : 'text-white'}`}>
+                        {req.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <button
                 type="submit"
-                disabled={email.length < 4 || password.length < 4}
+                disabled={email.length < 4 || !isPasswordStrong}
                 className="w-full bg-gradient-to-r from-[#bb8712] to-[#f6c453] text-[#1f2933] font-black uppercase tracking-[0.25em] text-[11px] py-5 rounded-[1.5rem] shadow-xl shadow-[#f6c453]/20 active:scale-[0.98] hover:brightness-110 transition-all disabled:opacity-30 disabled:grayscale flex items-center justify-center gap-2 group"
               >
                 {isRegister ? 'Zahájit nábor' : 'Vstoupit do centrály'}
