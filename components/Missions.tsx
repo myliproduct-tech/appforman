@@ -260,28 +260,16 @@ export const Missions: React.FC<MissionsProps> = ({
                                 </>
                             ) : (
                                 <>
-                                    {/* Daily Missions */}
+                                    {/* Active Missions (Daily + Scheduled Custom) */}
                                     {localizedDailyMissions.map((mission) => (
                                         <MissionTaskCard
                                             key={mission.id}
                                             task={mission}
                                             onComplete={onComplete}
                                             onOpenScheduleModal={openScheduleModal}
+                                            onDelete={onDelete}
                                         />
                                     ))}
-
-                                    {/* Scheduled Custom Missions for Today */}
-                                    {localizedCustomMissions
-                                        .filter(m => m.scheduledDate === simulatedDate)
-                                        .map((mission) => (
-                                            <MissionTaskCard
-                                                key={mission.id}
-                                                task={mission}
-                                                onComplete={onComplete}
-                                                onOpenScheduleModal={openScheduleModal}
-                                                onDelete={onDelete}
-                                            />
-                                        ))}
 
                                     {dailyMissions.length === 0 && customMissions.filter(m => m.scheduledDate === simulatedDate).length === 0 && (
                                         <div className="text-center py-20 opacity-30">
