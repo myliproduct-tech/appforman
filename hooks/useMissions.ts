@@ -48,8 +48,22 @@ export const useMissions = (
         });
 
         if (xpGain > 0) {
+            const newPoints = currentStats.points + xpGain;
+            const oldRank = getRankBasedOnPoints(currentStats.points);
+            const newRank = getRankBasedOnPoints(newPoints);
+
+            // Trigger rank modal if level increased
+            if (newRank.level > oldRank.level) {
+                setShowRankModal({ show: true, rank: newRank });
+            }
+
             return {
-                updatedStats: { ...currentStats, badges: newBadges, points: currentStats.points + xpGain },
+                updatedStats: {
+                    ...currentStats,
+                    badges: newBadges,
+                    points: newPoints,
+                    level: newRank.level
+                },
                 newUnlocks
             };
         }
