@@ -75,7 +75,7 @@ export const useUserStats = (currentUser: string | null) => {
         const loadData = async () => {
             // Try server first
             try {
-                const response = await fetch(`/api/stats/${encodeURIComponent(currentUser)}`);
+                const response = await fetch(`https://appforman.onrender.com/api/stats/${encodeURIComponent(currentUser)}`);
                 const serverData = await response.json();
 
                 if (serverData) {
@@ -121,7 +121,7 @@ export const useUserStats = (currentUser: string | null) => {
 
             // Save to server
             try {
-                const response = await fetch(`/api/stats/${encodeURIComponent(stats.email)}`, {
+                const response = await fetch(`https://appforman.onrender.com/api/stats/${encodeURIComponent(stats.email)}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: dataStr

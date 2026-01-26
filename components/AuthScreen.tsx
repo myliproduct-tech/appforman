@@ -41,7 +41,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
   const getVault = async (): Promise<VaultEntry[]> => {
     try {
-      const response = await fetch('/api/vault');
+      const response = await fetch('https://appforman.onrender.com/api/vault');
       const data = await response.json();
       return data || [];
     } catch (error) {
@@ -56,7 +56,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
     // Save to server
     try {
-      await fetch('/api/vault', {
+      await fetch('https://appforman.onrender.com/api/vault', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: normalizedEmail, passwordHash: pass })
