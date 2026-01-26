@@ -1,16 +1,24 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import { promises as fs } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_DIR = path.join(__dirname, 'data');
+const MONGODB_URI = process.env.MONGODB_URI;
+
+// Middleware
+app.use(cors());
+app.use(express.json({ limit: '10mb' }));
 
 // Logging middleware
 app.use((req, res, next) => {
@@ -19,48 +27,35 @@ app.use((req, res, next) => {
     next();
 });
 
-// Middleware
-app.use(cors());
-app.use(express.json({ limit: '10mb' }));
-
-console.log('🔧 Server configuration:');
-console.log(`   - Port: ${PORT}`);
-console.log(`   - Data directory: ${DATA_DIR}`);
-console.log(`   - Node version: ${process.version}`);
-console.log(`   - Environment: ${process.env.NODE_ENV || 'development'}`);
-
-
-// Ensure data directory exists
-async function ensureDataDir() {
-    try {
-        await fs.access(DATA_DIR);
-        console.log('✅ Data directory exists');
-    } catch {
-        await fs.mkdir(DATA_DIR, { recursive: true });
-        console.log('📁 Created data directory');
-    }
+// MongoDB Connection
+if (MONGODB_URI) {
+    mongoose.connect(MONGODB_URI)
+        .then(() => console.log('✅ Connected to MongoDB Atlas'))
+        .catch(err => console.error('❌ MongoDB connection error:', err));
+} else {
+    console.warn('⚠️ MONGODB_URI not found. Server will start but database features won\'t work.');
 }
 
-// --- Vault Management (Auth) ---
-const VAULT_FILE = path.join(DATA_DIR, 'vault.json');
+// Schemas
+const vaultSchema = new mongoose.Schema({
+    email: { type: String, required: true, unique: true, lowercase: true },
+    passwordHash: { type: String, required: true }
+});
 
-async function getVaultData() {
-    try {
-        const data = await fs.readFile(VAULT_FILE, 'utf8');
-        return JSON.parse(data);
-    } catch {
-        return [];
-    }
-}
+const userStatsSchema = new mongoose.Schema({
+    email: { type: String, required: true, unique: true, lowercase: true },
+    data: { type: Object, required: true }
+}, { minimize: false, timestamps: true });
 
-async function saveVaultData(vault) {
-    await fs.writeFile(VAULT_FILE, JSON.stringify(vault, null, 2));
-}
+const Vault = mongoose.model('Vault', vaultSchema);
+const UserStats = mongoose.model('UserStats', userStatsSchema);
 
-// Get entire vault (for app startup/sync)
+// --- API Routes ---
+
+// Get entire vault (demo compatibility)
 app.get('/api/vault', async (req, res) => {
     try {
-        const vault = await getVaultData();
+        const vault = await Vault.find({});
         res.json(vault);
     } catch (error) {
         res.status(500).json({ error: 'Failed to read vault' });
@@ -75,40 +70,34 @@ app.post('/api/vault', async (req, res) => {
             return res.status(400).json({ error: 'Email and password required' });
         }
 
-        const vault = await getVaultData();
-        const exists = vault.find(u => u.email === email.toLowerCase());
+        const normalizedEmail = email.toLowerCase();
+        await Vault.findOneAndUpdate(
+            { email: normalizedEmail },
+            { email: normalizedEmail, passwordHash },
+            { upsert: true, new: true }
+        );
 
-        if (exists) {
-            exists.passwordHash = passwordHash; // Update if exists (or handle differently)
-        } else {
-            vault.push({ email: email.toLowerCase(), passwordHash });
-        }
-
-        await saveVaultData(vault);
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: 'Failed to update vault' });
     }
 });
 
-// API Routes
 // Get user stats
 app.get('/api/stats/:email', async (req, res) => {
     try {
-        const email = encodeURIComponent(req.params.email);
-        const filePath = path.join(DATA_DIR, `${email}.json`);
+        const email = req.params.email.toLowerCase();
+        const record = await UserStats.findOne({ email });
 
-        try {
-            const data = await fs.readFile(filePath, 'utf8');
-            console.log(`📥 Loaded stats for: ${req.params.email}`);
-            res.json(JSON.parse(data));
-        } catch (error) {
-            // File doesn't exist - return null
-            console.log(`ℹ️  No stats found for: ${req.params.email}`);
+        if (record) {
+            console.log(`📥 Loaded stats from DB for: ${email}`);
+            res.json(record.data);
+        } else {
+            console.log(`ℹ️  No stats found in DB for: ${email}`);
             res.json(null);
         }
     } catch (error) {
-        console.error('❌ Error reading stats:', error);
+        console.error('❌ Error reading stats from DB:', error);
         res.status(500).json({ error: 'Failed to read stats' });
     }
 });
@@ -116,15 +105,19 @@ app.get('/api/stats/:email', async (req, res) => {
 // Save user stats
 app.post('/api/stats/:email', async (req, res) => {
     try {
-        const email = encodeURIComponent(req.params.email);
-        const filePath = path.join(DATA_DIR, `${email}.json`);
+        const email = req.params.email.toLowerCase();
         const stats = req.body;
 
-        await fs.writeFile(filePath, JSON.stringify(stats, null, 2));
-        console.log(`💾 Saved stats for: ${req.params.email}`);
-        res.json({ success: true, message: 'Stats saved successfully' });
+        await UserStats.findOneAndUpdate(
+            { email },
+            { email, data: stats },
+            { upsert: true, new: true }
+        );
+
+        console.log(`💾 Saved stats to DB for: ${email}`);
+        res.json({ success: true, message: 'Stats saved to MongoDB' });
     } catch (error) {
-        console.error('❌ Error saving stats:', error);
+        console.error('❌ Error saving stats to DB:', error);
         res.status(500).json({ error: 'Failed to save stats' });
     }
 });
@@ -132,55 +125,44 @@ app.post('/api/stats/:email', async (req, res) => {
 // Delete user data
 app.delete('/api/stats/:email', async (req, res) => {
     try {
-        const email = encodeURIComponent(req.params.email);
-        const filePath = path.join(DATA_DIR, `${email}.json`);
+        const email = req.params.email.toLowerCase();
+        const result = await UserStats.deleteOne({ email });
+        await Vault.deleteOne({ email });
 
-        try {
-            await fs.unlink(filePath);
-            console.log(`🗑️  Deleted stats for: ${req.params.email}`);
-            res.json({ success: true, message: 'Stats deleted successfully' });
-        } catch (error) {
-            console.log(`ℹ️  No data to delete for: ${req.params.email}`);
+        if (result.deletedCount > 0) {
+            console.log(`🗑️  Deleted stats from DB for: ${email}`);
+            res.json({ success: true, message: 'Data deleted from MongoDB' });
+        } else {
             res.json({ success: true, message: 'No data to delete' });
         }
     } catch (error) {
-        console.error('❌ Error deleting stats:', error);
-        res.status(500).json({ error: 'Failed to delete stats' });
+        res.status(500).json({ error: 'Failed to delete data' });
     }
 });
 
-// Health check endpoint
+// Health check
 app.get('/api/health', (req, res) => {
-    const uptime = process.uptime();
-    const healthData = {
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        uptime: `${Math.floor(uptime / 60)}m ${Math.floor(uptime % 60)}s`,
-        memory: {
-            used: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB`,
-            total: `${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)}MB`
-        }
-    };
-    console.log(`💓 Health check - Uptime: ${healthData.uptime}`);
-    res.json(healthData);
+    res.json({
+        status: mongoose.connection.readyState === 1 ? 'ok' : 'connecting',
+        mongo: mongoose.connection.readyState,
+        timestamp: new Date().toISOString()
+    });
 });
 
-// Serve static files from dist directory (production build)
+// Static files
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// SPA fallback - serve index.html for all non-API routes
+// SPA fallback
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    if (!req.url.startsWith('/api')) {
+        res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    } else {
+        res.status(404).json({ error: 'API endpoint not found' });
+    }
 });
 
 // Start server
-async function startServer() {
-    await ensureDataDir();
-    app.listen(PORT, () => {
-        console.log(`🚀 Server running on port ${PORT}`);
-        console.log(`📡 API available at http://localhost:${PORT}/api`);
-        console.log(`🌐 Frontend available at http://localhost:${PORT}`);
-    });
-}
-
-startServer().catch(console.error);
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📡 MongoDB Integration Active`);
+});
