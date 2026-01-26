@@ -142,8 +142,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
               <h2 className="text-lg xs:text-xl sm:text-2xl font-black italic uppercase accent-text tracking-tight inline-block pr-3 group-hover:translate-x-1 transition-transform">
                 Centrum Velení
               </h2>
-              <p className="text-[9px] sm:text-[10px] font-bold text-white/40 uppercase tracking-wider">
-                Týden {currentWeek}
+              <p className="text-[9px] sm:text-[10px] font-bold text-white/40 uppercase tracking-wider flex items-center gap-2">
+                <span>Týden {currentWeek}</span>
+                <span className="opacity-20">•</span>
+                <span>{parseLocalDate(effectiveDate).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long' })}</span>
               </p>
             </div>
           </div>
