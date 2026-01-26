@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { UserStats } from '../types';
+import { API_BASE_URL } from '../config';
 
 /**
  * Custom hook for managing user stats with localStorage persistence
@@ -75,7 +76,7 @@ export const useUserStats = (currentUser: string | null) => {
         const loadData = async () => {
             // Try server first
             try {
-                const response = await fetch(`https://appforman.onrender.com/api/stats/${encodeURIComponent(currentUser)}`);
+                const response = await fetch(`${API_BASE_URL}/stats/${encodeURIComponent(currentUser)}`);
                 const serverData = await response.json();
 
                 if (serverData) {
@@ -121,7 +122,7 @@ export const useUserStats = (currentUser: string | null) => {
 
             // Save to server
             try {
-                const response = await fetch(`https://appforman.onrender.com/api/stats/${encodeURIComponent(stats.email)}`, {
+                const response = await fetch(`${API_BASE_URL}/stats/${encodeURIComponent(stats.email)}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: dataStr

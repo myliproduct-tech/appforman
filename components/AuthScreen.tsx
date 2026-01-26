@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, ChevronRight, Lock, Mail, Github, Chrome, AlertCircle, CheckCircle2, RefreshCw } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 interface AuthScreenProps {
   onLogin: (email: string) => void;
@@ -41,7 +42,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
   const getVault = async (): Promise<VaultEntry[]> => {
     try {
-      const response = await fetch('https://appforman.onrender.com/api/vault');
+      const response = await fetch(`${API_BASE_URL}/vault`);
       const data = await response.json();
       return data || [];
     } catch (error) {
@@ -56,7 +57,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
     // Save to server
     try {
-      await fetch('https://appforman.onrender.com/api/vault', {
+      await fetch(`${API_BASE_URL}/vault`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: normalizedEmail, passwordHash: pass })
