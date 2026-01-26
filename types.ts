@@ -70,6 +70,14 @@ export interface UserStats {
   }; // New: Sync of sound ID stats
   customHospitalBagGear?: CustomGearItem[]; // New: User defined items for hospital bag
   customOperationalPrepGear?: CustomGearItem[]; // New: User defined items for operational prep
+  contractions?: Contraction[]; // New: History of contractions
+}
+
+export interface Contraction {
+  id: string;
+  startTime: string; // ISO string
+  duration: number; // seconds
+  interval?: number; // seconds since previous contraction start
 }
 export interface GearItem {
   id: string;

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Gamepad2, Users, MessageSquare, Sparkles, Zap, X, Radio, Settings as SettingsIcon, Baby, Heart, Rocket } from 'lucide-react';
+import { Gamepad2, Users, MessageSquare, Sparkles, Zap, X, Radio, Settings as SettingsIcon, Baby, Heart, Rocket, Activity } from 'lucide-react';
 import { SpeedBuild } from './extra/SpeedBuild';
 import { SoundID } from './extra/SoundID';
+import { ContractionTimer } from './extra/ContractionTimer';
 import { VisitInstructions } from './extra/VisitInstructions';
 import { SexIntimacy } from './extra/SexIntimacy';
 import { BabyNameGenerator } from './recon/BabyNameGenerator';
-import { BabyName } from '../types';
+import { BabyName, Contraction } from '../types';
 
 type MiniGame = 'speed-build' | 'sound-id' | null;
 
@@ -37,6 +38,7 @@ export const Extra: React.FC<ExtraProps> = ({
     const [showVisitInstructions, setShowVisitInstructions] = useState(false);
     const [showBabyNames, setShowBabyNames] = useState(false);
     const [showSexIntimacy, setShowSexIntimacy] = useState(false);
+    const [showContractionTimer, setShowContractionTimer] = useState(false);
 
     // If a mini-game is selected, show it
     if (selectedGame === 'speed-build') {
@@ -58,6 +60,15 @@ export const Extra: React.FC<ExtraProps> = ({
         return <VisitInstructions
             onClose={() => setShowVisitInstructions(false)}
             partnerName={userStats?.partnerName || ''}
+        />;
+    }
+
+    // If Contraction Timer is shown
+    if (showContractionTimer) {
+        return <ContractionTimer
+            onClose={() => setShowContractionTimer(false)}
+            contractions={userStats?.contractions || []}
+            onUpdate={(contractions) => onUpdateStats({ contractions })}
         />;
     }
 
@@ -270,6 +281,26 @@ export const Extra: React.FC<ExtraProps> = ({
                             </h3>
                             <p className="text-[10px] text-white/40 uppercase tracking-wider mt-1">
                                 Důvěrné informace
+                            </p>
+                        </div>
+                    </div>
+                </button>
+
+                {/* Contraction Timer Card */}
+                <button
+                    onClick={() => setShowContractionTimer(true)}
+                    className="group relative overflow-hidden rounded-2xl bg-white/5 border-2 border-white/10 p-6 text-left hover:border-[#f6c453]/40 hover:scale-[1.02] active:scale-95 transition-all shadow-lg"
+                >
+                    <div className="relative flex flex-col items-center gap-3">
+                        <div className="p-4 bg-[#f6c453]/10 rounded-xl group-hover:bg-[#f6c453]/20 transition-all text-[#f6c453]">
+                            <Activity className="w-8 h-8 group-hover:scale-110 transition-transform" />
+                        </div>
+                        <div className="text-center">
+                            <h3 className="text-sm font-black uppercase text-white/90 tracking-tight group-hover:text-[#f6c453] transition-colors">
+                                Měřič Kontrakcí
+                            </h3>
+                            <p className="text-[10px] text-white/40 uppercase tracking-wider mt-1">
+                                Logistika porodu
                             </p>
                         </div>
                     </div>
