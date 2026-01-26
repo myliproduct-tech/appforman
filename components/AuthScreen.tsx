@@ -16,7 +16,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   const [isRegister, setIsRegister] = useState(false);
   const [alert, setAlert] = useState<{ type: 'error' | 'success' | 'info'; message: string } | null>(null);
   const [isResetLoading, setIsResetLoading] = useState(false);
-  const [gdprAccepted, setGdprAccepted] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [consentAccepted, setConsentAccepted] = useState(false);
+  const [activeLegalDoc, setActiveLegalDoc] = useState<'privacy' | 'terms' | 'consent'>('privacy');
   const [showGdpr, setShowGdpr] = useState(false);
 
   // Password validation criteria
@@ -32,7 +34,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   // Clear alert when switching modes
   useEffect(() => {
     setAlert(null);
-    setGdprAccepted(false);
+    setTermsAccepted(false);
+    setConsentAccepted(false);
     setShowGdpr(false);
   }, [isRegister]);
 
@@ -75,7 +78,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     const normalizedEmail = email.trim().toLowerCase();
 
     if (isRegister) {
-      if (!isPasswordStrong || !gdprAccepted) return;
+      if (!isPasswordStrong || !termsAccepted || !consentAccepted) return;
 
       const exists = vault.find(u => u.email === normalizedEmail);
       if (exists) {
@@ -247,40 +250,75 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                       ))}
                     </div>
 
-                    {/* GDPR Section */}
+                    {/* Legal Documentation Section */}
                     <div className="mt-6 space-y-3 px-2">
                       <button
                         type="button"
                         onClick={() => setShowGdpr(!showGdpr)}
                         className="w-full flex items-center justify-between py-2 border-b border-white/5 group"
                       >
-                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#f6c453]/60 group-hover:text-[#f6c453] transition-colors">Právní protokol (GDPR)</span>
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#f6c453]/60 group-hover:text-[#f6c453] transition-colors italic">Právní dokumentace</span>
                         <ChevronRight className={`w-3 h-3 text-[#f6c453]/40 transition-transform ${showGdpr ? 'rotate-90' : ''}`} />
                       </button>
 
                       {showGdpr && (
-                        <div className="bg-[#161c22]/50 p-4 rounded-xl border border-white/5 animate-slide-up mb-4">
-                          <p className="text-[8px] leading-relaxed text-white/50 font-medium tracking-wide">
-                            Vaše data jsou bezpečně uložena na našem serveru pro účely synchronizace mezi vašimi zařízeními. Aplikace Partner v Akci dbá na ochranu soukromí a vaše údaje neposkytuje třetím stranám. Smazáním účtu v nastavení dojde k trvalému odstranění všech vašich dat ze serveru.
-                          </p>
+                        <div className="bg-[#161c22]/50 rounded-xl border border-white/5 animate-slide-up mb-4 overflow-hidden">
+                          {/* Tabs for different docs */}
+                          <div className="flex border-b border-white/5">
+                            {(['terms', 'privacy', 'consent'] as const).map((tab) => (
+                              <button
+                                key={tab}
+                                type="button"
+                                onClick={() => setActiveLegalDoc(tab)}
+                                className={`flex-1 py-1.5 text-[7px] font-black uppercase tracking-widest transition-all ${activeLegalDoc === tab ? 'bg-[#f6c453]/10 text-[#f6c453]' : 'text-white/20'}`}
+                              >
+                                {tab === 'terms' ? 'Podmínky' : tab === 'privacy' ? 'Zásady' : 'Souhlas'}
+                              </button>
+                            ))}
+                          </div>
+                          <div className="p-4 max-h-[100px] overflow-y-auto custom-scrollbar">
+                            <p className="text-[8px] leading-relaxed text-white/50 font-medium tracking-wide">
+                              {activeLegalDoc === 'privacy' && "Vaše data jsou bezpečně uložena na našem serveru pro účely synchronizace mezi vašimi zařízeními. Aplikace Partner v Akci dbá na ochranu soukromí a vaše údaje neposkytuje třetím stranám. Smazáním účtu dojde k trvalému odstranění dat."}
+                              {activeLegalDoc === 'terms' && "Používáním aplikace Partner v Akci souhlasíte s obchodními podmínkami. Aplikace slouží k informačním a motivačním účelům během těhotenství. Nejedná se o lékařské poradenství. Uživatel nese plnou odpovědnost za své kroky."}
+                              {activeLegalDoc === 'consent' && "Souhlasím se zpracováním mých osobních údajů (email, jméno, údaje o průběhu těhotenství) za účelem personalizace obsahu a funkcí aplikace. Souhlas lze kdykoliv odvolat smazáním profilu."}
+                            </p>
+                          </div>
                         </div>
                       )}
 
-                      <label className="flex items-start gap-3 cursor-pointer group">
-                        <div className="relative flex items-center mt-0.5">
-                          <input
-                            type="checkbox"
-                            checked={gdprAccepted}
-                            onChange={(e) => setGdprAccepted(e.target.checked)}
-                            className="peer sr-only"
-                          />
-                          <div className="w-4 h-4 border-2 border-[#f6c453]/20 rounded transition-all peer-checked:bg-[#f6c453] peer-checked:border-[#f6c453] shadow-[0_0_10px_rgba(246,196,83,0)] peer-checked:shadow-[0_0_15px_rgba(246,196,83,0.3)]"></div>
-                          <CheckCircle2 className="absolute inset-0 w-4 h-4 text-[#1f2933] scale-0 peer-checked:scale-100 transition-transform" />
-                        </div>
-                        <span className="text-[9px] font-bold text-white/40 group-hover:text-white/60 transition-colors leading-tight">
-                          Potvrzuji seznámení se s protokolem o ochraně dat
-                        </span>
-                      </label>
+                      <div className="space-y-2">
+                        <label className="flex items-start gap-3 cursor-pointer group">
+                          <div className="relative flex items-center mt-0.5">
+                            <input
+                              type="checkbox"
+                              checked={termsAccepted}
+                              onChange={(e) => setTermsAccepted(e.target.checked)}
+                              className="peer sr-only"
+                            />
+                            <div className="w-4 h-4 border-2 border-[#f6c453]/20 rounded transition-all peer-checked:bg-[#f6c453] peer-checked:border-[#f6c453] shadow-[0_0_10px_rgba(246,196,83,0)] peer-checked:shadow-[0_0_15px_rgba(246,196,83,0.3)]"></div>
+                            <CheckCircle2 className="absolute inset-0 w-4 h-4 text-[#1f2933] scale-0 peer-checked:scale-100 transition-transform" />
+                          </div>
+                          <span className="text-[9px] font-bold text-white/40 group-hover:text-white/60 transition-colors leading-tight">
+                            Souhlasím s obchodními podmínkami a zásadami ochrany údajů
+                          </span>
+                        </label>
+
+                        <label className="flex items-start gap-3 cursor-pointer group">
+                          <div className="relative flex items-center mt-0.5">
+                            <input
+                              type="checkbox"
+                              checked={consentAccepted}
+                              onChange={(e) => setConsentAccepted(e.target.checked)}
+                              className="peer sr-only"
+                            />
+                            <div className="w-4 h-4 border-2 border-[#f6c453]/20 rounded transition-all peer-checked:bg-[#f6c453] peer-checked:border-[#f6c453] shadow-[0_0_10px_rgba(246,196,83,0)] peer-checked:shadow-[0_0_15px_rgba(246,196,83,0.3)]"></div>
+                            <CheckCircle2 className="absolute inset-0 w-4 h-4 text-[#1f2933] scale-0 peer-checked:scale-100 transition-transform" />
+                          </div>
+                          <span className="text-[9px] font-bold text-white/40 group-hover:text-white/60 transition-colors leading-tight">
+                            Souhlasím se zpracováním osobních údajů pro účely aplikace
+                          </span>
+                        </label>
+                      </div>
                     </div>
                   </>
                 )}
@@ -288,7 +326,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
               <button
                 type="submit"
-                disabled={email.length < 4 || (isRegister && (!isPasswordStrong || !gdprAccepted)) || (!isRegister && password.length < 1)}
+                disabled={email.length < 4 || (isRegister && (!isPasswordStrong || !termsAccepted || !consentAccepted)) || (!isRegister && password.length < 1)}
                 className="w-full bg-gradient-to-r from-[#bb8712] to-[#f6c453] text-[#1f2933] font-black uppercase tracking-[0.25em] text-[11px] py-5 rounded-[1.5rem] shadow-xl shadow-[#f6c453]/20 active:scale-[0.98] hover:brightness-110 transition-all disabled:opacity-30 disabled:grayscale flex items-center justify-center gap-2 group"
               >
                 {isRegister ? 'Zahájit nábor' : 'Vstoupit do centrály'}
