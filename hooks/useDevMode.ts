@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getStartDateFromDue } from '../utils';
 
 /**
  * Custom hook for dev mode functionality
@@ -13,15 +14,7 @@ export const useDevMode = () => {
     const getEffectiveDate = (dueDate: string | null): string => {
         if (!dueDate) return new Date().toISOString().split('T')[0];
 
-        const dueDateObj = new Date(dueDate);
-        // Validate the date
-        if (isNaN(dueDateObj.getTime())) {
-            console.warn('Invalid dueDate:', dueDate);
-            return new Date().toISOString().split('T')[0];
-        }
-
-        const startDate = new Date(dueDateObj);
-        startDate.setDate(dueDateObj.getDate() - 280);
+        const startDate = getStartDateFromDue(dueDate);
 
         const effectiveDate = new Date(startDate);
         effectiveDate.setDate(startDate.getDate() + dayOffset);

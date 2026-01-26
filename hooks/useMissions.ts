@@ -1,7 +1,7 @@
 import React from 'react';
 import { UserStats, Task, Achievement } from '../types';
 import { getDailyMissions } from '../data/dailyMissions';
-import { localizeText, getRankBasedOnPoints } from '../utils';
+import { localizeText, getRankBasedOnPoints, getStartDateFromDue, getDayIndex } from '../utils';
 import { soundService } from '../services/SoundService';
 import { ACHIEVEMENTS } from '../constants';
 import { notificationService } from '../services/NotificationService';
@@ -303,14 +303,10 @@ export const useMissions = (
                 const missionsForDay = getDailyMissions(d);
                 missionsForDay.forEach(mission => {
                     if (!completedDailyIds.has(mission.id) && !postponedIds.has(mission.id) && !historyIds.has(mission.id)) {
-                        // Calculate date for this day
-                        const dueDateObj = prev.dueDate ? new Date(prev.dueDate) : new Date();
-                        if (isNaN(dueDateObj.getTime())) {
-                            console.warn('Invalid dueDate in syncMissedMissions (daily):', prev.dueDate);
-                            return prev;
-                        }
-                        const missionDate = new Date(dueDateObj);
-                        missionDate.setDate(dueDateObj.getDate() - (280 - d));
+                        // Calculate date for this day using centralized utility
+                        const startDate = getStartDateFromDue(prev.dueDate || new Date());
+                        const missionDate = new Date(startDate);
+                        missionDate.setDate(startDate.getDate() + d);
 
                         const failedMission: Task = {
                             ...mission,
@@ -326,14 +322,10 @@ export const useMissions = (
             }
 
             // 2. Process overdue restored missions (last chance failed) - PENALTY APPLIES HERE
-            // Calculate current effective date from dueDate and dayIndex
-            const dueDateObj = prev.dueDate ? new Date(prev.dueDate) : new Date();
-            if (isNaN(dueDateObj.getTime())) {
-                console.warn('Invalid dueDate in syncMissedMissions (restored):', prev.dueDate);
-                return prev;
-            }
-            const currentEffectiveDate = new Date(dueDateObj);
-            currentEffectiveDate.setDate(dueDateObj.getDate() - (280 - effectiveDayIndex));
+            // Calculate current effective date from dueDate and dayIndex using centralized logic
+            const startDate = getStartDateFromDue(prev.dueDate || new Date());
+            const currentEffectiveDate = new Date(startDate);
+            currentEffectiveDate.setDate(startDate.getDate() + effectiveDayIndex);
             const currentEffectiveDateStr = currentEffectiveDate.toISOString().split('T')[0];
 
             const overdueCustom = prev.customMissions.filter(cm =>

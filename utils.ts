@@ -125,3 +125,39 @@ export const makePhoneCall = (phone: string) => {
     window.location.href = `tel:${phone}`;
   }
 };
+
+/**
+ * Pregnancy Date Calculation Utilities
+ */
+
+/**
+ * Calculates start of pregnancy (day 0) from due date.
+ * Pregnancy duration is estimated at 280 days (40 weeks).
+ */
+export const getStartDateFromDue = (dueDate: string | Date): Date => {
+  const date = new Date(dueDate);
+  if (isNaN(date.getTime())) return new Date();
+
+  // Set to midnight UTC for stable math
+  const start = new Date(date);
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() - 280);
+  return start;
+};
+
+/**
+ * Calculates current day index (0-280) based on start date and current target date.
+ * Normalizes both dates to midnight to avoid time-of-day issues.
+ */
+export const getDayIndex = (startDate: Date, targetDate: Date = new Date()): number => {
+  const d1 = new Date(startDate);
+  d1.setHours(0, 0, 0, 0);
+
+  const d2 = new Date(targetDate);
+  d2.setHours(0, 0, 0, 0);
+
+  const diffTime = d2.getTime() - d1.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  return Math.max(0, Math.min(280, diffDays));
+};

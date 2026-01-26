@@ -9,6 +9,7 @@ import { OnboardingTour } from './components/OnboardingTour';
 import { Navigation } from './components/Navigation';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { Tab, Task, Achievement, UserStats } from './types';
+import { localizeText, getRankBasedOnPoints, getDayIndex, getStartDateFromDue } from './utils';
 import { GEAR_CHECKLIST, HOSPITAL_BAG_CHECKLIST, ACHIEVEMENTS } from './constants';
 import { RANKS } from './constants';
 import { EyeOff, Shield } from 'lucide-react';
@@ -225,17 +226,22 @@ const App: React.FC = () => {
     // Sync dayOffset with real calendar progress when NOT in dev mode
     useEffect(() => {
         if (!devMode.isDevMode && stats.dueDate) {
-            const dueDate = new Date(stats.dueDate);
-            if (isNaN(dueDate.getTime())) return;
+            const updateDayIndex = () => {
+                const startDate = getStartDateFromDue(stats.dueDate);
+                const realDayIndex = getDayIndex(startDate);
 
-            const startDate = new Date(dueDate);
-            startDate.setDate(dueDate.getDate() - 280);
-            const now = new Date();
-            const realDayIndex = Math.floor(Math.max(0, (now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+                if (realDayIndex !== devMode.dayOffset) {
+                    console.log(`🕒 Time sync: Day ${devMode.dayOffset} -> ${realDayIndex}`);
+                    devMode.setDayOffset(realDayIndex);
+                }
+            };
 
-            if (realDayIndex !== devMode.dayOffset) {
-                devMode.setDayOffset(realDayIndex);
-            }
+            // Run immediately
+            updateDayIndex();
+
+            // Periodic check (every 30 seconds should be enough to catch midnight without overhead)
+            const interval = setInterval(updateDayIndex, 30000);
+            return () => clearInterval(interval);
         }
     }, [devMode.isDevMode, stats.dueDate, devMode.dayOffset]);
 
@@ -454,12 +460,9 @@ const App: React.FC = () => {
         return (
             <Onboarding
                 onComplete={(name, dueDate, partnerName) => {
-                    // Calculate initial day index based on due date
-                    const dueDateObj = new Date(dueDate);
-                    const startDate = new Date(dueDateObj);
-                    startDate.setDate(dueDateObj.getDate() - 280);
-                    const now = new Date();
-                    const initialDayIndex = Math.floor(Math.max(0, (now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+                    // Calculate initial day index based on due date using centralized utility
+                    const startDate = getStartDateFromDue(dueDate);
+                    const initialDayIndex = getDayIndex(startDate);
 
                     setStats(prev => ({
                         ...prev,
