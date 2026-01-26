@@ -63,10 +63,14 @@ export const useUserStats = (currentUser: string | null) => {
     };
 
     const [stats, setStats] = useState<UserStats>(initialStats);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     // 1. Initial Load: Server (Primary) -> LocalStorage (Secondary)
     useEffect(() => {
-        if (!currentUser) return;
+        if (!currentUser) {
+            setIsLoaded(false);
+            return;
+        }
 
         const loadData = async () => {
             // Try server first
@@ -78,6 +82,7 @@ export const useUserStats = (currentUser: string | null) => {
                     setStats({ ...initialStats, ...serverData, email: currentUser });
                     // Sync local storage with fresh server data
                     localStorage.setItem(`partner_app_data_${currentUser}`, JSON.stringify(serverData));
+                    setIsLoaded(true);
                     return;
                 }
             } catch (error) {
@@ -98,6 +103,7 @@ export const useUserStats = (currentUser: string | null) => {
             } else {
                 setStats({ ...initialStats, email: currentUser });
             }
+            setIsLoaded(true);
         };
 
         loadData();
@@ -105,7 +111,7 @@ export const useUserStats = (currentUser: string | null) => {
 
     // 2. Periodic Save: Save to both Server and LocalStorage
     useEffect(() => {
-        if (!stats.email) return;
+        if (!stats.email || !isLoaded) return;
 
         const saveData = async () => {
             const dataStr = JSON.stringify(stats);
@@ -115,11 +121,15 @@ export const useUserStats = (currentUser: string | null) => {
 
             // Save to server
             try {
-                await fetch(`/api/stats/${encodeURIComponent(stats.email)}`, {
+                const response = await fetch(`/api/stats/${encodeURIComponent(stats.email)}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: dataStr
                 });
+
+                if (!response.ok) {
+                    console.error('❌ Server error during save', response.status);
+                }
             } catch (error) {
                 console.error('❌ Failed to push stats to server', error);
             }
@@ -127,7 +137,7 @@ export const useUserStats = (currentUser: string | null) => {
 
         // Debounce saving slightly if needed, but for now direct is fine
         saveData();
-    }, [stats]);
+    }, [stats, isLoaded]);
 
     return { stats, setStats, initialStats };
 };
