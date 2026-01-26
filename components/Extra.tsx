@@ -194,7 +194,7 @@ export const Extra: React.FC<ExtraProps> = ({
                         <Rocket className="w-6 h-6 text-[#f6c453]" />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-black italic uppercase accent-text tracking-tight inline-block pr-3 group-hover:translate-x-1 transition-transform">
+                        <h2 className="text-lg xs:text-xl sm:text-2xl font-black italic uppercase accent-text tracking-tight inline-block pr-3 group-hover:translate-x-1 transition-transform">
                             Extra Obsah
                         </h2>
                         <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">

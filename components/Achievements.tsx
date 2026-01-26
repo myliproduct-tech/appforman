@@ -34,7 +34,7 @@ export const Achievements: React.FC<AchievementsProps> = ({ stats, onClose }) =>
                         <Trophy className="w-6 h-6 text-[#f6c453]" />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-black italic uppercase text-white tracking-tighter">Zeď Slávy</h2>
+                        <h2 className="text-lg xs:text-xl sm:text-2xl font-black italic uppercase text-white tracking-tighter">Zeď Slávy</h2>
                         <div className="flex items-center gap-2">
                             <div className="h-1.5 w-32 bg-white/5 rounded-full overflow-hidden border border-white/10">
                                 <div
