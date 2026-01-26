@@ -1,7 +1,7 @@
 import React from 'react';
 import { UserStats, Task, Achievement } from '../types';
 import { getDailyMissions } from '../data/dailyMissions';
-import { localizeText, getRankBasedOnPoints, getStartDateFromDue, getDayIndex } from '../utils';
+import { localizeText, getStartDateFromDue, parseLocalDate, getTodayString, getRankBasedOnPoints, getDayIndex } from '../utils';
 import { soundService } from '../services/SoundService';
 import { ACHIEVEMENTS } from '../constants';
 import { notificationService } from '../services/NotificationService';
@@ -127,15 +127,18 @@ export const useMissions = (
             const newPoints = prev.points + taskPoints;
 
             // Calculate streak
-            const today = effectiveDate || new Date().toISOString().split('T')[0];
+            const today = effectiveDate || getTodayString();
             let newStreak = prev.streak;
             let newLastEngagementDate = today;
 
+            if (prev.lastEngagementDate === today) return prev; // Already updated today
+
             if (prev.lastEngagementDate) {
-                const lastDate = new Date(prev.lastEngagementDate);
-                const currentDate = new Date(today);
-                const diffTime = currentDate.getTime() - lastDate.getTime();
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                const lastDate = parseLocalDate(prev.lastEngagementDate || '2000-01-01');
+                const currentDate = parseLocalDate(today);
+
+                const diffTime = Math.abs(currentDate.getTime() - lastDate.getTime());
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
                 if (diffDays === 0) {
                     // Same day - no change to streak

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Task } from '../../types';
 import { X, Clock, Calendar, CalendarDays, ArrowRight, RotateCcw, Sunrise, Sun, AlertTriangle } from 'lucide-react';
 import { DatePickerModal } from '../common/DatePickerModal';
+import { parseLocalDate, formatLocalDate } from '../../utils';
 
 interface MissionSchedulerProps {
     task: Task | null;
@@ -27,26 +28,26 @@ const MissionSchedulerComponent: React.FC<MissionSchedulerProps> = ({
 
     useEffect(() => {
         if (task) {
-            const base = new Date(simulatedDate || new Date());
+            const base = simulatedDate ? parseLocalDate(simulatedDate) : new Date();
             if (mode === 'postpone') {
                 base.setDate(base.getDate() + 1);
             }
-            setManualDate(base.toISOString().split('T')[0]);
+            setManualDate(formatLocalDate(base));
         }
     }, [task, mode, simulatedDate]);
 
     if (!task) return null;
 
     const getDateShifted = (days: number) => {
-        const base = simulatedDate ? new Date(simulatedDate) : new Date();
+        const base = simulatedDate ? parseLocalDate(simulatedDate) : new Date();
         base.setDate(base.getDate() + days);
-        return base.toISOString().split('T')[0];
+        return formatLocalDate(base);
     };
 
     const formatDateLabel = (dateStr: string) => {
         if (!dateStr) return "Vybrat datum";
-        const d = new Date(dateStr);
-        const today = new Date(simulatedDate || new Date());
+        const d = parseLocalDate(dateStr);
+        const today = simulatedDate ? parseLocalDate(simulatedDate) : new Date();
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
 

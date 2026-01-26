@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { UserStats, ConsumableItem } from '../types';
+import { parseLocalDate } from '../utils';
 import { DEFAULT_CONSUMABLES } from '../constants';
 import { notificationService } from '../services/NotificationService';
 
@@ -20,7 +21,7 @@ export const useConsumables = (
             // Check if any item needs deduction
             const needsUpdate = stats.budgetPlan.consumables.some(item => {
                 const lastUpdated = item.lastUpdated.split('T')[0];
-                const daysDiff = Math.floor((new Date(effectiveToday).getTime() - new Date(lastUpdated).getTime()) / (1000 * 60 * 60 * 24));
+                const daysDiff = Math.floor((parseLocalDate(effectiveToday).getTime() - parseLocalDate(lastUpdated).getTime()) / (1000 * 60 * 60 * 24));
                 return daysDiff >= 1;
             });
 
@@ -32,7 +33,7 @@ export const useConsumables = (
 
                     const updatedConsumables = prev.budgetPlan.consumables.map(item => {
                         const lastUpdated = item.lastUpdated.split('T')[0];
-                        const daysDiff = Math.floor((new Date(effectiveToday).getTime() - new Date(lastUpdated).getTime()) / (1000 * 60 * 60 * 24));
+                        const daysDiff = Math.floor((parseLocalDate(effectiveToday).getTime() - parseLocalDate(lastUpdated).getTime()) / (1000 * 60 * 60 * 24));
 
                         if (daysDiff >= 1) {
                             const newQuantity = Math.max(0, item.quantity - daysDiff);

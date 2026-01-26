@@ -1,4 +1,5 @@
 import React from 'react';
+import { parseLocalDate } from '../../utils';
 import { Task } from '../../types';
 
 interface MissionStatsProps {
@@ -9,7 +10,7 @@ interface MissionStatsProps {
 export const calculateStats = (missions: Task[], simulatedDate?: string | null) => {
     if (!simulatedDate) return { thisMonth: { count: 0, xp: 0 }, thisWeek: { count: 0, xp: 0 }, total: { count: 0, xp: 0 } };
 
-    const now = new Date(simulatedDate);
+    const now = parseLocalDate(simulatedDate);
     const thisMonth = missions.filter(m => {
         const date = new Date(m.completedDate || '');
         return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();

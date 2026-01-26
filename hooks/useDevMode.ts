@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getStartDateFromDue } from '../utils';
+import { getStartDateFromDue, formatLocalDate } from '../utils';
 
 /**
  * Custom hook for dev mode functionality
@@ -12,13 +12,13 @@ export const useDevMode = () => {
 
     // Calculate effective date based on start date and current day index
     const getEffectiveDate = (dueDate: string | null): string => {
-        if (!dueDate) return new Date().toISOString().split('T')[0];
+        if (!dueDate) return formatLocalDate(new Date());
 
         const startDate = getStartDateFromDue(dueDate);
 
         const effectiveDate = new Date(startDate);
         effectiveDate.setDate(startDate.getDate() + dayOffset);
-        return effectiveDate.toISOString().split('T')[0];
+        return formatLocalDate(effectiveDate);
     };
 
     // Update current week when day index changes

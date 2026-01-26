@@ -4,7 +4,7 @@ import { soundService } from '../services/SoundService';
 import { PREGNANCY_STAGES, BABY_SIZES, RANKS, WEEKLY_INTEL, PARTNER_RECON, DESERTER_RANK } from '../constants';
 import { Flame, Target, Trophy, Activity, Dna, X, ChevronRight, FileText, AlertTriangle, Shield } from 'lucide-react';
 
-import { localizeText, getRankBasedOnPoints } from '../utils';
+import { localizeText, getRankBasedOnPoints, parseLocalDate } from '../utils';
 import { useDashboardReducer } from '../hooks/useDashboardReducer';
 import { Modal } from './common/Modal';
 
@@ -70,7 +70,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ stats, currentWeek, effect
 
       // 2. Use effectiveDate (simulated) vs last mission date
       // Normalize both to start of day for accurate full-day difference
-      const simulatedNow = new Date(effectiveDate);
+      const simulatedNow = parseLocalDate(effectiveDate);
       if (isNaN(simulatedNow.getTime())) {
         console.warn('Invalid effectiveDate:', effectiveDate);
         return false; // Can't determine deserter status with invalid date

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Task } from '../../types';
+import { localizeText, parseLocalDate } from '../../utils';
 import { Download } from 'lucide-react';
 import html2canvas from 'html2canvas';
 
@@ -13,7 +14,7 @@ export const getTaskWebData = (completedDateStr: string | undefined, simulatedDa
     if (!completedDateStr || !simulatedDate) return { week: 0, month: 0 };
 
     const compDate = new Date(completedDateStr);
-    const today = new Date(simulatedDate);
+    const today = parseLocalDate(simulatedDate);
 
     const conceptionDate = new Date(today);
     conceptionDate.setDate(today.getDate() - dayIndex);
@@ -30,7 +31,7 @@ export const getTaskWebData = (completedDateStr: string | undefined, simulatedDa
 export const groupMissionsByMonth = (missions: Task[]) => {
     const grouped = missions.reduce((acc, mission) => {
         const date = new Date(mission.completedDate || '');
-        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        const monthKey = `${date.getFullYear()} -${String(date.getMonth() + 1).padStart(2, '0')} `;
 
         if (!acc[monthKey]) {
             acc[monthKey] = {
@@ -66,7 +67,7 @@ const MissionTimelineComponent: React.FC<MissionTimelineProps> = ({ missions, si
 
             const imgData = canvas.toDataURL('image/png');
             const link = document.createElement('a');
-            link.download = `mise-historie-${new Date().toISOString().split('T')[0]}.png`;
+            link.download = `mise - historie - ${new Date().toISOString().split('T')[0]}.png`;
             link.href = imgData;
             link.click();
             setIsExporting(false);
@@ -105,7 +106,7 @@ const MissionTimelineComponent: React.FC<MissionTimelineProps> = ({ missions, si
                             <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#f6c453] via-[#f6c453]/50 to-transparent" />
 
                             {monthGroup.missions.map((mission, idx) => (
-                                <div key={`${mission.id}_timeline_${idx}`} className="relative mb-6 animate-fade-in">
+                                <div key={`${mission.id}_timeline_${idx} `} className="relative mb-6 animate-fade-in">
                                     <div className="absolute -left-6 top-2 w-4 h-4 rounded-full bg-[#f6c453] border-4 border-[#1f2933] shadow-lg shadow-[#f6c453]/50 z-10" />
 
                                     <div className="glass-card p-4 rounded-2xl border-l-4 border-[#f6c453] hover:translate-x-1 transition-transform">

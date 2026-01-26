@@ -9,7 +9,7 @@ import { MissionTimeline, getTaskWebData } from './missions/MissionTimeline';
 import { MissionScheduler } from './missions/MissionScheduler';
 import { CustomMissionForm } from './missions/CustomMissionForm';
 import { MISSIONS_TOUR } from '../tourSteps/missionsTour';
-import { localizeText } from '../utils';
+import { localizeText, parseLocalDate } from '../utils';
 import { useMissionsReducer } from '../hooks/useMissionsReducer';
 
 interface MissionsProps {
@@ -92,7 +92,7 @@ export const Missions: React.FC<MissionsProps> = ({
 
     const formattedDate = (() => {
         if (!simulatedDate) return 'Dnešní mise';
-        const date = new Date(simulatedDate);
+        const date = parseLocalDate(simulatedDate);
         if (isNaN(date.getTime())) return 'Dnešní mise';
         return date.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long' });
     })();

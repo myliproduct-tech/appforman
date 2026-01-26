@@ -127,18 +127,45 @@ export const makePhoneCall = (phone: string) => {
 };
 
 /**
- * Pregnancy Date Calculation Utilities
+ * Safe Date Utilities for Local Time
+ * Prevents UTC-lag where YYYY-MM-DD is interpreted as midnight GMT, 
+ * causing it to be "yesterday" in many timezones.
  */
+
+/**
+ * Parses a YYYY-MM-DD string into a Date object at local midnight.
+ */
+export const parseLocalDate = (dateStr: string): Date => {
+  if (!dateStr) return new Date();
+  const [year, month, day] = dateStr.split('-').map(Number);
+  if (!year || !month || !day) return new Date();
+  return new Date(year, month - 1, day, 0, 0, 0, 0);
+};
+
+/**
+ * Formats a Date object as YYYY-MM-DD in local time.
+ */
+export const formatLocalDate = (date: Date): string => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+/**
+ * Returns today's date string in YYYY-MM-DD local format.
+ */
+export const getTodayString = (): string => formatLocalDate(new Date());
 
 /**
  * Calculates start of pregnancy (day 0) from due date.
  * Pregnancy duration is estimated at 280 days (40 weeks).
  */
 export const getStartDateFromDue = (dueDate: string | Date): Date => {
-  const date = new Date(dueDate);
+  const date = typeof dueDate === 'string' ? parseLocalDate(dueDate) : new Date(dueDate);
   if (isNaN(date.getTime())) return new Date();
 
-  // Set to midnight UTC for stable math
   const start = new Date(date);
   start.setHours(0, 0, 0, 0);
   start.setDate(start.getDate() - 280);
