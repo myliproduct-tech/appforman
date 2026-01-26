@@ -80,24 +80,34 @@ export const ContractionTimer: React.FC<ContractionTimerProps> = ({ onClose, con
     };
 
     const analyzeHistory = () => {
-        if (contractions.length < 3) return null;
+        if (contractions.length < 1) return null; // Changed from 3 to 1 to show info for any record
 
         const recent = contractions.slice(0, 5);
         const avgInterval = recent.reduce((acc, c) => acc + (c.interval || 0), 0) / (recent.length - 1 || 1);
         const avgDuration = recent.reduce((acc, c) => acc + c.duration, 0) / recent.length;
 
-        if (avgInterval <= 300 && avgDuration >= 45) {
+        // Critical - Intervals under 6 mins, sustained
+        if (avgInterval <= 360 && avgDuration >= 45) {
             return {
                 level: 'critical',
+                title: 'KRITICKÝ STAV: ODJEZD',
                 message: 'ČAS VYRAZIT DO PORODNICE!'
             };
-        } else if (avgInterval <= 600) {
+        }
+        // Active Alert - Intervals under 10 mins
+        else if (avgInterval <= 600) {
             return {
                 level: 'warning',
-                message: 'Kontrakce se zkracují. Buďte v pohotovosti.'
+                title: 'AKTIVNÍ POHOTOVOST',
+                message: 'Kontrakce jsou pravidelné a zkracují se. Buďte připraveni k přesunu.'
             };
         }
-        return null;
+        // Early Stage - Any record
+        return {
+            level: 'info',
+            title: 'RANNÁ FÁZE',
+            message: 'Kontrakce zaznamenány. Sledujte trend a snažte se odpočívat.'
+        };
     };
 
     const status = analyzeHistory();
@@ -124,9 +134,11 @@ export const ContractionTimer: React.FC<ContractionTimerProps> = ({ onClose, con
 
                 <div className="space-y-6 flex-1">
                     {/* Status Advisor - Styled like Intro card */}
-                    <div className={`glass-card p-6 rounded-3xl border-2 ${status?.level === 'critical' ? 'bg-red-500/10 border-red-500/30' : 'bg-[#f6c453]/5 border-[#f6c453]/20'}`}>
+                    <div className={`glass-card p-6 rounded-3xl border-2 ${status?.level === 'critical' ? 'bg-red-500/10 border-red-500/30' :
+                        status?.level === 'warning' ? 'bg-amber-500/5 border-amber-500/20' : 'bg-[#f6c453]/5 border-[#f6c453]/20'}`}>
                         <div className="flex items-start gap-4">
-                            <div className={`p-3 rounded-xl shrink-0 ${status?.level === 'critical' ? 'bg-red-500/20' : 'bg-[#f6c453]/20'}`}>
+                            <div className={`p-3 rounded-xl shrink-0 ${status?.level === 'critical' ? 'bg-red-500/20' :
+                                status?.level === 'warning' ? 'bg-amber-500/20' : 'bg-[#f6c453]/20'}`}>
                                 {status?.level === 'critical' ? (
                                     <AlertTriangle className="w-6 h-6 text-red-400" />
                                 ) : (
@@ -135,10 +147,12 @@ export const ContractionTimer: React.FC<ContractionTimerProps> = ({ onClose, con
                             </div>
                             <div>
                                 <h3 className="text-lg font-black mb-1">
-                                    {status ? (status.level === 'critical' ? <span className="text-red-500 uppercase animate-pulse">ALARM: DOSAŽENO 5-1-1</span> : <span className="text-white uppercase italic">Analýza systému</span>) : <span className="text-white font-black italic">Instrukce měření</span>}
+                                    {status ? (status.level === 'critical' ? <span className="text-red-500 uppercase animate-pulse">{status.title}</span> :
+                                        <span className="text-white uppercase italic">{status.title}</span>) :
+                                        <span className="text-white font-black italic">Instrukce měření</span>}
                                 </h3>
-                                <p className={`text-sm leading-relaxed italic font-bold ${status?.level === 'critical' ? 'text-red-400 text-lg not-italic mt-2 shadow-red-500/20' : 'text-white/70'}`}>
-                                    {status ? status.message : "Pravidlo 5-1-1: Kontrakce každých 5 minut, trvající 1 minutu, po dobu 1 hodiny."}
+                                <p className={`text-sm leading-relaxed italic font-bold ${status?.level === 'critical' ? 'text-red-400 text-lg not-italic mt-2' : 'text-white/70'}`}>
+                                    {status ? status.message : "Sledujte pravidelnost a délku kontrakcí. Při intervalu pod 5-7 minut se připravte k odjezdu."}
                                 </p>
                             </div>
                         </div>
