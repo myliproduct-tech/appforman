@@ -89,7 +89,7 @@ export const ContractionTimer: React.FC<ContractionTimerProps> = ({ onClose, con
         if (avgInterval <= 300 && avgDuration >= 45) {
             return {
                 level: 'critical',
-                message: 'PRAVIDLO 5-1-1 SPLNĚNO: Kontrakce jsou pravidelné. Připravte se k odjezdu!'
+                message: 'ČAS VYRAZIT DO PORODNICE!'
             };
         } else if (avgInterval <= 600) {
             return {
@@ -135,9 +135,9 @@ export const ContractionTimer: React.FC<ContractionTimerProps> = ({ onClose, con
                             </div>
                             <div>
                                 <h3 className="text-lg font-black mb-1">
-                                    {status ? (status.level === 'critical' ? <span className="text-red-400 uppercase">Poplach: Pravidlo 5-1-1</span> : <span className="text-white">Analýza systému</span>) : <span className="text-white font-black italic">Instrukce měření</span>}
+                                    {status ? (status.level === 'critical' ? <span className="text-red-500 uppercase animate-pulse">ALARM: DOSAŽENO 5-1-1</span> : <span className="text-white uppercase italic">Analýza systému</span>) : <span className="text-white font-black italic">Instrukce měření</span>}
                                 </h3>
-                                <p className="text-sm text-white/70 leading-relaxed italic">
+                                <p className={`text-sm leading-relaxed italic font-bold ${status?.level === 'critical' ? 'text-red-400 text-lg not-italic mt-2 shadow-red-500/20' : 'text-white/70'}`}>
                                     {status ? status.message : "Pravidlo 5-1-1: Kontrakce každých 5 minut, trvající 1 minutu, po dobu 1 hodiny."}
                                 </p>
                             </div>
