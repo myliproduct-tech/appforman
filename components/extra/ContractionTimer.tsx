@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Clock, Play, Square, Trash2, Activity, Info, AlertTriangle } from 'lucide-react';
+import { Clock, Play, Square, Trash2, Activity, Info, AlertTriangle, X } from 'lucide-react';
 import { Contraction } from '../../types';
-import { Modal } from '../common/Modal';
 
 interface ContractionTimerProps {
     onClose: () => void;
@@ -104,101 +103,127 @@ export const ContractionTimer: React.FC<ContractionTimerProps> = ({ onClose, con
     const status = analyzeHistory();
 
     return (
-        <Modal
-            isOpen={true}
-            onClose={onClose}
-            title="Měřič Kontrakcí"
-            subtitle="Strategický Časovač"
-            color="#f6c453"
-            size="lg"
-        >
-            <div className="space-y-6">
-                {/* Status Advisor */}
-                {status ? (
-                    <div className={`p-4 rounded-2xl border flex gap-3 items-start animate-bounce-subtle ${status.level === 'critical' ? 'bg-red-500/10 border-red-500/30 text-rose-400' : 'bg-[#f6c453]/10 border-[#f6c453]/30 text-[#f6c453]'}`}>
-                        {status.level === 'critical' ? <AlertTriangle className="w-5 h-5 shrink-0" /> : <Info className="w-5 h-5 shrink-0" />}
-                        <p className="text-[10px] font-black uppercase leading-relaxed tracking-wide">
-                            {status.message}
-                        </p>
+        <div className="fixed inset-0 z-[80] bg-[#1f2933] overflow-y-auto animate-fade-in p-4">
+            <div className="max-w-2xl mx-auto min-h-full flex flex-col py-8">
+                <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+                    <div className="flex items-center gap-3">
+                        <div>
+                            <h2 className="text-xl font-black italic uppercase text-[#f6c453] tracking-tighter">
+                                Měřič Kontrakcí
+                            </h2>
+                            <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em]">
+                                Logistika porodu • Taktický časovač
+                            </p>
+                        </div>
                     </div>
-                ) : (
-                    <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex gap-3 items-start opacity-60">
-                        <Info className="w-5 h-5 text-[#f6c453] shrink-0" />
-                        <p className="text-[10px] font-bold uppercase leading-relaxed tracking-wide text-white/70">
-                            Pravidlo 5-1-1: Kontrakce každých 5 minut, trvající 1 minutu, po dobu 1 hodiny.
-                        </p>
-                    </div>
-                )}
 
-                {/* Main Timer Display */}
-                <div className="relative group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#f6c453]/10 to-transparent blur-3xl opacity-30"></div>
-                    <div className="relative bg-white/5 rounded-[2.5rem] p-8 border border-white/10 flex flex-col items-center gap-6 shadow-xl">
-                        <div className="text-6xl font-black tabular-nums accent-text italic tracking-tighter">
+                    <button onClick={onClose} className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/10">
+                        <X className="w-6 h-6 text-[#f6c453]" />
+                    </button>
+                </div>
+
+                <div className="space-y-6 flex-1">
+                    {/* Status Advisor - Styled like Intro card */}
+                    <div className={`glass-card p-6 rounded-3xl border-2 ${status?.level === 'critical' ? 'bg-red-500/10 border-red-500/30' : 'bg-[#f6c453]/5 border-[#f6c453]/20'}`}>
+                        <div className="flex items-start gap-4">
+                            <div className={`p-3 rounded-xl shrink-0 ${status?.level === 'critical' ? 'bg-red-500/20' : 'bg-[#f6c453]/20'}`}>
+                                {status?.level === 'critical' ? (
+                                    <AlertTriangle className="w-6 h-6 text-red-400" />
+                                ) : (
+                                    <Info className="w-6 h-6 text-[#f6c453]" />
+                                )}
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-black mb-1">
+                                    {status ? (status.level === 'critical' ? <span className="text-red-400 uppercase">Poplach: Pravidlo 5-1-1</span> : <span className="text-white">Analýza systému</span>) : <span className="text-white font-black italic">Instrukce měření</span>}
+                                </h3>
+                                <p className="text-sm text-white/70 leading-relaxed italic">
+                                    {status ? status.message : "Pravidlo 5-1-1: Kontrakce každých 5 minut, trvající 1 minutu, po dobu 1 hodiny."}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Main Timer Display - Large Card Styling */}
+                    <div className="glass-card p-10 rounded-3xl border-white/10 flex flex-col items-center gap-6 shadow-xl relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#f6c453]/5 to-transparent blur-3xl"></div>
+                        <div className="relative text-7xl font-black tabular-nums accent-text italic tracking-tighter mb-4">
                             {formatTime(currentTime)}
                         </div>
 
                         <button
                             onClick={handleToggle}
-                            className={`w-20 h-20 rounded-full flex items-center justify-center transition-all active:scale-95 shadow-2xl ${isActive ? 'bg-rose-600 shadow-rose-600/30' : 'bg-[#f6c453] shadow-[#f6c453]/30'}`}
+                            className={`relative z-10 w-24 h-24 rounded-full flex items-center justify-center transition-all active:scale-95 shadow-2xl ${isActive ? 'bg-rose-600 shadow-rose-600/40' : 'bg-[#f6c453] shadow-[#f6c453]/40'}`}
                         >
                             {isActive ? (
-                                <Square className="w-8 h-8 text-[#1f2933] fill-current" />
+                                <Square className="w-10 h-10 text-[#1f2933] fill-current" />
                             ) : (
-                                <Play className="w-8 h-8 text-[#1f2933] fill-current ml-1" />
+                                <Play className="w-10 h-10 text-[#1f2933] fill-current ml-1" />
                             )}
                         </button>
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-30">
-                            {isActive ? 'Probíhá měření' : 'Zahájit měřič'}
+                        <p className="relative z-10 text-[11px] font-black uppercase tracking-[0.4em] opacity-40 text-white mt-2">
+                            {isActive ? 'Probíhá aktivní měření' : 'Měřič připraven'}
                         </p>
                     </div>
-                </div>
 
-                {/* History Table */}
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between px-2">
-                        <h3 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 opacity-40">
-                            <Activity className="w-4 h-4 text-[#f6c453]" /> Historie Protokolu
-                        </h3>
-                        {contractions.length > 0 && (
-                            <button
-                                onClick={handleClear}
-                                className="text-[9px] font-black uppercase text-rose-400/50 hover:text-rose-400 transition-colors flex items-center gap-1"
-                            >
-                                <Trash2 className="w-3 h-3" /> Vymazat
-                            </button>
-                        )}
+                    {/* History Section - Styled like Trimester tips */}
+                    <div className="glass-card p-6 rounded-3xl border-white/10 shadow-lg">
+                        <div className="flex items-center justify-between mb-8">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-[#f6c453]/10 rounded-lg">
+                                    <Activity className="w-5 h-5 text-[#f6c453]" />
+                                </div>
+                                <h3 className="text-lg font-black text-white italic uppercase tracking-tight">Historie měření</h3>
+                            </div>
+                            {contractions.length > 0 && (
+                                <button
+                                    onClick={handleClear}
+                                    className="p-2.5 rounded-xl bg-white/5 hover:bg-rose-500/10 text-rose-400 group transition-all border border-white/10 hover:border-rose-500/20"
+                                >
+                                    <Trash2 className="w-5 h-5 opacity-40 group-hover:opacity-100 transition-opacity" />
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="space-y-3">
+                            {contractions.length === 0 ? (
+                                <div className="bg-white/5 p-12 rounded-2xl border border-dashed border-white/10 text-center">
+                                    <Clock className="w-10 h-10 mx-auto mb-3 opacity-10 text-[#f6c453]" />
+                                    <p className="text-[10px] font-black uppercase tracking-widest opacity-20">Žádná data v archivu</p>
+                                </div>
+                            ) : (
+                                contractions.map((c, i) => (
+                                    <div key={c.id} className="bg-white/5 p-5 rounded-2xl border border-white/5 flex items-center justify-between group hover:border-[#f6c453]/30 transition-all hover:bg-white/[0.07]">
+                                        <div className="flex items-center gap-6">
+                                            <div className="text-left border-r border-white/10 pr-6">
+                                                <span className="text-[10px] font-black text-white/20 uppercase block mb-0.5">Start</span>
+                                                <span className="text-sm font-black text-white/90">{new Date(c.startTime).toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' })}</span>
+                                            </div>
+                                            <div>
+                                                <span className="text-[10px] font-black text-white/20 uppercase block mb-0.5">Trvání</span>
+                                                <span className="text-sm font-black text-[#f6c453]">{formatTime(c.duration)}</span>
+                                            </div>
+                                        </div>
+
+                                        {c.interval && (
+                                            <div className="text-right">
+                                                <span className="text-[10px] font-black text-white/20 uppercase block mb-1.5">Interval</span>
+                                                <span className="text-[11px] font-black text-[#1f2933] bg-[#f6c453] px-4 py-1.5 rounded-full uppercase tracking-tighter">
+                                                    {formatInterval(c.interval)}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
+                            )}
+                        </div>
                     </div>
 
-                    <div className="space-y-2">
-                        {contractions.length === 0 ? (
-                            <div className="text-center py-10 opacity-20 bg-white/5 rounded-3xl border border-dashed border-white/5">
-                                <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                                <p className="text-[10px] font-black uppercase tracking-widest">Žádný záznam</p>
-                            </div>
-                        ) : (
-                            contractions.map((c, i) => (
-                                <div key={c.id} className="bg-white/5 border border-white/5 rounded-2xl p-4 flex items-center justify-between animate-slide-up group hover:bg-white/10 transition-all">
-                                    <div className="flex flex-col">
-                                        <span className="text-[9px] font-black text-white/30 uppercase tracking-widest">
-                                            {new Date(c.startTime).toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' })}
-                                        </span>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-[#f6c453]"></div>
-                                            <span className="text-xs font-black text-white/90">Délka: {formatTime(c.duration)}</span>
-                                        </div>
-                                    </div>
-
-                                    {c.interval && (
-                                        <div className="text-right">
-                                            <span className="text-[10px] font-bold text-[#f6c453] bg-[#f6c453]/10 px-3 py-1 rounded-full uppercase tracking-wide">
-                                                {formatInterval(c.interval)}
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-                            ))
-                        )}
+                    {/* Bottom Tactics Card */}
+                    <div className="bg-gradient-to-r from-[#f6c453]/10 to-transparent rounded-2xl p-6 border-l-4 border-[#f6c453]">
+                        <p className="text-[11px] text-white/60 leading-relaxed font-bold uppercase tracking-wide">
+                            ⚡ <span className="text-[#f6c453]">Taktická poznámka:</span> Pravidelné kontrakce jsou signálem k přesunu na základnu. Měj připravené zavazadlo a auto v pohotovosti.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -212,6 +237,6 @@ export const ContractionTimer: React.FC<ContractionTimerProps> = ({ onClose, con
           animation: bounce-subtle 2s infinite ease-in-out;
         }
       `}</style>
-        </Modal>
+        </div>
     );
 };
