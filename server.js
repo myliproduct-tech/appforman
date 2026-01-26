@@ -71,11 +71,19 @@ app.post('/api/vault', async (req, res) => {
         }
 
         const normalizedEmail = email.toLowerCase();
+        const existingUser = await Vault.findOne({ email: normalizedEmail });
+
         await Vault.findOneAndUpdate(
             { email: normalizedEmail },
             { email: normalizedEmail, passwordHash },
             { upsert: true, new: true }
         );
+
+        if (!existingUser) {
+            console.log(`🆕 NOVOPEČENÝ VELITEL ZAREGISTROVÁN: ${normalizedEmail}`);
+        } else {
+            console.log(`🔐 AKTUALIZACE PŘÍSTUPU PRO: ${normalizedEmail}`);
+        }
 
         res.json({ success: true });
     } catch (error) {
