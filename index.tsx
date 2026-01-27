@@ -4,7 +4,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
+const GOOGLE_CLIENT_ID = '114673832827-t3j7f6kloamihnsu9llkoka3tt89q783.apps.googleusercontent.com';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -14,8 +16,11 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );
+

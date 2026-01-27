@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, ChevronRight, Lock, Mail, Github, Chrome, AlertCircle, CheckCircle2, RefreshCw } from 'lucide-react';
+import { useGoogleLogin } from '@react-oauth/google';
 import { API_BASE_URL } from '../config';
 
 interface AuthScreenProps {
@@ -125,10 +126,28 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     }, 1500);
   };
 
-  const handleGoogleLogin = () => {
-    // Simulace Gmail přihlášení pro demo účely
-    onLogin('pilot.gmail@example.com');
-  };
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setAlert({ type: 'info', message: 'Ověřování Google účtu...' });
+        const response = await fetch(`${API_BASE_URL}/auth/google`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: tokenResponse.access_token, type: 'access' })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          onLogin(data.email);
+        } else {
+          setAlert({ type: 'error', message: data.error || 'Autentizace selhala' });
+        }
+      } catch (error) {
+        setAlert({ type: 'error', message: 'Nepodařilo se spojit se serverem' });
+      }
+    },
+    onError: () => setAlert({ type: 'error', message: 'Přihlášení přes Google selhalo' })
+  });
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#1f2933] relative overflow-hidden">
@@ -346,7 +365,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
               <div className="grid grid-cols-1 gap-3">
                 <button
-                  onClick={handleGoogleLogin}
+                  onClick={() => handleGoogleLogin()}
                   className="w-full bg-white/5 hover:bg-white/10 border border-white/10 py-4 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] group"
                 >
                   <div className="w-5 h-5 flex items-center justify-center bg-white rounded-full p-1 opacity-80 group-hover:opacity-100 transition-opacity">

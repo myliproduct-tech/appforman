@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { OAuth2Client } from 'google-auth-library';
+
 
 // Load environment variables
 dotenv.config();
@@ -13,8 +15,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGODB_URI;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+
+if (!GOOGLE_CLIENT_ID) {
+    console.error('❌ GOOGLE_CLIENT_ID not found in environment variables!');
+}
+
+const client = new OAuth2Client(GOOGLE_CLIENT_ID);
+
+
 
 // Middleware
 app.use(cors({
@@ -94,6 +105,58 @@ app.post('/api/vault', async (req, res) => {
         res.status(500).json({ error: 'Failed to update vault' });
     }
 });
+
+// Google Auth Verification
+app.post('/api/auth/google', async (req, res) => {
+    try {
+        const { token, type } = req.body;
+        if (!token) return res.status(400).json({ error: 'Token is required' });
+
+        let email, googleId;
+
+        if (type === 'access') {
+            // Verify access token
+            const tokenInfo = await client.getTokenInfo(token);
+            email = tokenInfo.email;
+            googleId = tokenInfo.sub;
+        } else {
+            // Verify ID token
+            const ticket = await client.verifyIdToken({
+                idToken: token,
+                audience: GOOGLE_CLIENT_ID
+            });
+            const payload = ticket.getPayload();
+            if (payload) {
+                email = payload.email;
+                googleId = payload.sub;
+            }
+        }
+
+        if (!email) return res.status(401).json({ error: 'Invalid token or missing email scope' });
+        const normalizedEmail = email.toLowerCase();
+
+        // Check if user exists in vault
+        let user = await Vault.findOne({ email: normalizedEmail });
+
+        if (!user) {
+            user = new Vault({
+                email: normalizedEmail,
+                passwordHash: `GOOGLE_AUTH_${googleId}`
+            });
+            await user.save();
+            console.log(`🆕 NOVÝ VELITEL PŘES GOOGLE: ${normalizedEmail}`);
+        } else {
+            console.log(`🔐 PŘIHLÁŠENÍ PŘES GOOGLE: ${normalizedEmail}`);
+        }
+
+        res.json({ success: true, email: normalizedEmail });
+    } catch (error) {
+        console.error('❌ Google Auth Error:', error);
+        res.status(500).json({ error: 'Google authentication failed' });
+    }
+});
+
+
 
 // Get user stats
 app.get('/api/stats/:email', async (req, res) => {
