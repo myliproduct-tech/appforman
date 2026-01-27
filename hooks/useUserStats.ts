@@ -140,5 +140,6 @@ export const useUserStats = (currentUser: string | null) => {
         saveData();
     }, [stats, isLoaded]);
 
-    return { stats, setStats, initialStats };
+    return { stats, setStats, initialStats, isLoaded };
+
 };

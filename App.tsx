@@ -93,7 +93,7 @@ const App: React.FC = () => {
     }, [showOnboarding, showAchievementModal]);
 
     // Custom Hooks
-    const { stats, setStats } = useUserStats(currentUser);
+    const { stats, setStats, isLoaded } = useUserStats(currentUser);
     const devMode = useDevMode();
     const effectiveDate = devMode.getEffectiveDate(stats.dueDate);
 
@@ -438,9 +438,10 @@ const App: React.FC = () => {
         setStats(prev => ({ ...prev, hospitalBagChecklist: [] }));
     };
 
-    if (isBooting) {
+    if (isBooting || (currentUser && !isLoaded)) {
         return <SplashScreen />;
     }
+
 
     // Auth screen check
     if (!currentUser) {
