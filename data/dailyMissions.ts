@@ -14,7 +14,7 @@ const DAILY_MISSIONS_DATABASE: Record<number, Omit<Task, 'id' | 'completed' | 'i
   ],
   2: [
     { title: "Sanitární očista", description: "Proveď hloubkový úklid Základny. Čisté prostředí zvyšuje psychickou stabilitu Velitelky před zahájením mise.", category: 'údržba', points: 40 },
-    { title: "Bonusová pozornost", description: "Kup Velitelce květinu nebo oblíbený nealko drink. Udržování vysokého morálu posádky je klíčem k úspěchu.", category: 'servis', points: 35 }
+    { title: "Bonusová pozornost", description: "Kup Velitelce květinu nebo oblíbený nealko drink. Udržování vysoké morálky posádky je klíčem k úspěchu.", category: 'servis', points: 35 }
   ],
   3: [
     { title: "Analýza expertů", description: "Vyhledej a ulož kontakt na špičkovou gynekologickou kliniku v perimetru. Musíme vědět, kam poslat Juniora na první kontrolu.", category: 'průzkum', points: 35 },
@@ -237,7 +237,7 @@ const DAILY_MISSIONS_DATABASE: Record<number, Omit<Task, 'id' | 'completed' | 'i
   ],
   54: [
     { title: "Kontrola klimatizace", description: "Ujisti se, že klimatizace v autě funguje perfektně a filtry jsou čisté. Velitelka může trpět náhlými návaly horka nebo nevolnosti z vydýchaného vzduchu.", category: 'transport', points: 35 },
-    { title: "Instalace monitoring-app", description: "Pokud ještě nemáš, nainstaluj si do mobilu aplikaci pro sledování vývoje plodu. Sleduj parametry Juniora v reálném čase.", category: 'hardware', points: 15 }
+    { title: "Aktivace Briefingu", description: "Otevři v naší aplikaci modul Briefing a zkontroluj aktuální stav Juniora. Sleduj parametry v reálném čase přímo zde.", category: 'průzkum', points: 15 }
   ],
   55: [
     { title: "KONEC OPERACE STAVITEL", description: "Oslavte dokončení 2. měsíce. Junior je nyní oficiálně plod, má lokty a kolena. Připrav slavnostní nealko večeři (pokud to žaludek Velitelky dovolí).", category: 'velká_mise', points: 150 },
@@ -444,7 +444,7 @@ const DAILY_MISSIONS_DATABASE: Record<number, Omit<Task, 'id' | 'completed' | 'i
     { title: "Kontrola chemické expozice", description: "Pokud plánujete malování dětského sektoru, zajisti barvy s označením 'Zero VOC'. Výpary nesmí narušit Juniorův vývoj.", category: 'perimetr', points: 40 }
   ],
   102: [
-    { title: "Porada o pohybech", description: "Junior už dělá salta, ale jsou tlumena plodovou vodou. Řekni Velitelce, ať se soustředí na pocity 'bublinek' v pod břiškem. První kontakt se blíží.", category: 'briefing', points: 40 },
+    { title: "Porada o pohybech", description: "Junior už dělá salta, ale jsou tlumena plodovou vodou. Řekni Velitelce, ať se soustředí na pocity 'bublinek' v podbříšku. První kontakt se blíží.", category: 'briefing', points: 40 },
     { title: "Management pitného režimu", description: "Zvyšte příjem tekutin na 2,5–3 litry. Plodová voda se kompletně obměňuje několikrát za den, systém potřebuje průtok.", category: 'logistika', points: 35 }
   ],
   103: [
@@ -644,7 +644,7 @@ const DAILY_MISSIONS_DATABASE: Record<number, Omit<Task, 'id' | 'completed' | 'i
     { title: "Kontrola hladiny cukru", description: "Velitelka může pociťovat náhlé chutě na sladké. Sleduj to, protože v příštích týdnech nás čeká klíčový test na těhotenskou cukrovku (OGTT).", category: 'medik', points: 35 }
   ],
   148: [
-    { title: "Analýza autosedaček (Vajíčko)", description: "Pokud ještě nemáte, prověř crash-testy (ADAC) pro vybraný model. Bezpečnost Juniora při transportu z HQ na Základnu je nekritičtější částí logistiky.", category: 'průzkum', points: 35 },
+    { title: "Analýza autosedaček (Vajíčko)", description: "Pokud ještě nemáte, prověř crash-testy (ADAC) pro vybraný model. Bezpečnost Juniora při transportu z HQ na Základnu je nekjritičtější částí logistiky.", category: 'průzkum', points: 35 },
     { title: "Péče o dýchací kapacitu", description: "Junior tlačí na bránici Velitelky. Pokud se jí špatně dýchá vleže, pořiď další polštáře, aby mohla spát v polosedě. Tím uvolníš prostor pro plíce.", category: 'servis', points: 35 }
   ],
   149: [
@@ -883,7 +883,7 @@ const DAILY_MISSIONS_DATABASE: Record<number, Omit<Task, 'id' | 'completed' | 'i
   // Týden 30: Expanze mozku a ladění termostatu (Dny 204–210)
   203: [
     { title: "Monitoring mozkové aktivity", description: "Junior už má vyvinuté cykly REM spánku. Pokud cítíš rychlé, rytmické záškuby, pravděpodobně má Junior škytavku z polykání plodové vody. Je to dobré znamení – trénuje plíce.", category: 'strategie', points: 40 },
-    { title: "Revize krevního tlaku", description: "Dohlédni, aby se Velitelka nepředpínala. Pokud cítí mžitky před očima nebo bolest v pravém podžebří, okamžitě kontaktuj lékařskou podporu.", category: 'medik', points: 40 }
+    { title: "Revize krevního tlaku", description: "Dohlédni, aby se Velitelka nepřepínala. Pokud cítí mžitky před očima nebo bolest v pravém podžebří, okamžitě kontaktuj lékařskou podporu.", category: 'medik', points: 40 }
   ],
   204: [
     { title: "Analýza porodních poloh", description: "Proberte s Velitelkou vertikální polohy při porodu (vkleče, v dřepu). Gravitace je tvůj spojenec. Nastuduj si, jak jí v těchto polohách můžeš být fyzickou oporou.", category: 'průzkum', points: 35 },
@@ -1054,7 +1054,7 @@ const DAILY_MISSIONS_DATABASE: Record<number, Omit<Task, 'id' | 'completed' | 'i
   ],
   243: [
     { title: "Navigační check", description: "Prověř, zda na trase k HQ (porodnici) nejsou nové uzavírky. Cesta musí být bez překvapení.", category: 'transport', points: 35 },
-    { title: "Formování trávicího traktu", description: "Junior už vylučuje do plodové vody odpadní látky (smolku). Zapiš do logu: 'Odpadní systém naplněn.'", category: 'hardware', points: 35 }
+    { title: "Formování trávicího traktu", description: "Juniorova střeva jsou kompletně naplněny smolkou. Zapiš do logu: 'Odpadní systém naplněn.'", category: 'hardware', points: 35 }
   ],
   244: [
     { title: "Zánik lanuga", description: "Jemné chmýří mizí, zůstává jen mázka. Junior je velký jako střední ananas. Zapiš do logu: 'Design exteriéru dokončen.'", category: 'junior_update', points: 45 },
@@ -1126,7 +1126,7 @@ const DAILY_MISSIONS_DATABASE: Record<number, Omit<Task, 'id' | 'completed' | 'i
   // Týden 38: Akumulace energie a klid před bouří (Dny 260–266)
   259: [
     { title: "Analýza energie", description: "Sleduj náhlý útlum nebo příval energie. Obojí je příprava na výsadek. Dohlédni, aby se nepřepínala.", category: 'strategie', points: 40 },
-    { title: "Sledování pohybů", description: "Junior je velmi nízko. Pohyby cítíš jako 'škrábání' na čípek. Bolestivost značí jeho sílu.", category: 'medik', points: 40 }
+    { title: "Sledování pohybů", description: "Junior je velmi nízko. Velitelka cítí pohyby jako 'škrábání' na čípek. Bolestivost v této oblasti značí jeho sílu.", category: 'medik', points: 40 }
   ],
   260: [
     { title: "Monitoring kontrakcí", description: "Pravé kontrakce neustupují po změně polohy, jsou delší a intervaly se zkracují. Při 5 min intervalu startuj.", category: 'průzkum', points: 45 },
@@ -1234,7 +1234,7 @@ const DAILY_MISSIONS_DATABASE: Record<number, Omit<Task, 'id' | 'completed' | 'i
     { title: "Psychická stabilizace", description: "Být skála – neřeš detaily, nekritizuj a buď maximálně trpělivý. Velitelka je pod tlakem z přenášení.", category: 'medik', points: 50 }
   ],
   288: [
-    { title: "Nutriční stimulace", description: "Pokud to zdravotní stav Velitelky dovolí, zkuste pálivé jídle. Může to reflexivně rozhýbat dělohu.", category: 'medik', points: 45 }
+    { title: "Nutriční stimulace", description: "Pokud to zdravotní stav Velitelky dovolí, zkuste pálivé jídlo. Může to reflexivně rozhýbat dělohu.", category: 'medik', points: 45 }
   ],
   289: [
     { title: "Regenerace dolních končetin", description: "Udej mamině důkladnou masáž nohou a chodidel. Ulevíš jí od otoků a pomůžeš jí se uvolnit.", category: 'medik', points: 40 }
