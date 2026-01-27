@@ -319,7 +319,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                             <CheckCircle2 className="absolute inset-0 w-4 h-4 text-[#1f2933] scale-0 peer-checked:scale-100 transition-transform" />
                           </div>
                           <span className="text-[9px] font-bold text-white/40 group-hover:text-white/60 transition-colors leading-tight">
-                            Souhlasím s obchodními podmínkami a zásadami ochrany údajů
+                            Souhlasím s <a href="https://sites.google.com/view/partnervakci/obchodn%C3%AD-podm%C3%ADnky-a-gdpr?authuser=0" target="_blank" rel="noopener noreferrer" className="text-[#f6c453] hover:underline">obchodními podmínkami a zásadami ochrany údajů</a>
                           </span>
                         </label>
 
@@ -335,7 +335,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                             <CheckCircle2 className="absolute inset-0 w-4 h-4 text-[#1f2933] scale-0 peer-checked:scale-100 transition-transform" />
                           </div>
                           <span className="text-[9px] font-bold text-white/40 group-hover:text-white/60 transition-colors leading-tight">
-                            Souhlasím se zpracováním osobních údajů pro účely aplikace
+                            Souhlasím se <a href="https://sites.google.com/view/partnervakci/souhlas-se-zpracov%C3%A1n%C3%ADm-osobn%C3%ADch-%C3%BAdaj%C5%AF?authuser=0" target="_blank" rel="noopener noreferrer" className="text-[#f6c453] hover:underline">zpracováním osobních údajů</a> pro účely aplikace
                           </span>
                         </label>
                       </div>
