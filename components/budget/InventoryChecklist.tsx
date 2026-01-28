@@ -73,107 +73,91 @@ export const InventoryChecklist: React.FC<InventoryChecklistProps> = ({
 
         const missingCustom = customGear.filter(c => !c.bought);
 
-        // Dynamically load jsPDF from CDN
-        const loadJsPDF = () => {
+        // Dynamically load html2pdf.js from CDN
+        const loadHtml2Pdf = () => {
             return new Promise((resolve, reject) => {
-                if ((window as any).jspdf) {
-                    resolve((window as any).jspdf.jsPDF);
+                if ((window as any).html2pdf) {
+                    resolve((window as any).html2pdf);
                     return;
                 }
 
                 const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-                script.onload = () => resolve((window as any).jspdf.jsPDF);
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+                script.onload = () => resolve((window as any).html2pdf);
                 script.onerror = reject;
                 document.head.appendChild(script);
             });
         };
 
         try {
-            const jsPDF = await loadJsPDF() as any;
-            const doc = new jsPDF();
+            const html2pdf = await loadHtml2Pdf() as any;
 
-            // Title
-            doc.setFontSize(20);
-            doc.setFont(undefined, 'bold');
-            doc.text('CHYBĚJÍCÍ POLOŽKY - REPORT', 20, 20);
+            // Create temporary container for the report
+            const element = document.createElement('div');
+            element.style.padding = '40px';
+            element.style.color = '#1f2933';
+            element.style.fontFamily = 'Arial, sans-serif';
+            element.style.backgroundColor = '#ffffff';
 
-            // Metadata
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            doc.text(`Datum: ${new Date().toLocaleDateString('cs-CZ')}`, 20, 30);
-            doc.text(`Stav mise: ${progressPercent}% Hotovo`, 20, 36);
+            element.innerHTML = `
+                <div style="border-bottom: 2px solid #f6c453; padding-bottom: 20px; margin-bottom: 30px;">
+                    <h1 style="font-size: 24px; font-weight: 900; font-style: italic; color: #1f2933; margin: 0; text-transform: uppercase;">Chybějící Položky - Report</h1>
+                    <div style="font-size: 10px; color: #666; margin-top: 5px; text-transform: uppercase; letter-spacing: 0.1em;">Taktický Seznam Zásobování</div>
+                </div>
 
-            let yPos = 50;
+                <div style="display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 12px; font-weight: bold; color: #4a5568;">
+                    <span>Datum: ${new Date().toLocaleDateString('cs-CZ')}</span>
+                    <span>Stav mise: ${progressPercent}% Hotovo</span>
+                </div>
 
-            // Add missing items by category
-            GEAR_CHECKLIST.forEach(cat => {
+                ${GEAR_CHECKLIST.map(cat => {
                 const missingInCat = missingStandard.filter(i => i.category === cat.category);
-                if (missingInCat.length === 0) return;
+                if (missingInCat.length === 0) return '';
+                return `
+                        <div style="margin-bottom: 25px;">
+                            <h3 style="background: #f7fafc; padding: 8px 12px; font-size: 12px; font-weight: 900; color: #2d3748; border-left: 4px solid #f6c453; text-transform: uppercase; margin-bottom: 15px;">${cat.category}</h3>
+                            <div style="display: grid; gap: 8px; padding-left: 5px;">
+                                ${missingInCat.map(item => `
+                                    <div style="display: flex; align-items: center; gap: 10px; font-size: 11px; color: #1f2933;">
+                                        <div style="width: 12px; height: 12px; border: 1.5px solid #cbd5e0; border-radius: 3px;"></div>
+                                        <span>${item.label}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+            }).join('')}
 
-                // Category header
-                if (yPos > 270) {
-                    doc.addPage();
-                    yPos = 20;
-                }
+                ${missingCustom.length > 0 ? `
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="background: #f7fafc; padding: 8px 12px; font-size: 12px; font-weight: 900; color: #2d3748; border-left: 4px solid #f6c453; text-transform: uppercase; margin-bottom: 15px;">Vlastní Výbava</h3>
+                        <div style="display: grid; gap: 8px; padding-left: 5px;">
+                            ${missingCustom.map(item => `
+                                <div style="display: flex; align-items: center; gap: 10px; font-size: 11px; color: #1f2933;">
+                                    <div style="width: 12px; height: 12px; border: 1.5px solid #cbd5e0; border-radius: 3px;"></div>
+                                    <span>${item.label}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
 
-                doc.setFontSize(12);
-                doc.setFont(undefined, 'bold');
-                doc.text(cat.category.toUpperCase(), 20, yPos);
-                yPos += 8;
+                <div style="margin-top: 50px; border-top: 1px solid #edf2f7; pt-20px; text-align: center; font-size: 9px; font-style: italic; color: #a0aec0;">
+                    Generováno aplikací Partner v Akci
+                </div>
+            `;
 
-                // Items
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                missingInCat.forEach(item => {
-                    if (yPos > 280) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
-                    doc.rect(20, yPos - 3, 3, 3); // Checkbox
-                    doc.text(item.label, 26, yPos);
-                    yPos += 6;
-                });
+            const opt = {
+                margin: 10,
+                filename: `chybejici-polozky-${new Date().toISOString().split('T')[0]}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
 
-                yPos += 5;
-            });
+            // Generate and save PDF
+            await html2pdf().set(opt).from(element).save();
 
-            // Custom items
-            if (missingCustom.length > 0) {
-                if (yPos > 270) {
-                    doc.addPage();
-                    yPos = 20;
-                }
-
-                doc.setFontSize(12);
-                doc.setFont(undefined, 'bold');
-                doc.text('VLASTNÍ VÝBAVA', 20, yPos);
-                yPos += 8;
-
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                missingCustom.forEach(item => {
-                    if (yPos > 280) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
-                    doc.rect(20, yPos - 3, 3, 3);
-                    doc.text(item.label, 26, yPos);
-                    yPos += 6;
-                });
-            }
-
-            // Footer
-            const pageCount = doc.internal.pages.length - 1;
-            for (let i = 1; i <= pageCount; i++) {
-                doc.setPage(i);
-                doc.setFontSize(8);
-                doc.setFont(undefined, 'italic');
-                doc.text('Generováno aplikací Partner v Akci', 105, 290, { align: 'center' });
-            }
-
-            // Download PDF
-            doc.save(`chybejici-polozky-${new Date().toISOString().split('T')[0]}.pdf`);
         } catch (error) {
             console.error('Chyba při generování PDF:', error);
             alert('Nepodařilo se vygenerovat PDF. Zkuste to prosím znovu.');
