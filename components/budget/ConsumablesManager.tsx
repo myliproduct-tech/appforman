@@ -213,19 +213,88 @@ export const ConsumablesManager: React.FC<ConsumablesManagerProps> = ({
                                         Čas připomínek
                                     </label>
                                     <div className={`grid gap-2 ${newFrequency === '2x' ? 'grid-cols-2' : 'grid-cols-1'}`}>
-                                        <input
-                                            type="time"
-                                            value={newTime1}
-                                            onChange={(e) => setNewTime1(e.target.value)}
-                                            className="bg-[#1f2933] border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-[#f6c453]/50 focus:outline-none"
-                                        />
+                                        {/* Time 1 */}
+                                        <div className="flex items-center justify-between bg-[#1f2933] border border-white/10 rounded-xl px-4 py-2">
+                                            <div className="flex items-center gap-1 font-mono w-full justify-center">
+                                                <input
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    value={newTime1.split(':')[0]}
+                                                    onChange={(e) => {
+                                                        const h = e.target.value.replace(/\D/g, '').slice(0, 2);
+                                                        const m = newTime1.split(':')[1];
+                                                        setNewTime1(`${h.padStart(1, '0')}:${m}`);
+                                                    }}
+                                                    onBlur={(e) => {
+                                                        const h = e.target.value.replace(/\D/g, '').padStart(2, '0');
+                                                        const m = newTime1.split(':')[1];
+                                                        setNewTime1(`${h}:${m}`);
+                                                    }}
+                                                    className="w-8 bg-white/5 border-none p-1 text-[#f6c453] text-lg font-black text-center outline-none rounded-lg"
+                                                    placeholder="00"
+                                                />
+                                                <span className="text-[#f6c453] font-black text-lg animate-pulse">:</span>
+                                                <input
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    value={newTime1.split(':')[1]}
+                                                    onChange={(e) => {
+                                                        const m = e.target.value.replace(/\D/g, '').slice(0, 2);
+                                                        const h = newTime1.split(':')[0];
+                                                        setNewTime1(`${h}:${m.padStart(1, '0')}`);
+                                                    }}
+                                                    onBlur={(e) => {
+                                                        const m = e.target.value.replace(/\D/g, '').padStart(2, '0');
+                                                        const h = newTime1.split(':')[0];
+                                                        setNewTime1(`${h}:${m}`);
+                                                    }}
+                                                    className="w-8 bg-white/5 border-none p-1 text-[#f6c453] text-lg font-black text-center outline-none rounded-lg"
+                                                    placeholder="00"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Time 2 (if 2x) */}
                                         {newFrequency === '2x' && (
-                                            <input
-                                                type="time"
-                                                value={newTime2}
-                                                onChange={(e) => setNewTime2(e.target.value)}
-                                                className="bg-[#1f2933] border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-[#f6c453]/50 focus:outline-none"
-                                            />
+                                            <div className="flex items-center justify-between bg-[#1f2933] border border-white/10 rounded-xl px-4 py-2">
+                                                <div className="flex items-center gap-1 font-mono w-full justify-center">
+                                                    <input
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        value={newTime2.split(':')[0]}
+                                                        onChange={(e) => {
+                                                            const h = e.target.value.replace(/\D/g, '').slice(0, 2);
+                                                            const m = newTime2.split(':')[1];
+                                                            setNewTime2(`${h.padStart(1, '0')}:${m}`);
+                                                        }}
+                                                        onBlur={(e) => {
+                                                            const h = e.target.value.replace(/\D/g, '').padStart(2, '0');
+                                                            const m = newTime2.split(':')[1];
+                                                            setNewTime2(`${h}:${m}`);
+                                                        }}
+                                                        className="w-8 bg-white/5 border-none p-1 text-[#f6c453] text-lg font-black text-center outline-none rounded-lg"
+                                                        placeholder="00"
+                                                    />
+                                                    <span className="text-[#f6c453] font-black text-lg animate-pulse">:</span>
+                                                    <input
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        value={newTime2.split(':')[1]}
+                                                        onChange={(e) => {
+                                                            const m = e.target.value.replace(/\D/g, '').slice(0, 2);
+                                                            const h = newTime2.split(':')[0];
+                                                            setNewTime2(`${h}:${m.padStart(1, '0')}`);
+                                                        }}
+                                                        onBlur={(e) => {
+                                                            const m = e.target.value.replace(/\D/g, '').padStart(2, '0');
+                                                            const h = newTime2.split(':')[0];
+                                                            setNewTime2(`${h}:${m}`);
+                                                        }}
+                                                        className="w-8 bg-white/5 border-none p-1 text-[#f6c453] text-lg font-black text-center outline-none rounded-lg"
+                                                        placeholder="00"
+                                                    />
+                                                </div>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
