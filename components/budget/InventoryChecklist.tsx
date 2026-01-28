@@ -188,7 +188,7 @@ export const InventoryChecklist: React.FC<InventoryChecklistProps> = ({
     }
 
     const getCategoryIcon = (categoryName: string) => {
-        if (categoryName.includes("Velitelka")) return <Heart className="w-4 h-4 text-rose-400" />;
+        if (categoryName.includes("Velitelka")) return <Heart className="w-4 h-4" />;
         if (categoryName.includes("Výstroj")) return <Shirt className="w-4 h-4" />;
         if (categoryName.includes("Vozidla")) return <Car className="w-4 h-4" />;
         if (categoryName.includes("Palivový")) return <Utensils className="w-4 h-4" />;
