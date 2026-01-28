@@ -106,126 +106,127 @@ export const Achievements: React.FC<AchievementsProps> = ({ stats, onClose }) =>
                     />
                 )}
             </div>
-            );
+        </div>
+    );
 };
 
-            interface AchievementModalProps {
-                achievement: Achievement;
-            userName: string;
-            stats: UserStats;
+interface AchievementModalProps {
+    achievement: Achievement;
+    userName: string;
+    stats: UserStats;
     onClose: () => void;
 }
 
-            export const AchievementModal: React.FC<AchievementModalProps> = ({achievement: selectedAchievement, userName, stats, onClose }) => {
+export const AchievementModal: React.FC<AchievementModalProps> = ({ achievement: selectedAchievement, userName, stats, onClose }) => {
     const isUnlocked = stats.badges.some(b => b.id === selectedAchievement.id);
-                const [isGeneratingImage, setIsGeneratingImage] = useState(false);
-                const cardRef = useRef<HTMLDivElement>(null);
+    const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+    const cardRef = useRef<HTMLDivElement>(null);
 
     const handleDownload = async () => {
         if (!isUnlocked) return;
-                    if (cardRef.current && !isGeneratingImage) {
-                        setIsGeneratingImage(true);
-                    try {
+        if (cardRef.current && !isGeneratingImage) {
+            setIsGeneratingImage(true);
+            try {
                 const canvas = await html2canvas(cardRef.current, {
-                        backgroundColor: '#1f2933',
+                    backgroundColor: '#1f2933',
                     scale: 2,
                     useCORS: true
                 });
-                    const link = document.createElement('a');
-                    link.download = `Achievement-${selectedAchievement?.title || 'Badge'}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
+                const link = document.createElement('a');
+                link.download = `Achievement-${selectedAchievement?.title || 'Badge'}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
             } catch (err) {
-                        console.error('Failed to generate image:', err);
+                console.error('Failed to generate image:', err);
             } finally {
-                        setIsGeneratingImage(false);
+                setIsGeneratingImage(false);
             }
         }
     };
 
     const getIcon = (iconName: string, isUnlocked: boolean) => {
         const icons: Record<string, any> = {
-                        Trophy, Medal, Sprout, Flame, Bot, Star, Crown, Package, Search, Backpack, Wrench, Car, Milk, Waves, BookOpen, Volume2, Headphones, Moon, ShieldCheck, ShieldAlert, Flag, TrendingUp, Zap, Tag, Wallet, FileText, UserPlus, Settings, Heart
-                    };
-                    const IconComponent = icons[iconName] || Trophy;
-                    return <IconComponent className={`w-8 h-8 ${isUnlocked ? 'text-[#f6c453]' : 'text-white/20'}`} />;
+            Trophy, Medal, Sprout, Flame, Bot, Star, Crown, Package, Search, Backpack, Wrench, Car, Milk, Waves, BookOpen, Volume2, Headphones, Moon, ShieldCheck, ShieldAlert, Flag, TrendingUp, Zap, Tag, Wallet, FileText, UserPlus, Settings, Heart
+        };
+        const IconComponent = icons[iconName] || Trophy;
+        return <IconComponent className={`w-8 h-8 ${isUnlocked ? 'text-[#f6c453]' : 'text-white/20'}`} />;
     };
 
-                    return (
-                    <div className="fixed inset-0 z-[1100] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in">
-                        <div className="w-full max-w-lg">
-                            {/* Printable Card */}
-                            <div
-                                ref={cardRef}
-                                className={`relative min-h-[400px] rounded-[3rem] bg-[#1f2933] border-4 p-8 pt-12 pb-24 flex flex-col items-center justify-start text-center overflow-hidden shadow-2xl transition-all duration-500 ${isUnlocked ? 'border-[#f6c453]/50' : 'border-white/10 bg-slate-900'}`}
-                            >
-                                {/* Decorative Elements */}
-                                {isUnlocked && (
-                                    <>
-                                        <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#f6c453]/10 rounded-full blur-3xl animate-pulse" />
-                                        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-[#f6c453]/5 rounded-full blur-3xl" />
-                                    </>
-                                )}
+    return (
+        <div className="fixed inset-0 z-[1100] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in">
+            <div className="w-full max-w-lg">
+                {/* Printable Card */}
+                <div
+                    ref={cardRef}
+                    className={`relative min-h-[400px] rounded-[3rem] bg-[#1f2933] border-4 p-8 pt-12 pb-24 flex flex-col items-center justify-start text-center overflow-hidden shadow-2xl transition-all duration-500 ${isUnlocked ? 'border-[#f6c453]/50' : 'border-white/10 bg-slate-900'}`}
+                >
+                    {/* Decorative Elements */}
+                    {isUnlocked && (
+                        <>
+                            <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#f6c453]/10 rounded-full blur-3xl animate-pulse" />
+                            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-[#f6c453]/5 rounded-full blur-3xl" />
+                        </>
+                    )}
 
-                                <div className={`relative z-10 w-24 h-24 rounded-[2.5rem] border-2 flex items-center justify-center mb-8 shadow-inner transform -rotate-6 transition-all duration-500 ${isUnlocked ? 'bg-[#f6c453]/10 border-[#f6c453]/50' : 'bg-white/5 border-white/10 grayscale opacity-40'}`}>
-                                    {React.cloneElement(getIcon(selectedAchievement.icon, isUnlocked), { className: `w-12 h-12 ${isUnlocked ? 'text-[#f6c453]' : 'text-white'}` })}
-                                </div>
+                    <div className={`relative z-10 w-24 h-24 rounded-[2.5rem] border-2 flex items-center justify-center mb-8 shadow-inner transform -rotate-6 transition-all duration-500 ${isUnlocked ? 'bg-[#f6c453]/10 border-[#f6c453]/50' : 'bg-white/5 border-white/10 grayscale opacity-40'}`}>
+                        {React.cloneElement(getIcon(selectedAchievement.icon, isUnlocked), { className: `w-12 h-12 ${isUnlocked ? 'text-[#f6c453]' : 'text-white'}` })}
+                    </div>
 
-                                <div className="relative z-10 space-y-4">
-                                    <div>
-                                        <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 transition-colors ${isUnlocked ? 'text-[#f6c453] opacity-60' : 'text-white/30'}`}>
-                                            {isUnlocked ? 'ČESTNÉ UZNÁNÍ' : 'UTAJENÁ MISE'}
-                                        </p>
-                                        <h2 className={`text-3xl font-black italic uppercase tracking-tighter leading-none mb-2 transition-colors ${isUnlocked ? 'text-white' : 'text-white/40'}`}>
-                                            {localizeText(selectedAchievement.title, stats.partnerName)}
-                                        </h2>
-                                        <div className={`h-0.5 w-12 mx-auto rounded-full transition-colors ${isUnlocked ? 'bg-[#f6c453]' : 'bg-white/10'}`} />
-                                    </div>
-                                    <p className={`text-sm font-medium leading-relaxed px-4 transition-colors ${isUnlocked ? 'text-white/80' : 'text-white/40 italic'}`}>
-                                        {isUnlocked
-                                            ? localizeText(selectedAchievement.description, stats.partnerName)
-                                            : 'Tato schopnost ještě nebyla v poli prověřena. Pokračuj v plnění misí k odemknutí tohoto ocenění.'}
-                                    </p>
-                                    {/* Locked Achievement Requirement Info */}
-                                    {!isUnlocked && selectedAchievement.howToUnlock && (
-                                        <div className="mt-4 p-4 bg-white/5 rounded-2xl border border-white/10">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-[#f6c453] mb-1">Informace k odemknutí:</p>
-                                            <p className="text-xs text-white/60 leading-relaxed font-bold italic">{localizeText(selectedAchievement.howToUnlock, stats.partnerName)}</p>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Footer for Sharing */}
-                                <div className="absolute bottom-6 left-0 right-0 px-8 flex justify-between items-end opacity-40">
-                                    <div className="text-left">
-                                        <p className="text-[8px] font-black uppercase text-[#f6c453]">Program</p>
-                                        <p className="text-[10px] font-black italic text-white uppercase tracking-tighter">APP FOR MAN</p>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-[8px] font-mono text-white/60">LVL {getRankBasedOnPoints(stats.points).level}</p>
-                                    </div>
-                                </div>
+                    <div className="relative z-10 space-y-4">
+                        <div>
+                            <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 transition-colors ${isUnlocked ? 'text-[#f6c453] opacity-60' : 'text-white/30'}`}>
+                                {isUnlocked ? 'ČESTNÉ UZNÁNÍ' : 'UTAJENÁ MISE'}
+                            </p>
+                            <h2 className={`text-3xl font-black italic uppercase tracking-tighter leading-none mb-2 transition-colors ${isUnlocked ? 'text-white' : 'text-white/40'}`}>
+                                {localizeText(selectedAchievement.title, stats.partnerName)}
+                            </h2>
+                            <div className={`h-0.5 w-12 mx-auto rounded-full transition-colors ${isUnlocked ? 'bg-[#f6c453]' : 'bg-white/10'}`} />
+                        </div>
+                        <p className={`text-sm font-medium leading-relaxed px-4 transition-colors ${isUnlocked ? 'text-white/80' : 'text-white/40 italic'}`}>
+                            {isUnlocked
+                                ? localizeText(selectedAchievement.description, stats.partnerName)
+                                : 'Tato schopnost ještě nebyla v poli prověřena. Pokračuj v plnění misí k odemknutí tohoto ocenění.'}
+                        </p>
+                        {/* Locked Achievement Requirement Info */}
+                        {!isUnlocked && selectedAchievement.howToUnlock && (
+                            <div className="mt-4 p-4 bg-white/5 rounded-2xl border border-white/10">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-[#f6c453] mb-1">Informace k odemknutí:</p>
+                                <p className="text-xs text-white/60 leading-relaxed font-bold italic">{localizeText(selectedAchievement.howToUnlock, stats.partnerName)}</p>
                             </div>
+                        )}
+                    </div>
 
-                            {/* Actions */}
-                            <div className="flex gap-3 mt-8">
-                                {isUnlocked && (
-                                    <button
-                                        onClick={handleDownload}
-                                        disabled={isGeneratingImage}
-                                        className="flex-1 bg-white/5 border-2 border-white/20 text-white rounded-3xl py-4 font-black uppercase text-xs tracking-widest hover:bg-white/10 active:scale-95 transition-all flex items-center justify-center gap-3"
-                                    >
-                                        <Download className="w-5 h-5" /> {isGeneratingImage ? 'Generuji...' : 'Uložit'}
-                                    </button>
-                                )}
-                                <button
-                                    onClick={onClose}
-                                    className={`text-[#1f2933] rounded-3xl px-8 py-4 font-black uppercase text-xs tracking-widest active:scale-95 transition-all ${isUnlocked ? 'flex-none bg-[#f6c453] hover:bg-[#ffcf60]' : 'flex-1 bg-white/20 text-white hover:bg-white/30'}`}
-                                >
-                                    Zavřít
-                                </button>
-                            </div>
+                    {/* Footer for Sharing */}
+                    <div className="absolute bottom-6 left-0 right-0 px-8 flex justify-between items-end opacity-40">
+                        <div className="text-left">
+                            <p className="text-[8px] font-black uppercase text-[#f6c453]">Program</p>
+                            <p className="text-[10px] font-black italic text-white uppercase tracking-tighter">APP FOR MAN</p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-[8px] font-mono text-white/60">LVL {getRankBasedOnPoints(stats.points).level}</p>
                         </div>
                     </div>
-                    );
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-3 mt-8">
+                    {isUnlocked && (
+                        <button
+                            onClick={handleDownload}
+                            disabled={isGeneratingImage}
+                            className="flex-1 bg-white/5 border-2 border-white/20 text-white rounded-3xl py-4 font-black uppercase text-xs tracking-widest hover:bg-white/10 active:scale-95 transition-all flex items-center justify-center gap-3"
+                        >
+                            <Download className="w-5 h-5" /> {isGeneratingImage ? 'Generuji...' : 'Uložit'}
+                        </button>
+                    )}
+                    <button
+                        onClick={onClose}
+                        className={`text-[#1f2933] rounded-3xl px-8 py-4 font-black uppercase text-xs tracking-widest active:scale-95 transition-all ${isUnlocked ? 'flex-none bg-[#f6c453] hover:bg-[#ffcf60]' : 'flex-1 bg-white/20 text-white hover:bg-white/30'}`}
+                    >
+                        Zavřít
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
 };

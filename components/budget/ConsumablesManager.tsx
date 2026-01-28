@@ -264,7 +264,7 @@ export const ConsumablesManager: React.FC<ConsumablesManagerProps> = ({
                         </div>
                     </div>
                 </div>
-            )}
-            </>
-            );
+            </div>
+        </div>
+    );
 };
