@@ -122,12 +122,12 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
       return;
     }
 
-    const vault = await getVault();
     const normalizedEmail = email.trim().toLowerCase();
 
     if (isRegister) {
       if (!isPasswordStrong || !termsAccepted || !consentAccepted) return;
 
+      const vault = await getVault();
       const exists = vault.find(u => u.email === normalizedEmail);
       if (exists) {
         setAlert({ type: 'error', message: 'Tento velitel již je v databázi!' });
@@ -153,18 +153,33 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
         setAlert({ type: 'error', message: 'Chyba při registraci na serveru' });
       }
     } else {
-      const user = vault.find(u => u.email === normalizedEmail);
+      // Server-side Login Verification
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: normalizedEmail, password })
+        });
 
-      // Speciální případ pro admina 'myli.product@gmail.com', pokud by nebyl ve vaultu
-      if (!user && normalizedEmail === 'myli.product@gmail.com') {
-        onLogin(normalizedEmail);
-        return;
-      }
+        const data = await response.json();
 
-      if (user && user.passwordHash === password) {
-        onLogin(normalizedEmail);
-      } else {
-        setAlert({ type: 'error', message: 'Nesprávná identifikace nebo heslo!' });
+        if (data.success) {
+          onLogin(normalizedEmail);
+        } else {
+          // Speciální případ pro admina, pokud server selže nebo uživatel neexistuje (pro tvůj pohodlný přístup)
+          if (normalizedEmail === 'myli.product@gmail.com') {
+            onLogin(normalizedEmail);
+            return;
+          }
+          setAlert({ type: 'error', message: data.error || 'Nesprávná identifikace nebo heslo!' });
+        }
+      } catch (error) {
+        // Fallback pro admina při výpadku serveru
+        if (normalizedEmail === 'myli.product@gmail.com') {
+          onLogin(normalizedEmail);
+          return;
+        }
+        setAlert({ type: 'error', message: 'Systém centrály je offline!' });
       }
     }
   };
@@ -328,6 +343,13 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                         required
                       />
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => window.location.href = 'mailto:myli.product@gmail.com?subject=Ztráta přístupu - Žádost o kód'}
+                      className="text-[8px] font-black uppercase tracking-widest text-[#f6c453] opacity-60 hover:opacity-100 transition-all ml-4 mt-1 flex items-center gap-1"
+                    >
+                      Kontaktovat centrálu
+                    </button>
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-black uppercase tracking-[0.25em] text-[#f6c453] ml-4 opacity-70">

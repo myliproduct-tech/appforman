@@ -6,6 +6,7 @@ import { dirname } from 'path';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { OAuth2Client } from 'google-auth-library';
+import crypto from 'crypto';
 
 
 // Load environment variables
@@ -66,12 +67,18 @@ const userStatsSchema = new mongoose.Schema({
 const Vault = mongoose.model('Vault', vaultSchema);
 const UserStats = mongoose.model('UserStats', userStatsSchema);
 
+// --- Helpers ---
+const hashPassword = (password) => {
+    // Hidden from Atlas eyes, but verifiable
+    return crypto.createHash('sha256').update(password).digest('hex');
+};
+
 // --- API Routes ---
 
-// Get entire vault (demo compatibility)
+// Get entire vault (DEPRECATED for security, but keeping for compatibility if needed)
 app.get('/api/vault', async (req, res) => {
     try {
-        const vault = await Vault.find({});
+        const vault = await Vault.find({}, { passwordHash: 0 }); // Don't send hashes to client!
         res.json(vault);
     } catch (error) {
         res.status(500).json({ error: 'Failed to read vault' });
@@ -89,7 +96,8 @@ app.post('/api/vault', async (req, res) => {
         const normalizedEmail = email.toLowerCase();
         const existingUser = await Vault.findOne({ email: normalizedEmail });
 
-        const updateData = { email: normalizedEmail, passwordHash };
+        const hashedPassword = hashPassword(passwordHash);
+        const updateData = { email: normalizedEmail, passwordHash: hashedPassword };
         if (recoveryKey) updateData.recoveryKey = recoveryKey;
 
         await Vault.findOneAndUpdate(
@@ -110,6 +118,31 @@ app.post('/api/vault', async (req, res) => {
     }
 });
 
+// Standard Login Verification
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) return res.status(400).json({ error: 'Email a heslo jsou vyžadovány' });
+
+        const normalizedEmail = email.toLowerCase();
+        const user = await Vault.findOne({ email: normalizedEmail });
+
+        if (!user) {
+            return res.status(401).json({ error: 'Uživatel nenalezen' });
+        }
+
+        const hashedPassword = hashPassword(password);
+        if (user.passwordHash === hashedPassword || user.passwordHash === password) { // Allow transition for existing plain text
+            console.log(`📡 VELITEL PŘIHLÁŠEN: ${normalizedEmail}`);
+            return res.json({ success: true, email: normalizedEmail });
+        }
+
+        res.status(401).json({ error: 'Nesprávné heslo' });
+    } catch (error) {
+        res.status(500).json({ error: 'Login error' });
+    }
+});
+
 // Reset password via recovery key
 app.post('/api/vault/reset', async (req, res) => {
     try {
@@ -127,7 +160,7 @@ app.post('/api/vault/reset', async (req, res) => {
             return res.status(401).json({ error: 'Neplatný nouzový klíč' });
         }
 
-        user.passwordHash = newPassword;
+        user.passwordHash = hashPassword(newPassword);
         await user.save();
 
         console.log(`🔄 HESLO RESETOVÁNO PRO: ${email}`);
