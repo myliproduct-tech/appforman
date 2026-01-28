@@ -64,7 +64,7 @@ export const InventoryChecklist: React.FC<InventoryChecklistProps> = ({
         }
     };
 
-    const handlePrintMissing = () => {
+    const handlePrintMissing = async () => {
         const missingStandard = GEAR_CHECKLIST.flatMap(cat =>
             cat.items
                 .filter(item => !gearChecklist.includes(item.id))
@@ -73,60 +73,110 @@ export const InventoryChecklist: React.FC<InventoryChecklistProps> = ({
 
         const missingCustom = customGear.filter(c => !c.bought);
 
-        const printWindow = window.open('', '_blank');
-        if (printWindow) {
-            printWindow.document.write(`
-                <html>
-                  <head>
-                    <title>Taktický Seznam Zásobování</title>
-                    <style>
-                      body { font-family: 'Courier New', monospace; padding: 20px; color: #000; }
-                      h1 { font-size: 24px; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; }
-                      .category { margin-top: 20px; font-weight: bold; text-transform: uppercase; font-size: 14px; background: #eee; padding: 5px; }
-                      .item { padding: 5px 0; border-bottom: 1px dotted #ccc; display: flex; justify-content: space-between; }
-                      .checkbox { width: 15px; height: 15px; border: 1px solid #000; display: inline-block; margin-right: 10px; }
-                      .footer { margin-top: 40px; font-size: 10px; text-align: center; border-top: 1px solid #ccc; padding-top: 10px; }
-                    </style>
-                  </head>
-                  <body>
-                    <h1>Chybějící Položky - Report</h1>
-                    <p><strong>Datum:</strong> ${new Date().toLocaleDateString()}</p>
-                    <p><strong>Stav mise:</strong> ${progressPercent}% Hotovo</p>
-                    
-                    ${GEAR_CHECKLIST.map(cat => {
+        // Dynamically load jsPDF from CDN
+        const loadJsPDF = () => {
+            return new Promise((resolve, reject) => {
+                if ((window as any).jspdf) {
+                    resolve((window as any).jspdf.jsPDF);
+                    return;
+                }
+
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                script.onload = () => resolve((window as any).jspdf.jsPDF);
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        };
+
+        try {
+            const jsPDF = await loadJsPDF() as any;
+            const doc = new jsPDF();
+
+            // Title
+            doc.setFontSize(20);
+            doc.setFont(undefined, 'bold');
+            doc.text('CHYBĚJÍCÍ POLOŽKY - REPORT', 20, 20);
+
+            // Metadata
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Datum: ${new Date().toLocaleDateString('cs-CZ')}`, 20, 30);
+            doc.text(`Stav mise: ${progressPercent}% Hotovo`, 20, 36);
+
+            let yPos = 50;
+
+            // Add missing items by category
+            GEAR_CHECKLIST.forEach(cat => {
                 const missingInCat = missingStandard.filter(i => i.category === cat.category);
-                if (missingInCat.length === 0) return '';
-                return `
-                         <div class="category">${cat.category}</div>
-                         ${missingInCat.map(item => `
-                            <div class="item">
-                              <span><span class="checkbox"></span>${item.label}</span>
-                            </div>
-                         `).join('')}
-                       `;
-            }).join('')}
-                    
-                    ${missingCustom.length > 0 ? `
-                      <div class="category">Vlastní Výbava</div>
-                       ${missingCustom.map(item => `
-                          <div class="item">
-                            <span><span class="checkbox"></span>${item.label}</span>
-                          </div>
-                       `).join('')}
-                    ` : ''}
-                    
-                    <div class="footer">
-                      Generováno aplikací Partner v Akci
-                    </div>
-                  </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => {
-                printWindow.print();
-                printWindow.close();
-            }, 500);
+                if (missingInCat.length === 0) return;
+
+                // Category header
+                if (yPos > 270) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text(cat.category.toUpperCase(), 20, yPos);
+                yPos += 8;
+
+                // Items
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                missingInCat.forEach(item => {
+                    if (yPos > 280) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    doc.rect(20, yPos - 3, 3, 3); // Checkbox
+                    doc.text(item.label, 26, yPos);
+                    yPos += 6;
+                });
+
+                yPos += 5;
+            });
+
+            // Custom items
+            if (missingCustom.length > 0) {
+                if (yPos > 270) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text('VLASTNÍ VÝBAVA', 20, yPos);
+                yPos += 8;
+
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                missingCustom.forEach(item => {
+                    if (yPos > 280) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    doc.rect(20, yPos - 3, 3, 3);
+                    doc.text(item.label, 26, yPos);
+                    yPos += 6;
+                });
+            }
+
+            // Footer
+            const pageCount = doc.internal.pages.length - 1;
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setFont(undefined, 'italic');
+                doc.text('Generováno aplikací Partner v Akci', 105, 290, { align: 'center' });
+            }
+
+            // Download PDF
+            doc.save(`chybejici-polozky-${new Date().toISOString().split('T')[0]}.pdf`);
+        } catch (error) {
+            console.error('Chyba při generování PDF:', error);
+            alert('Nepodařilo se vygenerovat PDF. Zkuste to prosím znovu.');
         }
     };
 
