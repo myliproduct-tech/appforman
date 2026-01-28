@@ -130,7 +130,7 @@ export const useConsumables = (
     };
 
     // Handler: Add custom consumable (vitamins)
-    const handleAddCustomConsumable = (name: string, quantity: number) => {
+    const handleAddCustomConsumable = (name: string, quantity: number, frequency: '1x' | '2x', times: string[]) => {
         setStats(prev => {
             const consumables = prev.budgetPlan?.consumables || [];
             const newItem: ConsumableItem = {
@@ -138,7 +138,9 @@ export const useConsumables = (
                 name,
                 quantity,
                 lastUpdated: effectiveDate,
-                isCustom: true
+                isCustom: true,
+                notificationFrequency: frequency,
+                notificationTimes: times
             };
 
             const updatedConsumables = [...consumables, newItem];

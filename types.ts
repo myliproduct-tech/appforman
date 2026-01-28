@@ -103,6 +103,8 @@ export interface ConsumableItem {
   lastUpdated: string; // ISO date string of last quantity update
   lastConfirmedDate?: string; // ISO date string of last manual confirmation (when user clicked "Vzala dnes")
   isCustom: boolean; // true for user-added vitamins
+  notificationFrequency?: '1x' | '2x'; // How often to send notifications (1x or 2x daily)
+  notificationTimes?: string[]; // Times for notifications in "HH:mm" format
 }
 
 export interface BudgetPlan {

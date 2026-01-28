@@ -6,7 +6,7 @@ import { DEFAULT_CONSUMABLES } from '../../constants';
 interface ConsumablesManagerProps {
     budgetPlan?: BudgetPlan;
     onUpdateConsumable?: (id: string, quantity: number) => void;
-    onAddCustomConsumable?: (name: string, quantity: number) => void;
+    onAddCustomConsumable?: (name: string, quantity: number, frequency: '1x' | '2x', times: string[]) => void;
     onDeleteConsumable?: (id: string) => void;
     onConfirmConsumption?: (id: string) => void;
     effectiveDate?: string;
@@ -24,6 +24,9 @@ export const ConsumablesManager: React.FC<ConsumablesManagerProps> = ({
 }) => {
     const [newConsumableName, setNewConsumableName] = useState('');
     const [newConsumableQty, setNewConsumableQty] = useState('');
+    const [newFrequency, setNewFrequency] = useState<'1x' | '2x'>('1x');
+    const [newTime1, setNewTime1] = useState('09:00');
+    const [newTime2, setNewTime2] = useState('21:00');
     const [editingConsumable, setEditingConsumable] = useState<{ id: string, qty: string } | null>(null);
 
     const consumables = budgetPlan?.consumables || [];
@@ -137,8 +140,8 @@ export const ConsumablesManager: React.FC<ConsumablesManagerProps> = ({
                                                         onClick={() => onConfirmConsumption(item.id)}
                                                         disabled={isConfirmedToday}
                                                         className={`flex-shrink-0 px-4 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${isConfirmedToday
-                                                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-not-allowed'
-                                                                : 'bg-[#f6c453] text-[#1f2933] hover:bg-[#ffcf60]'
+                                                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-not-allowed'
+                                                            : 'bg-[#f6c453] text-[#1f2933] hover:bg-[#ffcf60]'
                                                             }`}
                                                     >
                                                         {isConfirmedToday ? '✓ Vzala' : 'Vzala dnes'}
@@ -166,28 +169,83 @@ export const ConsumablesManager: React.FC<ConsumablesManagerProps> = ({
                                 className="w-full bg-[#1f2933] border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-[#f6c453]/50 focus:outline-none"
                                 placeholder="Název vitamínu..."
                             />
-                            <div className="flex gap-2">
-                                <input
-                                    type="number"
-                                    value={newConsumableQty}
-                                    onChange={(e) => setNewConsumableQty(e.target.value)}
-                                    className="flex-1 min-w-0 bg-[#1f2933] border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-[#f6c453]/50 focus:outline-none"
-                                    placeholder="Počet"
-                                />
-                                <button
-                                    onClick={() => {
-                                        if (onAddCustomConsumable && newConsumableName.trim() && newConsumableQty) {
-                                            onAddCustomConsumable(newConsumableName, parseInt(newConsumableQty));
-                                            setNewConsumableName('');
-                                            setNewConsumableQty('');
-                                        }
-                                    }}
-                                    className="flex-shrink-0 px-5 py-3 bg-[#f6c453] text-[#1f2933] rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#ffcf60] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                                    disabled={!newConsumableName.trim() || !newConsumableQty}
-                                >
-                                    Přidat
-                                </button>
+                            <input
+                                type="number"
+                                value={newConsumableQty}
+                                onChange={(e) => setNewConsumableQty(e.target.value)}
+                                className="w-full bg-[#1f2933] border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-[#f6c453]/50 focus:outline-none"
+                                placeholder="Počet"
+                            />
+
+                            {/* Notification Frequency */}
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-white/50 mb-2 block">
+                                    Frekvence připomínek
+                                </label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setNewFrequency('1x')}
+                                        className={`py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${newFrequency === '1x'
+                                                ? 'bg-[#f6c453] text-[#1f2933]'
+                                                : 'bg-white/5 text-white/50 border border-white/10'
+                                            }`}
+                                    >
+                                        1x denně
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setNewFrequency('2x')}
+                                        className={`py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${newFrequency === '2x'
+                                                ? 'bg-[#f6c453] text-[#1f2933]'
+                                                : 'bg-white/5 text-white/50 border border-white/10'
+                                            }`}
+                                    >
+                                        2x denně
+                                    </button>
+                                </div>
                             </div>
+
+                            {/* Notification Times */}
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-white/50 mb-2 block">
+                                    Čas připomínek
+                                </label>
+                                <div className={`grid gap-2 ${newFrequency === '2x' ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                                    <input
+                                        type="time"
+                                        value={newTime1}
+                                        onChange={(e) => setNewTime1(e.target.value)}
+                                        className="bg-[#1f2933] border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-[#f6c453]/50 focus:outline-none"
+                                    />
+                                    {newFrequency === '2x' && (
+                                        <input
+                                            type="time"
+                                            value={newTime2}
+                                            onChange={(e) => setNewTime2(e.target.value)}
+                                            className="bg-[#1f2933] border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-[#f6c453]/50 focus:outline-none"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => {
+                                    if (onAddCustomConsumable && newConsumableName.trim() && newConsumableQty) {
+                                        const times = newFrequency === '1x' ? [newTime1] : [newTime1, newTime2];
+                                        onAddCustomConsumable(newConsumableName, parseInt(newConsumableQty), newFrequency, times);
+                                        setNewConsumableName('');
+                                        setNewConsumableQty('');
+                                        setNewFrequency('1x');
+                                        setNewTime1('09:00');
+                                        setNewTime2('21:00');
+                                    }
+                                }}
+                                className="w-full px-5 py-3 bg-[#f6c453] text-[#1f2933] rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#ffcf60] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                                disabled={!newConsumableName.trim() || !newConsumableQty}
+                            >
+                                Přidat
+                            </button>
                         </div>
                     </div>
 

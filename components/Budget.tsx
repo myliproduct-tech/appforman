@@ -26,7 +26,7 @@ interface BudgetProps {
     onSaveVehicle?: (model: string) => void;
     onConfirmVehicle?: () => void;
     onUpdateConsumable?: (id: string, quantity: number) => void;
-    onAddCustomConsumable?: (name: string, quantity: number) => void;
+    onAddCustomConsumable?: (name: string, quantity: number, frequency: '1x' | '2x', times: string[]) => void;
     onDeleteConsumable?: (id: string) => void;
     onConfirmConsumption?: (id: string) => void;
     effectiveDate?: string;
