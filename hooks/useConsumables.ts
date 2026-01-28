@@ -3,6 +3,7 @@ import { UserStats, ConsumableItem } from '../types';
 import { parseLocalDate } from '../utils';
 import { DEFAULT_CONSUMABLES } from '../constants';
 import { notificationService } from '../services/NotificationService';
+import { vitaminNotificationScheduler } from '../services/VitaminNotificationScheduler';
 
 /**
  * Custom hook for managing consumables (teas, vitamins)
@@ -38,6 +39,28 @@ export const useConsumables = (
             }
         }
     }, [stats.email]); // Run only when user changes
+
+    // Schedule vitamin notifications based on their specific times
+    useEffect(() => {
+        if (!stats.notificationsEnabled || !stats.budgetPlan?.consumables) return;
+
+        // Run immediately on mount/update
+        vitaminNotificationScheduler.checkAndSendNotifications(
+            stats.budgetPlan.consumables,
+            stats.notificationsEnabled
+        );
+        vitaminNotificationScheduler.cleanupOldRecords();
+
+        // Check every minute
+        const interval = setInterval(() => {
+            vitaminNotificationScheduler.checkAndSendNotifications(
+                stats.budgetPlan?.consumables,
+                stats.notificationsEnabled
+            );
+        }, 60000);
+
+        return () => clearInterval(interval);
+    }, [stats.notificationsEnabled, stats.budgetPlan?.consumables]);
 
     // Daily notification reminder for consumables (no auto-deduction)
     useEffect(() => {
