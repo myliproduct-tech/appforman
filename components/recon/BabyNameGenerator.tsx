@@ -78,30 +78,31 @@ export const BabyNameGenerator: React.FC<BabyNameGeneratorProps> = ({
     const sortedNames = [...babyNames].sort((a, b) => a.rating - b.rating);
 
     return (
-        <>
-            {/* BABY NAMES MODAL */}
-            {showNameList && (
-                <>
-                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/20">
-                        <div className="flex items-center gap-3">
-                            <div>
-                                <h2 className="text-xl font-black italic uppercase text-[#f6c453] tracking-tighter">
-                                    Nominace Juniora
-                                </h2>
-                                <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em]">
-                                    Výběr kódového označení
-                                </p>
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={() => onClose ? onClose() : setShowNameList(false)}
-                            className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all border-2 border-white/20"
-                        >
-                            <XIcon className="w-6 h-6 text-[#f6c453]" />
-                        </button>
+        <div className="flex flex-col h-full w-full">
+            {/* BABY NAMES HEADER */}
+            <div className="flex items-center justify-between px-4 py-8 z-30 border-b border-white/20 shadow-xl shrink-0">
+                <div className="flex items-center gap-3">
+                    <div>
+                        <h2 className="text-xl font-black italic uppercase text-[#f6c453] tracking-tighter">
+                            Nominace Juniora
+                        </h2>
+                        <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em]">
+                            Výběr kódového označení
+                        </p>
                     </div>
+                </div>
 
+                <button
+                    onClick={() => onClose ? onClose() : setShowNameList(false)}
+                    className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all border-2 border-white/20"
+                >
+                    <XIcon className="w-6 h-6 text-[#f6c453]" />
+                </button>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto px-4 pt-6 pb-24 custom-scrollbar">
+                <div className="max-w-2xl mx-auto">
                     {/* Content Card */}
                     <div className="glass-card p-6 rounded-[2rem] border-white/20 animate-slide-up mb-4">
 
@@ -198,8 +199,8 @@ export const BabyNameGenerator: React.FC<BabyNameGeneratorProps> = ({
                             )}
                         </div>
                     </div>
-                </>
-            )}
-        </>
+                </div>
+            </div>
+        </div>
     );
 };

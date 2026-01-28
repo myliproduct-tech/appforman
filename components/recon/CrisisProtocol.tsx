@@ -165,97 +165,101 @@ export const CrisisProtocol: React.FC<{ onClose: () => void }> = ({ onClose }) =
     };
 
     return (
-        <div className="fixed inset-0 z-[100] bg-[#1f2933] overflow-y-auto animate-fade-in shadow-2xl">
-            <div className="min-h-full p-4 pb-24">
-                <div className="max-w-2xl mx-auto">
-                    {/* Minimalist Header */}
-                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/20">
-                        <div className="flex items-center gap-3">
-                            <div>
-                                <h1 className="text-xl font-black italic uppercase text-[#f6c453] tracking-tighter">
-                                    Krizový Protokol
-                                </h1>
-                                <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em]">
-                                    Rizika v těhotenství
-                                </p>
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={onClose}
-                            className="p-3 rounded-xl bg-white/5 hover:bg-black/20 transition-all border-2 border-white/20 active:scale-95 group"
-                        >
-                            <X className="w-6 h-6 text-[#f6c453] group-hover:rotate-90 transition-transform" />
-                        </button>
-                    </div>
-
-                    {/* Warning banner */}
-                    <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 mb-8">
-                        <div className="flex items-start gap-4">
-                            <div className="p-2 bg-red-500/20 rounded-lg">
-                                <AlertTriangle className="w-5 h-5 text-red-500" />
-                            </div>
-                            <div>
-                                <p className="text-sm text-white font-bold mb-1 uppercase tracking-tight">Důležité upozornění</p>
-                                <p className="text-[11px] text-white/50 leading-relaxed">
-                                    Tento seznam není vyčerpávající. Vždy konzultujte s lékařem.
-                                    V případě pochybností ihned volejte tísňovou linku.
-                                </p>
-                            </div>
+        <div className="fixed inset-0 z-[100] bg-[#1f2933] flex flex-col animate-fade-in shadow-2xl overflow-hidden">
+            <div className="max-w-2xl mx-auto w-full h-full flex flex-col">
+                {/* Minimalist Header */}
+                <div className="flex items-center justify-between bg-[#1f2933] px-6 py-8 z-30 border-b border-white/10 shadow-xl shrink-0">
+                    <div className="flex items-center gap-3">
+                        <div>
+                            <h1 className="text-xl font-black italic uppercase text-[#f6c453] tracking-tighter">
+                                Krizový Protokol
+                            </h1>
+                            <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em]">
+                                Rizika v těhotenství
+                            </p>
                         </div>
                     </div>
 
-                    {/* Categories */}
-                    <div className="space-y-3">
-                        {PREGNANCY_WARNINGS.map((warning) => {
-                            const isExpanded = expandedCategory === warning.category;
+                    <button
+                        onClick={onClose}
+                        className="p-3 rounded-xl bg-white/5 hover:bg-black/20 transition-all border-2 border-white/20 active:scale-95 group"
+                    >
+                        <X className="w-6 h-6 text-[#f6c453] group-hover:rotate-90 transition-transform" />
+                    </button>
+                </div>
 
-                            return (
-                                <div key={warning.category} className="bg-white/5 rounded-2xl border-2 border-white/20 overflow-hidden transition-all">
-                                    {/* Category header */}
-                                    <button
-                                        onClick={() => toggleCategory(warning.category)}
-                                        className="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all"
-                                    >
-                                        <h3 className="text-sm font-black uppercase text-white tracking-widest">
-                                            {warning.category}
-                                        </h3>
-                                        {isExpanded ? (
-                                            <ChevronUp className="w-5 h-5 text-white/30" />
-                                        ) : (
-                                            <ChevronDown className="w-5 h-5 text-white/30" />
-                                        )}
-                                    </button>
+                {/* Scrollable Content */}
+                <div className="flex-1 overflow-y-auto px-4 pt-6 pb-24 custom-scrollbar">
+                    <div className="max-w-2xl mx-auto">
 
-                                    {/* Items */}
-                                    {isExpanded && (
-                                        <div className="px-4 pb-4 space-y-3">
-                                            {warning.items.map((item, index) => (
-                                                <div
-                                                    key={index}
-                                                    className={`p-4 rounded-xl border-2 border-white/20 ${getSeverityColor(item.severity)} bg-opacity-5`}
-                                                >
-                                                    <div className="flex items-start justify-between gap-3 mb-2">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className={`w-1.5 h-1.5 rounded-full ${getSeverityDotColor(item.severity)}`}></div>
-                                                            <h4 className="font-bold text-white text-xs uppercase tracking-tight">
-                                                                {item.title}
-                                                            </h4>
-                                                        </div>
-                                                        <span className="text-[10px] font-black opacity-40 uppercase tracking-widest whitespace-nowrap">
-                                                            {getSeverityLabel(item.severity)}
-                                                        </span>
-                                                    </div>
-                                                    <p className="text-[11px] text-white/60 leading-relaxed font-medium">
-                                                        {item.description}
-                                                    </p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
+                        {/* Warning banner */}
+                        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 mb-8">
+                            <div className="flex items-start gap-4">
+                                <div className="p-2 bg-red-500/20 rounded-lg">
+                                    <AlertTriangle className="w-5 h-5 text-red-500" />
                                 </div>
-                            );
-                        })}
+                                <div>
+                                    <p className="text-sm text-white font-bold mb-1 uppercase tracking-tight">Důležité upozornění</p>
+                                    <p className="text-[11px] text-white/50 leading-relaxed">
+                                        Tento seznam není vyčerpávající. Vždy konzultujte s lékařem.
+                                        V případě pochybností ihned volejte tísňovou linku.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Categories */}
+                        <div className="space-y-3">
+                            {PREGNANCY_WARNINGS.map((warning) => {
+                                const isExpanded = expandedCategory === warning.category;
+
+                                return (
+                                    <div key={warning.category} className="bg-white/5 rounded-2xl border-2 border-white/20 overflow-hidden transition-all">
+                                        {/* Category header */}
+                                        <button
+                                            onClick={() => toggleCategory(warning.category)}
+                                            className="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-all"
+                                        >
+                                            <h3 className="text-sm font-black uppercase text-white tracking-widest">
+                                                {warning.category}
+                                            </h3>
+                                            {isExpanded ? (
+                                                <ChevronUp className="w-5 h-5 text-white/30" />
+                                            ) : (
+                                                <ChevronDown className="w-5 h-5 text-white/30" />
+                                            )}
+                                        </button>
+
+                                        {/* Items */}
+                                        {isExpanded && (
+                                            <div className="px-4 pb-4 space-y-3">
+                                                {warning.items.map((item, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className={`p-4 rounded-xl border-2 border-white/20 ${getSeverityColor(item.severity)} bg-opacity-5`}
+                                                    >
+                                                        <div className="flex items-start justify-between gap-3 mb-2">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className={`w-1.5 h-1.5 rounded-full ${getSeverityDotColor(item.severity)}`}></div>
+                                                                <h4 className="font-bold text-white text-xs uppercase tracking-tight">
+                                                                    {item.title}
+                                                                </h4>
+                                                            </div>
+                                                            <span className="text-[10px] font-black opacity-40 uppercase tracking-widest whitespace-nowrap">
+                                                                {getSeverityLabel(item.severity)}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-[11px] text-white/60 leading-relaxed font-medium">
+                                                            {item.description}
+                                                        </p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
             </div>

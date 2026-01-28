@@ -72,11 +72,10 @@ export const Extra: React.FC<ExtraProps> = ({
         />;
     }
 
-    // If Baby Names is shown
     if (showBabyNames) {
         return (
-            <div className="fixed inset-0 z-[80] bg-[#1f2933] overflow-y-auto animate-fade-in p-4">
-                <div className="max-w-2xl mx-auto min-h-full flex flex-col">
+            <div className="fixed inset-0 z-[80] bg-[#1f2933] flex flex-col animate-fade-in overflow-hidden">
+                <div className="max-w-2xl mx-auto w-full h-full flex flex-col">
                     <BabyNameGenerator
                         babyNames={babyNames}
                         onSaveBabyNames={onSaveBabyNames}
@@ -96,12 +95,11 @@ export const Extra: React.FC<ExtraProps> = ({
         />;
     }
 
-    // Training Camp Menu
     if (showTrainingCamp) {
         return (
-            <div className="fixed inset-0 z-[80] bg-[#1f2933] overflow-y-auto animate-fade-in p-4">
-                <div className="max-w-2xl mx-auto min-h-full flex flex-col">
-                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/20">
+            <div className="fixed inset-0 z-[80] bg-[#1f2933] flex flex-col animate-fade-in overflow-hidden">
+                <div className="max-w-2xl mx-auto w-full h-full flex flex-col bg-[#1f2933]">
+                    <div className="flex justify-between items-center bg-[#1f2933] px-4 py-6 z-30 border-b border-white/20 shadow-xl shrink-0">
                         <div className="flex items-center gap-3">
                             <div>
                                 <h2 className="text-xl font-black italic uppercase accent-text tracking-tighter">
@@ -118,64 +116,62 @@ export const Extra: React.FC<ExtraProps> = ({
                         </button>
                     </div>
 
-                    <div className="space-y-4 flex-1">
-                        {/* Speed Build Card */}
-                        <button
-                            onClick={() => setSelectedGame('speed-build')}
-                            className="w-full bg-white/5 hover:bg-[#f6c453]/5 border-2 border-white/10 hover:border-[#f6c453]/30 rounded-2xl p-6 text-left transition-all active:scale-98 group"
-                        >
-                            <div className="flex items-start gap-4 transition-transform group-hover:translate-x-1">
-                                <div className="p-4 bg-[#f6c453]/10 rounded-xl text-[#f6c453] group-hover:scale-110 group-hover:rotate-6 transition-transform">
-                                    <Zap className="w-8 h-8" />
-                                </div>
-                                <div className="flex-1">
-                                    <h3 className="text-xl font-black uppercase text-white tracking-tight mb-1 group-hover:text-[#f6c453] transition-colors">
-                                        Rychlé nasazení
-                                    </h3>
-                                    <p className="text-sm text-white/70 mb-3">
-                                        Trénuj rychlost při instalaci autosedačky, přebalování a dalších úkolech
-                                    </p>
-                                    <div className="flex items-center gap-2 text-xs text-[#f6c453]/80">
-                                        <span className="px-2 py-1 bg-[#f6c453]/20 rounded uppercase font-black">3 kategorie</span>
-                                        <span className="px-2 py-1 bg-[#f6c453]/20 rounded uppercase font-black">Stopky</span>
+                    <div className="flex-1 overflow-y-auto px-4 pt-6 pb-24 custom-scrollbar">
+                        <div className="space-y-4">
+                            {/* Speed Build Card */}
+                            <button
+                                onClick={() => setSelectedGame('speed-build')}
+                                className="w-full bg-white/5 hover:bg-[#f6c453]/5 border-2 border-white/10 hover:border-[#f6c453]/30 rounded-2xl p-6 text-left transition-all active:scale-98 group"
+                            >
+                                <div className="flex items-start gap-4 transition-transform group-hover:translate-x-1">
+                                    <div className="p-4 bg-[#f6c453]/10 rounded-xl text-[#f6c453] group-hover:scale-110 group-hover:rotate-6 transition-transform">
+                                        <Zap className="w-8 h-8" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-xl font-black uppercase text-white tracking-tight mb-1 group-hover:text-[#f6c453] transition-colors">
+                                            Rychlé nasazení
+                                        </h3>
+                                        <p className="text-sm text-white/70 mb-3">
+                                            Trénuj rychlost při instalaci autosedačky, přebalování a dalších úkolech
+                                        </p>
+                                        <div className="flex items-center gap-2 text-xs text-[#f6c453]/80">
+                                            <span className="px-2 py-1 bg-[#f6c453]/20 rounded uppercase font-black">3 kategorie</span>
+                                            <span className="px-2 py-1 bg-[#f6c453]/20 rounded uppercase font-black">Stopky</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </button>
+                            </button>
 
-                        {/* Sound ID Card */}
-                        <button
-                            onClick={() => setSelectedGame('sound-id')}
-                            className="w-full bg-white/5 hover:bg-[#f6c453]/5 border-2 border-white/10 hover:border-[#f6c453]/30 rounded-2xl p-6 text-left transition-all active:scale-98 group"
-                        >
-                            <div className="flex items-start gap-4 transition-transform group-hover:translate-x-1">
-                                <div className="p-4 bg-[#f6c453]/10 rounded-xl text-[#f6c453] group-hover:scale-110 group-hover:-rotate-6 transition-transform">
-                                    <Radio className="w-8 h-8" />
-                                </div>
-                                <div className="flex-1">
-                                    <h3 className="text-xl font-black uppercase text-white tracking-tight mb-1 group-hover:text-[#f6c453] transition-colors">
-                                        Akustický Radar
-                                    </h3>
-                                    <p className="text-sm text-white/70 mb-3">
-                                        Nauč se rozpoznávat různé typy pláče podle Dunstan Baby Language
-                                    </p>
-                                    <div className="flex items-center gap-2 text-xs text-[#f6c453]/80">
-                                        <span className="px-2 py-1 bg-[#f6c453]/20 rounded uppercase font-black">4 typy pláče</span>
-                                        <span className="px-2 py-1 bg-[#f6c453]/20 rounded uppercase font-black">Audio analýza</span>
+                            {/* Sound ID Card */}
+                            <button
+                                onClick={() => setSelectedGame('sound-id')}
+                                className="w-full bg-white/5 hover:bg-[#f6c453]/5 border-2 border-white/10 hover:border-[#f6c453]/30 rounded-2xl p-6 text-left transition-all active:scale-98 group"
+                            >
+                                <div className="flex items-start gap-4 transition-transform group-hover:translate-x-1">
+                                    <div className="p-4 bg-[#f6c453]/10 rounded-xl text-[#f6c453] group-hover:scale-110 group-hover:-rotate-6 transition-transform">
+                                        <Radio className="w-8 h-8" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-xl font-black uppercase text-white tracking-tight mb-1 group-hover:text-[#f6c453] transition-colors">
+                                            Akustický Radar
+                                        </h3>
+                                        <p className="text-sm text-white/70 mb-3">
+                                            Nauč se rozpoznávat různé typy pláče podle Dunstan Baby Language
+                                        </p>
+                                        <div className="flex items-center gap-2 text-xs text-[#f6c453]/80">
+                                            <span className="px-2 py-1 bg-[#f6c453]/20 rounded uppercase font-black">4 typy pláče</span>
+                                            <span className="px-2 py-1 bg-[#f6c453]/20 rounded uppercase font-black">Audio analýza</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </button>
+                            </button>
+                        </div>
 
-
-
-
-                    </div>
-
-                    <div className="mt-8 bg-[#f6c453]/10 rounded-xl p-4 border border-[#f6c453]/30">
-                        <p className="text-xs text-[#f6c453]/80 text-center leading-relaxed">
-                            💡 Vyber mini-hru a trénuj své dovednosti!
-                        </p>
+                        <div className="mt-8 bg-[#f6c453]/10 rounded-xl p-4 border border-[#f6c453]/30 mb-10">
+                            <p className="text-xs text-[#f6c453]/80 text-center leading-relaxed">
+                                💡 Vyber mini-hru a trénuj své dovednosti!
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
