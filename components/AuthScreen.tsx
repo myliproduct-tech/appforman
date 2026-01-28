@@ -9,7 +9,8 @@ interface AuthScreenProps {
 
 interface VaultEntry {
   email: string;
-  passwordHash: string; // Pro tuto demo verzi ukládáme v prostém textu, v reálu by byl hash
+  passwordHash: string;
+  recoveryKey?: string;
 }
 
 export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
@@ -22,6 +23,10 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   const [consentAccepted, setConsentAccepted] = useState(false);
   const [activeLegalDoc, setActiveLegalDoc] = useState<'privacy' | 'terms' | 'consent'>('privacy');
   const [showGdpr, setShowGdpr] = useState(false);
+  const [showRecoveryKey, setShowRecoveryKey] = useState<string | null>(null);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [recoveryKeyInput, setRecoveryKeyInput] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   // Password validation criteria
   const validations = {
@@ -40,6 +45,13 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     setConsentAccepted(false);
     setShowGdpr(false);
   }, [isRegister]);
+
+  const generateRecoveryKey = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const nums = '23456789';
+    const pick = (str: string) => str[Math.floor(Math.random() * str.length)];
+    return `${pick(chars)}${pick(chars)}${pick(chars)}-${pick(nums)}${pick(nums)}-${pick(chars)}`;
+  };
 
   const getVault = async (): Promise<VaultEntry[]> => {
     try {
@@ -76,6 +88,40 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isForgotPassword) {
+      if (!email || !recoveryKeyInput || !newPassword) return;
+      setIsResetLoading(true);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/vault/reset`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email.trim().toLowerCase(),
+            recoveryKey: recoveryKeyInput.trim().toUpperCase(),
+            newPassword: newPassword
+          })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          setAlert({ type: 'success', message: 'Přístup obnoven! Nyní se můžete přihlásit novým heslem.' });
+          setIsForgotPassword(false);
+          setRecoveryKeyInput('');
+          setNewPassword('');
+          setPassword(''); // Clear fields
+        } else {
+          setAlert({ type: 'error', message: data.error || 'Obnova selhala' });
+        }
+      } catch (error) {
+        setAlert({ type: 'error', message: 'Chyba spojení se serverem' });
+      } finally {
+        setIsResetLoading(false);
+      }
+      return;
+    }
+
     const vault = await getVault();
     const normalizedEmail = email.trim().toLowerCase();
 
@@ -88,13 +134,24 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
         return;
       }
 
-      await saveToVault(normalizedEmail, password);
-      setAlert({ type: 'success', message: 'Registrace úspěšná! Vstupuji do systému...' });
+      const recoveryKey = generateRecoveryKey();
 
-      // AUTO-LOGIN po registraci
-      setTimeout(() => {
-        onLogin(normalizedEmail);
-      }, 1000);
+      // Save to server
+      try {
+        await fetch(`${API_BASE_URL}/vault`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: normalizedEmail,
+            passwordHash: password,
+            recoveryKey: recoveryKey
+          })
+        });
+
+        setShowRecoveryKey(recoveryKey);
+      } catch (error) {
+        setAlert({ type: 'error', message: 'Chyba při registraci na serveru' });
+      }
     } else {
       const user = vault.find(u => u.email === normalizedEmail);
 
@@ -113,17 +170,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   };
 
   const handleForgotPassword = () => {
-    if (!email || !email.includes('@')) {
-      setAlert({ type: 'error', message: 'Nejdříve zadejte svůj platný email!' });
-      return;
-    }
-
-    setIsResetLoading(true);
-    // Simulace odeslání emailu
-    setTimeout(() => {
-      setIsResetLoading(false);
-      setAlert({ type: 'info', message: 'Instrukce k resetu byly odeslány na váš email.' });
-    }, 1500);
+    setIsForgotPassword(true);
+    setAlert({ type: 'info', message: 'Zadejte email a váš taktický nouzový klíč pro nastavení nového hesla.' });
   };
 
   const handleGoogleLogin = useGoogleLogin({
@@ -175,24 +223,35 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
         </div>
 
         {/* Auth Content */}
-        <div className="glass-card p-1 rounded-[3rem] border-[#f6c453]/10 shadow-2xl overflow-hidden">
-          <div className="bg-[#1f2933]/40 backdrop-blur-xl p-8 rounded-[2.9rem]">
+        <div className="glass-card p-1 rounded-[2.5rem] sm:rounded-[3rem] border-[#f6c453]/10 shadow-2xl overflow-hidden">
+          <div className="bg-[#1f2933]/40 backdrop-blur-xl p-6 sm:p-8 rounded-[2.4rem] sm:rounded-[2.9rem]">
 
             {/* Mode Toggle Tabs */}
-            <div className="flex bg-[#2d3748]/50 p-1 rounded-2xl mb-8 border border-white/5">
-              <button
-                onClick={() => setIsRegister(false)}
-                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!isRegister ? 'bg-[#f6c453] text-[#1f2933] shadow-lg' : 'text-white/40 hover:text-white/60'}`}
-              >
-                Přihlásit
-              </button>
-              <button
-                onClick={() => setIsRegister(true)}
-                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${isRegister ? 'bg-[#f6c453] text-[#1f2933] shadow-lg' : 'text-white/40 hover:text-white/60'}`}
-              >
-                Registrovat
-              </button>
-            </div>
+            {!isForgotPassword ? (
+              <div className="flex bg-[#2d3748]/50 p-1 rounded-2xl mb-8 border border-white/5">
+                <button
+                  onClick={() => setIsRegister(false)}
+                  className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!isRegister ? 'bg-[#f6c453] text-[#1f2933] shadow-lg' : 'text-white/40 hover:text-white/60'}`}
+                >
+                  Přihlásit
+                </button>
+                <button
+                  onClick={() => setIsRegister(true)}
+                  className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${isRegister ? 'bg-[#f6c453] text-[#1f2933] shadow-lg' : 'text-white/40 hover:text-white/60'}`}
+                >
+                  Registrovat
+                </button>
+              </div>
+            ) : (
+              <div className="flex bg-[#2d3748]/50 p-1 rounded-2xl mb-8 border border-white/5">
+                <button
+                  onClick={() => setIsForgotPassword(false)}
+                  className="flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white/5 text-white/40 hover:text-white/60 transition-all flex items-center justify-center gap-2"
+                >
+                  Zpět k přihlášení
+                </button>
+              </div>
+            )}
 
             {/* Alert Messages */}
             {alert && (
@@ -223,133 +282,170 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center ml-4 mr-2">
-                  <label className="text-[9px] font-black uppercase tracking-[0.25em] text-[#f6c453] opacity-70 flex items-center gap-2">
-                    <Lock className="w-3 h-3" /> {isRegister ? 'Nové silné heslo' : 'Heslo'}
-                  </label>
-                  {!isRegister && (
-                    <button
-                      type="button"
-                      onClick={handleForgotPassword}
-                      disabled={isResetLoading}
-                      className="text-[8px] font-black uppercase tracking-wider text-[#f6c453] opacity-40 hover:opacity-100 transition-all flex items-center gap-1"
-                    >
-                      {isResetLoading ? <RefreshCw className="w-2.5 h-2.5 animate-spin" /> : 'Ztráta přístupu?'}
-                    </button>
-                  )}
-                </div>
-                <div className="relative group">
-                  <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#f6c453] transition-colors" />
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full bg-[#161c22]/50 border border-white/10 rounded-[1.5rem] pl-14 pr-6 py-5 text-[#f5f7fa] placeholder:opacity-20 focus:outline-none focus:ring-2 focus:ring-[#f6c453]/50 focus:bg-[#161c22] transition-all font-medium text-sm"
-                    required
-                  />
-                </div>
-
-                {/* Password Requirements Checklist - ONLY during registration */}
-                {isRegister && (
-                  <>
-                    <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 mt-3 px-4">
-                      {[
-                        { label: 'Min. 8 znaků', met: validations.length },
-                        { label: 'Velké písmeno', met: validations.upper },
-                        { label: 'Malé písmeno', met: validations.lower },
-                        { label: 'Číslice', met: validations.digit }
-                      ].map((req, i) => (
-                        <div key={i} className={`flex items-center gap-1.5 transition-all duration-300 ${req.met ? 'opacity-100' : 'opacity-30'}`}>
-                          <div className={`w-1.5 h-1.5 rounded-full ${req.met ? 'bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.5)]' : 'bg-white'}`} />
-                          <span className={`text-[8px] font-bold uppercase tracking-wider ${req.met ? 'text-emerald-400' : 'text-white'}`}>
-                            {req.label}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Legal Documentation Section */}
-                    <div className="mt-6 space-y-3 px-2">
+              {!isForgotPassword ? (
+                <div className="space-y-1.5">
+                  <div className="flex justify-between items-center ml-4 mr-2">
+                    <label className="text-[9px] font-black uppercase tracking-[0.25em] text-[#f6c453] opacity-70 flex items-center gap-2">
+                      <Lock className="w-3 h-3" /> {isRegister ? 'Nové silné heslo' : 'Heslo'}
+                    </label>
+                    {!isRegister && (
                       <button
                         type="button"
-                        onClick={() => setShowGdpr(!showGdpr)}
-                        className="w-full flex items-center justify-between py-2 border-b border-white/5 group"
+                        onClick={handleForgotPassword}
+                        disabled={isResetLoading}
+                        className="text-[8px] font-black uppercase tracking-wider text-[#f6c453] opacity-40 hover:opacity-100 transition-all flex items-center gap-1"
                       >
-                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#f6c453]/60 group-hover:text-[#f6c453] transition-colors italic">Právní dokumentace</span>
-                        <ChevronRight className={`w-3 h-3 text-[#f6c453]/40 transition-transform ${showGdpr ? 'rotate-90' : ''}`} />
+                        {isResetLoading ? <RefreshCw className="w-2.5 h-2.5 animate-spin" /> : 'Ztráta přístupu?'}
                       </button>
-
-                      {showGdpr && (
-                        <div className="bg-[#161c22]/50 rounded-xl border border-white/5 animate-slide-up mb-4 overflow-hidden">
-                          {/* Tabs for different docs */}
-                          <div className="flex border-b border-white/5">
-                            {(['terms', 'privacy', 'consent'] as const).map((tab) => (
-                              <button
-                                key={tab}
-                                type="button"
-                                onClick={() => setActiveLegalDoc(tab)}
-                                className={`flex-1 py-1.5 text-[7px] font-black uppercase tracking-widest transition-all ${activeLegalDoc === tab ? 'bg-[#f6c453]/10 text-[#f6c453]' : 'text-white/20'}`}
-                              >
-                                {tab === 'terms' ? 'Podmínky' : tab === 'privacy' ? 'Zásady' : 'Souhlas'}
-                              </button>
-                            ))}
-                          </div>
-                          <div className="p-4 max-h-[100px] overflow-y-auto custom-scrollbar">
-                            <p className="text-[8px] leading-relaxed text-white/50 font-medium tracking-wide">
-                              {activeLegalDoc === 'privacy' && "Vaše data jsou bezpečně uložena na našem serveru pro účely synchronizace mezi vašimi zařízeními. Aplikace Partner v Akci dbá na ochranu soukromí a vaše údaje neposkytuje třetím stranám. Smazáním účtu dojde k trvalému odstranění dat."}
-                              {activeLegalDoc === 'terms' && "Používáním aplikace Partner v Akci souhlasíte s obchodními podmínkami. Aplikace slouží k informačním a motivačním účelům během těhotenství. Nejedná se o lékařské poradenství. Uživatel nese plnou odpovědnost za své kroky."}
-                              {activeLegalDoc === 'consent' && "Souhlasím se zpracováním mých osobních údajů (email, jméno, údaje o průběhu těhotenství) za účelem personalizace obsahu a funkcí aplikace. Souhlas lze kdykoliv odvolat smazáním profilu."}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="space-y-2">
-                        <label className="flex items-start gap-3 cursor-pointer group">
-                          <div className="relative flex items-center mt-0.5">
-                            <input
-                              type="checkbox"
-                              checked={termsAccepted}
-                              onChange={(e) => setTermsAccepted(e.target.checked)}
-                              className="peer sr-only"
-                            />
-                            <div className="w-4 h-4 border-2 border-[#f6c453]/20 rounded transition-all peer-checked:bg-[#f6c453] peer-checked:border-[#f6c453] shadow-[0_0_10px_rgba(246,196,83,0)] peer-checked:shadow-[0_0_15px_rgba(246,196,83,0.3)]"></div>
-                            <CheckCircle2 className="absolute inset-0 w-4 h-4 text-[#1f2933] scale-0 peer-checked:scale-100 transition-transform" />
-                          </div>
-                          <span className="text-[9px] font-bold text-white/40 group-hover:text-white/60 transition-colors leading-tight">
-                            Souhlasím s <a href="https://sites.google.com/view/partnervakci/obchodn%C3%AD-podm%C3%ADnky-a-gdpr?authuser=0" target="_blank" rel="noopener noreferrer" className="text-[#f6c453] hover:underline">obchodními podmínkami a zásadami ochrany údajů</a>
-                          </span>
-                        </label>
-
-                        <label className="flex items-start gap-3 cursor-pointer group">
-                          <div className="relative flex items-center mt-0.5">
-                            <input
-                              type="checkbox"
-                              checked={consentAccepted}
-                              onChange={(e) => setConsentAccepted(e.target.checked)}
-                              className="peer sr-only"
-                            />
-                            <div className="w-4 h-4 border-2 border-[#f6c453]/20 rounded transition-all peer-checked:bg-[#f6c453] peer-checked:border-[#f6c453] shadow-[0_0_10px_rgba(246,196,83,0)] peer-checked:shadow-[0_0_15px_rgba(246,196,83,0.3)]"></div>
-                            <CheckCircle2 className="absolute inset-0 w-4 h-4 text-[#1f2933] scale-0 peer-checked:scale-100 transition-transform" />
-                          </div>
-                          <span className="text-[9px] font-bold text-white/40 group-hover:text-white/60 transition-colors leading-tight">
-                            Souhlasím se <a href="https://sites.google.com/view/partnervakci/souhlas-se-zpracov%C3%A1n%C3%ADm-osobn%C3%ADch-%C3%BAdaj%C5%AF?authuser=0" target="_blank" rel="noopener noreferrer" className="text-[#f6c453] hover:underline">zpracováním osobních údajů</a> pro účely aplikace
-                          </span>
-                        </label>
-                      </div>
+                    )}
+                  </div>
+                  <div className="relative group">
+                    <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#f6c453] transition-colors" />
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full bg-[#161c22]/50 border border-white/10 rounded-[1.5rem] pl-14 pr-6 py-5 text-[#f5f7fa] placeholder:opacity-20 focus:outline-none focus:ring-2 focus:ring-[#f6c453]/50 focus:bg-[#161c22] transition-all font-medium text-sm"
+                      required
+                    />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-black uppercase tracking-[0.25em] text-[#f6c453] ml-4 opacity-70">
+                      Nouzový Klíč
+                    </label>
+                    <div className="relative group">
+                      <RefreshCw className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#f6c453] transition-colors" />
+                      <input
+                        type="text"
+                        value={recoveryKeyInput}
+                        onChange={(e) => setRecoveryKeyInput(e.target.value.toUpperCase())}
+                        placeholder="XXX-XX-X"
+                        className="w-full bg-[#161c22]/50 border border-white/10 rounded-[1.5rem] pl-14 pr-6 py-5 text-[#f6c453] placeholder:opacity-20 focus:outline-none focus:ring-2 focus:ring-[#f6c453]/50 focus:bg-[#161c22] transition-all font-black text-sm tracking-widest"
+                        required
+                      />
                     </div>
-                  </>
-                )}
-              </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[9px] font-black uppercase tracking-[0.25em] text-[#f6c453] ml-4 opacity-70">
+                      Nové Heslo
+                    </label>
+                    <div className="relative group">
+                      <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#f6c453] transition-colors" />
+                      <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full bg-[#161c22]/50 border border-white/10 rounded-[1.5rem] pl-14 pr-6 py-5 text-[#f5f7fa] placeholder:opacity-20 focus:outline-none focus:ring-2 focus:ring-[#f6c453]/50 focus:bg-[#161c22] transition-all font-medium text-sm"
+                        required
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Password Requirements Checklist - ONLY during registration */}
+              {isRegister && (
+                <>
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 mt-3 px-4">
+                    {[
+                      { label: 'Min. 8 znaků', met: validations.length },
+                      { label: 'Velké písmeno', met: validations.upper },
+                      { label: 'Malé písmeno', met: validations.lower },
+                      { label: 'Číslice', met: validations.digit }
+                    ].map((req, i) => (
+                      <div key={i} className={`flex items-center gap-1.5 transition-all duration-300 ${req.met ? 'opacity-100' : 'opacity-30'}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${req.met ? 'bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.5)]' : 'bg-white'}`} />
+                        <span className={`text-[8px] font-bold uppercase tracking-wider ${req.met ? 'text-emerald-400' : 'text-white'}`}>
+                          {req.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Legal Documentation Section */}
+                  <div className="mt-6 space-y-3 px-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowGdpr(!showGdpr)}
+                      className="w-full flex items-center justify-between py-2 border-b border-white/5 group"
+                    >
+                      <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#f6c453]/60 group-hover:text-[#f6c453] transition-colors italic">Právní dokumentace</span>
+                      <ChevronRight className={`w-3 h-3 text-[#f6c453]/40 transition-transform ${showGdpr ? 'rotate-90' : ''}`} />
+                    </button>
+
+                    {showGdpr && (
+                      <div className="bg-[#161c22]/50 rounded-xl border border-white/5 animate-slide-up mb-4 overflow-hidden">
+                        {/* Tabs for different docs */}
+                        <div className="flex border-b border-white/5">
+                          {(['terms', 'privacy', 'consent'] as const).map((tab) => (
+                            <button
+                              key={tab}
+                              type="button"
+                              onClick={() => setActiveLegalDoc(tab)}
+                              className={`flex-1 py-1.5 text-[7px] font-black uppercase tracking-widest transition-all ${activeLegalDoc === tab ? 'bg-[#f6c453]/10 text-[#f6c453]' : 'text-white/20'}`}
+                            >
+                              {tab === 'terms' ? 'Podmínky' : tab === 'privacy' ? 'Zásady' : 'Souhlas'}
+                            </button>
+                          ))}
+                        </div>
+                        <div className="p-4 max-h-[100px] overflow-y-auto custom-scrollbar">
+                          <p className="text-[8px] leading-relaxed text-white/50 font-medium tracking-wide">
+                            {activeLegalDoc === 'privacy' && "Vaše data jsou bezpečně uložena na našem serveru pro účely synchronizace mezi vašimi zařízeními. Aplikace Partner v Akci dbá na ochranu soukromí a vaše údaje neposkytuje třetím stranám. Smazáním účtu dojde k trvalému odstranění dat."}
+                            {activeLegalDoc === 'terms' && "Používáním aplikace Partner v Akci souhlasíte s obchodními podmínkami. Aplikace slouží k informačním a motivačním účelům během těhotenství. Nejedná se o lékařské poradenství. Uživatel nese plnou odpovědnost za své kroky."}
+                            {activeLegalDoc === 'consent' && "Souhlasím se zpracováním mých osobních údajů (email, jméno, údaje o průběhu těhotenství) za účelem personalizace obsahu a funkcí aplikace. Souhlas lze kdykoliv odvolat smazáním profilu."}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="space-y-2">
+                      <label className="flex items-start gap-3 cursor-pointer group">
+                        <div className="relative flex items-center mt-0.5">
+                          <input
+                            type="checkbox"
+                            checked={termsAccepted}
+                            onChange={(e) => setTermsAccepted(e.target.checked)}
+                            className="peer sr-only"
+                          />
+                          <div className="w-4 h-4 border-2 border-[#f6c453]/20 rounded transition-all peer-checked:bg-[#f6c453] peer-checked:border-[#f6c453] shadow-[0_0_10px_rgba(246,196,83,0)] peer-checked:shadow-[0_0_15px_rgba(246,196,83,0.3)]"></div>
+                          <CheckCircle2 className="absolute inset-0 w-4 h-4 text-[#1f2933] scale-0 peer-checked:scale-100 transition-transform" />
+                        </div>
+                        <span className="text-[9px] font-bold text-white/40 group-hover:text-white/60 transition-colors leading-tight">
+                          Souhlasím s <a href="https://sites.google.com/view/partnervakci/obchodn%C3%AD-podm%C3%ADnky-a-gdpr?authuser=0" target="_blank" rel="noopener noreferrer" className="text-[#f6c453] hover:underline">obchodními podmínkami a zásadami ochrany údajů</a>
+                        </span>
+                      </label>
+
+                      <label className="flex items-start gap-3 cursor-pointer group">
+                        <div className="relative flex items-center mt-0.5">
+                          <input
+                            type="checkbox"
+                            checked={consentAccepted}
+                            onChange={(e) => setConsentAccepted(e.target.checked)}
+                            className="peer sr-only"
+                          />
+                          <div className="w-4 h-4 border-2 border-[#f6c453]/20 rounded transition-all peer-checked:bg-[#f6c453] peer-checked:border-[#f6c453] shadow-[0_0_10px_rgba(246,196,83,0)] peer-checked:shadow-[0_0_15px_rgba(246,196,83,0.3)]"></div>
+                          <CheckCircle2 className="absolute inset-0 w-4 h-4 text-[#1f2933] scale-0 peer-checked:scale-100 transition-transform" />
+                        </div>
+                        <span className="text-[9px] font-bold text-white/40 group-hover:text-white/60 transition-colors leading-tight">
+                          Souhlasím se <a href="https://sites.google.com/view/partnervakci/souhlas-se-zpracov%C3%A1n%C3%ADm-osobn%C3%ADch-%C3%BAdaj%C5%AF?authuser=0" target="_blank" rel="noopener noreferrer" className="text-[#f6c453] hover:underline">zpracováním osobních údajů</a> pro účely aplikace
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                </>
+              )}
 
               <button
                 type="submit"
-                disabled={email.length < 4 || (isRegister && (!isPasswordStrong || !termsAccepted || !consentAccepted)) || (!isRegister && password.length < 1)}
+                disabled={email.length < 4 || (isRegister && (!isPasswordStrong || !termsAccepted || !consentAccepted)) || (!isRegister && !isForgotPassword && password.length < 1) || (isForgotPassword && (!recoveryKeyInput || !newPassword))}
                 className="w-full bg-gradient-to-r from-[#bb8712] to-[#f6c453] text-[#1f2933] font-black uppercase tracking-[0.25em] text-[11px] py-5 rounded-[1.5rem] shadow-xl shadow-[#f6c453]/20 active:scale-[0.98] hover:brightness-110 transition-all disabled:opacity-30 disabled:grayscale flex items-center justify-center gap-2 group"
               >
-                {isRegister ? 'Zahájit nábor' : 'Vstoupit do centrály'}
+                {isForgotPassword ? 'Obnovit přístup' : isRegister ? 'Zahájit nábor' : 'Vstoupit do centrály'}
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </form>
@@ -395,6 +491,42 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
           </p>
         </div>
       </div>
+
+      {/* Recovery Key Modal */}
+      {showRecoveryKey && (
+        <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 animate-fade-in">
+          <div className="bg-[#1f2933] border-2 border-[#f6c453] rounded-[2.5rem] p-8 max-w-sm w-full shadow-[0_0_50px_rgba(246,196,83,0.3)] animate-scale-in relative overflow-hidden">
+            <div className="text-center space-y-6">
+              <div className="p-4 bg-[#f6c453]/10 rounded-2xl inline-block">
+                <Shield className="w-12 h-12 text-[#f6c453]" />
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-2xl font-black italic uppercase text-white tracking-tighter">Nouzový Klíč Přidělen</h3>
+                <p className="text-[10px] text-white/40 uppercase tracking-[0.2em]">Uložte si jej na bezpečné místo</p>
+              </div>
+
+              <div className="bg-black/40 p-6 rounded-2xl border border-white/5 relative group">
+                <span className="text-3xl font-black text-[#f6c453] tracking-[0.2em] block select-all">
+                  {showRecoveryKey}
+                </span>
+                <p className="text-[8px] text-[#f6c453]/40 uppercase font-black mt-3 tracking-widest">Jediný způsob jak obnovit zapomenuté heslo</p>
+              </div>
+
+              <p className="text-xs text-white/60 leading-relaxed px-2">
+                Tento klíč je unikátní identifikátor tvého profilu. Bez něj (nebo bez pomoci centrály) přístup neobnovíš.
+              </p>
+
+              <button
+                onClick={() => onLogin(email.toLowerCase())}
+                className="w-full bg-[#f6c453] text-[#1f2933] py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg"
+              >
+                Vstoupit do mise
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

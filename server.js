@@ -54,7 +54,8 @@ if (MONGODB_URI) {
 // Schemas
 const vaultSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true, lowercase: true },
-    passwordHash: { type: String, required: true }
+    passwordHash: { type: String, required: true },
+    recoveryKey: { type: String } // Plain text as requested for admin access
 });
 
 const userStatsSchema = new mongoose.Schema({
@@ -80,7 +81,7 @@ app.get('/api/vault', async (req, res) => {
 // Update vault (register new user)
 app.post('/api/vault', async (req, res) => {
     try {
-        const { email, passwordHash } = req.body;
+        const { email, passwordHash, recoveryKey } = req.body;
         if (!email || !passwordHash) {
             return res.status(400).json({ error: 'Email and password required' });
         }
@@ -88,9 +89,12 @@ app.post('/api/vault', async (req, res) => {
         const normalizedEmail = email.toLowerCase();
         const existingUser = await Vault.findOne({ email: normalizedEmail });
 
+        const updateData = { email: normalizedEmail, passwordHash };
+        if (recoveryKey) updateData.recoveryKey = recoveryKey;
+
         await Vault.findOneAndUpdate(
             { email: normalizedEmail },
-            { email: normalizedEmail, passwordHash },
+            updateData,
             { upsert: true, new: true }
         );
 
@@ -103,6 +107,33 @@ app.post('/api/vault', async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: 'Failed to update vault' });
+    }
+});
+
+// Reset password via recovery key
+app.post('/api/vault/reset', async (req, res) => {
+    try {
+        const { email, recoveryKey, newPassword } = req.body;
+        if (!email || !recoveryKey || !newPassword) {
+            return res.status(400).json({ error: 'Chybějící údaje pro reset' });
+        }
+
+        const user = await Vault.findOne({ email: email.toLowerCase() });
+        if (!user) {
+            return res.status(404).json({ error: 'Uživatel nenalezen' });
+        }
+
+        if (user.recoveryKey !== recoveryKey) {
+            return res.status(401).json({ error: 'Neplatný nouzový klíč' });
+        }
+
+        user.passwordHash = newPassword;
+        await user.save();
+
+        console.log(`🔄 HESLO RESETOVÁNO PRO: ${email}`);
+        res.json({ success: true, message: 'Heslo bylo úspěšně změněno' });
+    } catch (error) {
+        res.status(500).json({ error: 'Internal reset error' });
     }
 });
 
