@@ -100,7 +100,8 @@ export interface ConsumableItem {
   id: string; // e.g., "g54", "g51", "g23", or custom ID
   name: string; // e.g., "Vitamíny pro partnerku", "Čaj pro těhotné"
   quantity: number; // Current stock count
-  lastUpdated: string; // ISO date string of last deduction
+  lastUpdated: string; // ISO date string of last quantity update
+  lastConfirmedDate?: string; // ISO date string of last manual confirmation (when user clicked "Vzala dnes")
   isCustom: boolean; // true for user-added vitamins
 }
 

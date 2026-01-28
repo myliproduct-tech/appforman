@@ -28,6 +28,8 @@ interface BudgetProps {
     onUpdateConsumable?: (id: string, quantity: number) => void;
     onAddCustomConsumable?: (name: string, quantity: number) => void;
     onDeleteConsumable?: (id: string) => void;
+    onConfirmConsumption?: (id: string) => void;
+    effectiveDate?: string;
     onResetAllGear?: () => void;
     operationalPrepChecklist?: string[];
     onToggleOperationalPrep?: (id: string) => void;
@@ -58,6 +60,8 @@ export const Budget: React.FC<BudgetProps> = ({
     onUpdateConsumable,
     onAddCustomConsumable,
     onDeleteConsumable,
+    onConfirmConsumption,
+    effectiveDate,
     onResetAllGear,
     operationalPrepChecklist = [],
     onToggleOperationalPrep,
@@ -235,6 +239,8 @@ export const Budget: React.FC<BudgetProps> = ({
                         onUpdateConsumable={onUpdateConsumable}
                         onAddCustomConsumable={onAddCustomConsumable}
                         onDeleteConsumable={onDeleteConsumable}
+                        onConfirmConsumption={onConfirmConsumption}
+                        effectiveDate={effectiveDate}
                         onClose={() => setShowConsumables(false)}
                     />
                 )

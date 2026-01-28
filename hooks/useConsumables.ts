@@ -13,74 +13,55 @@ export const useConsumables = (
     setStats: React.Dispatch<React.SetStateAction<UserStats>>,
     effectiveDate: string
 ) => {
-    // Daily deduction for consumables
+    // Daily notification reminder for consumables (no auto-deduction)
     useEffect(() => {
         if (stats.budgetPlan?.consumables && stats.budgetPlan.consumables.length > 0 && stats.email) {
             const effectiveToday = effectiveDate;
 
-            // Check if any item needs deduction
-            const needsUpdate = stats.budgetPlan.consumables.some(item => {
-                const lastUpdated = item.lastUpdated.split('T')[0];
-                const daysDiff = Math.floor((parseLocalDate(effectiveToday).getTime() - parseLocalDate(lastUpdated).getTime()) / (1000 * 60 * 60 * 24));
-                return daysDiff >= 1;
+            // Check if any item needs confirmation today
+            const needsConfirmation = stats.budgetPlan.consumables.filter(item => {
+                const lastConfirmed = item.lastConfirmedDate?.split('T')[0];
+                return !lastConfirmed || lastConfirmed !== effectiveToday;
             });
 
-            if (needsUpdate) {
-                setStats(prev => {
-                    if (!prev.budgetPlan?.consumables || prev.budgetPlan.consumables.length === 0) {
-                        return prev;
-                    }
+            // Send notification if enabled and there are unconfirmed items
+            if (needsConfirmation.length > 0 && stats.notificationsEnabled) {
+                const names = needsConfirmation.map(i => i.name).join(', ');
+                notificationService.send(
+                    '💊 Připomínka vitamínů',
+                    `Nezapomeň potvrdit: ${names}`
+                );
+            }
 
-                    const updatedConsumables = prev.budgetPlan.consumables.map(item => {
-                        const lastUpdated = item.lastUpdated.split('T')[0];
-                        const daysDiff = Math.floor((parseLocalDate(effectiveToday).getTime() - parseLocalDate(lastUpdated).getTime()) / (1000 * 60 * 60 * 24));
+            // Check for low stock and send warning
+            const lowStockItems = stats.budgetPlan.consumables.filter(c => c.quantity < 5 && c.quantity > 0);
+            if (lowStockItems.length > 0 && stats.notificationsEnabled) {
+                const names = lowStockItems.map(i => i.name).join(', ');
+                notificationService.send(
+                    '⚠️ Docházející zásoby',
+                    `Dochází ti: ${names}. Zbývá méně než 5 kusů!`
+                );
+            }
 
-                        if (daysDiff >= 1) {
-                            const newQuantity = Math.max(0, item.quantity - daysDiff);
-                            return { ...item, quantity: newQuantity, lastUpdated: effectiveToday };
-                        }
-                        return item;
-                    });
+            // Auto-uncheck items with low stock
+            let newGearChecklist = stats.gearChecklist;
+            const lowStockTeas = lowStockItems.filter(c => c.id === 'g51' || c.id === 'g23');
+            lowStockTeas.forEach(item => {
+                if (newGearChecklist.includes(item.id)) {
+                    newGearChecklist = newGearChecklist.filter(id => id !== item.id);
+                }
+            });
 
-                    // Check for low stock and auto-uncheck in inventory
-                    let newGearChecklist = prev.gearChecklist;
+            const lowStockVitamins = lowStockItems.filter(c => c.isCustom);
+            if (lowStockVitamins.length > 0 && newGearChecklist.includes('g54')) {
+                newGearChecklist = newGearChecklist.filter(id => id !== 'g54');
+            }
 
-                    // For teas (g51, g23): uncheck if low stock
-                    const lowStockTeas = updatedConsumables.filter(c =>
-                        (c.id === 'g51' || c.id === 'g23') && c.quantity < 5
-                    );
-                    lowStockTeas.forEach(item => {
-                        if (newGearChecklist.includes(item.id)) {
-                            newGearChecklist = newGearChecklist.filter(id => id !== item.id);
-                        }
-                    });
-
-                    // For vitamins (custom only): uncheck g54 if ANY custom vitamin is low stock
-                    const lowStockVitamins = updatedConsumables.filter(c =>
-                        c.isCustom && c.quantity < 5
-                    );
-                    if (lowStockVitamins.length > 0 && newGearChecklist.includes('g54')) {
-                        newGearChecklist = newGearChecklist.filter(id => id !== 'g54');
-                    }
-
-                    // Send notifications if enabled
-                    if (prev.notificationsEnabled) {
-                        const lowStockItems = updatedConsumables.filter(c => c.quantity < 5 && c.quantity > 0);
-                        if (lowStockItems.length > 0) {
-                            const names = lowStockItems.map(i => i.name).join(', ');
-                            notificationService.send(
-                                '⚠️ Docházející zásoby',
-                                `Dochází ti: ${names}. Zbývá méně než 5 kusů!`
-                            );
-                        }
-                    }
-
-                    return {
-                        ...prev,
-                        budgetPlan: { ...prev.budgetPlan, consumables: updatedConsumables },
-                        gearChecklist: newGearChecklist
-                    };
-                });
+            if (newGearChecklist !== stats.gearChecklist) {
+                setStats(prev => ({
+                    ...prev,
+                    gearChecklist: newGearChecklist
+                }));
             }
         }
     }, [stats.email, effectiveDate]);
@@ -183,9 +164,54 @@ export const useConsumables = (
         });
     };
 
+    // Handler: Confirm consumption (manual deduction)
+    const handleConfirmConsumption = (id: string) => {
+        setStats(prev => {
+            const consumables = prev.budgetPlan?.consumables || [];
+            const item = consumables.find(c => c.id === id);
+
+            if (!item || item.quantity <= 0) {
+                return prev;
+            }
+
+            const updatedConsumables = consumables.map(c =>
+                c.id === id
+                    ? {
+                        ...c,
+                        quantity: c.quantity - 1,
+                        lastConfirmedDate: effectiveDate,
+                        lastUpdated: effectiveDate
+                    }
+                    : c
+            );
+
+            // Check for low stock after deduction
+            let newGearChecklist = prev.gearChecklist;
+            const updatedItem = updatedConsumables.find(c => c.id === id);
+
+            if (updatedItem && updatedItem.quantity < 5) {
+                // Uncheck teas if low stock
+                if (id === 'g51' || id === 'g23') {
+                    newGearChecklist = newGearChecklist.filter(gid => gid !== id);
+                }
+                // Uncheck g54 if any custom vitamin is low stock
+                if (updatedItem.isCustom && newGearChecklist.includes('g54')) {
+                    newGearChecklist = newGearChecklist.filter(gid => gid !== 'g54');
+                }
+            }
+
+            return {
+                ...prev,
+                budgetPlan: { ...prev.budgetPlan!, consumables: updatedConsumables },
+                gearChecklist: newGearChecklist
+            };
+        });
+    };
+
     return {
         handleUpdateConsumable,
         handleAddCustomConsumable,
         handleDeleteConsumable,
+        handleConfirmConsumption,
     };
 };

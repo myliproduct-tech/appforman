@@ -8,6 +8,8 @@ interface ConsumablesManagerProps {
     onUpdateConsumable?: (id: string, quantity: number) => void;
     onAddCustomConsumable?: (name: string, quantity: number) => void;
     onDeleteConsumable?: (id: string) => void;
+    onConfirmConsumption?: (id: string) => void;
+    effectiveDate?: string;
     onClose: () => void;
 }
 
@@ -16,6 +18,8 @@ export const ConsumablesManager: React.FC<ConsumablesManagerProps> = ({
     onUpdateConsumable,
     onAddCustomConsumable,
     onDeleteConsumable,
+    onConfirmConsumption,
+    effectiveDate,
     onClose
 }) => {
     const [newConsumableName, setNewConsumableName] = useState('');
@@ -53,9 +57,12 @@ export const ConsumablesManager: React.FC<ConsumablesManagerProps> = ({
                     {consumables.map((item) => {
                         const isLowStock = item.quantity < 5;
                         const isEditing = editingConsumable?.id === item.id;
+                        const today = effectiveDate?.split('T')[0] || new Date().toISOString().split('T')[0];
+                        const lastConfirmed = item.lastConfirmedDate?.split('T')[0];
+                        const isConfirmedToday = lastConfirmed === today;
 
                         return (
-                            <div key={item.id} className={`bg-[#2d3748] p-5 rounded-[2rem] border ${isLowStock ? 'border-rose-500/30 bg-rose-500/5' : 'border-white/5'} shadow-lg`}>
+                            <div key={item.id} className={`bg-[#2d3748] p-5 rounded-[2rem] border ${isLowStock ? 'border-rose-500/30 bg-rose-500/5' : isConfirmedToday ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-white/5'} shadow-lg`}>
                                 <div className="flex justify-between items-start mb-3">
                                     <div className="flex-1">
                                         <h4 className="font-bold text-[#f5f7fa] text-sm leading-snug">{item.name}</h4>
@@ -63,6 +70,12 @@ export const ConsumablesManager: React.FC<ConsumablesManagerProps> = ({
                                             <div className="flex items-center gap-1 mt-1">
                                                 <AlertTriangle className="w-3 h-3 text-[#f6c453]" />
                                                 <span className="text-[10px] font-black text-[#f6c453] uppercase tracking-widest">Doplň zásoby!</span>
+                                            </div>
+                                        )}
+                                        {isConfirmedToday && (
+                                            <div className="flex items-center gap-1 mt-1">
+                                                <Check className="w-3 h-3 text-emerald-400" />
+                                                <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Potvrzeno dnes</span>
                                             </div>
                                         )}
                                     </div>
@@ -112,12 +125,26 @@ export const ConsumablesManager: React.FC<ConsumablesManagerProps> = ({
                                                     Zbývá
                                                 </p>
                                             </div>
-                                            <button
-                                                onClick={() => setEditingConsumable({ id: item.id, qty: item.quantity.toString() })}
-                                                className="flex-shrink-0 px-4 py-3 bg-white/5 border border-white/10 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all text-white"
-                                            >
-                                                Upravit
-                                            </button>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => setEditingConsumable({ id: item.id, qty: item.quantity.toString() })}
+                                                    className="flex-shrink-0 px-4 py-3 bg-white/5 border border-white/10 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all text-white"
+                                                >
+                                                    Upravit
+                                                </button>
+                                                {onConfirmConsumption && item.quantity > 0 && (
+                                                    <button
+                                                        onClick={() => onConfirmConsumption(item.id)}
+                                                        disabled={isConfirmedToday}
+                                                        className={`flex-shrink-0 px-4 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${isConfirmedToday
+                                                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-not-allowed'
+                                                                : 'bg-[#f6c453] text-[#1f2933] hover:bg-[#ffcf60]'
+                                                            }`}
+                                                    >
+                                                        {isConfirmedToday ? '✓ Vzala' : 'Vzala dnes'}
+                                                    </button>
+                                                )}
+                                            </div>
                                         </>
                                     )}
                                 </div>
@@ -170,8 +197,8 @@ export const ConsumablesManager: React.FC<ConsumablesManagerProps> = ({
                             <Info className="w-4 h-4 text-[#f6c453] shrink-0 mt-0.5" />
                             <div>
                                 <p className="text-[10px] text-white/70 leading-relaxed font-medium">
-                                    <span className="font-black uppercase tracking-widest block mb-1 text-[#f6c453]">Automatický odpočet</span>
-                                    Každý den se automaticky odečte 1 kus od čajů a vitamínů. Když zbude méně než 5 kusů, položka se automaticky odškrtne v inventáři jako připomínka k nákupu.
+                                    <span className="font-black uppercase tracking-widest block mb-1 text-[#f6c453]">Manuální potvrzování</span>
+                                    Klikni na "Vzala dnes" po užití vitamínu/čaje. Odečte se 1 kus a uloží se potvrzení. Dostaneš denní připomínku, pokud ještě nebylo potvrzeno. Když zbude méně než 5 kusů, položka se automaticky odškrtne v inventáři.
                                 </p>
                             </div>
                         </div>
