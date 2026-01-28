@@ -273,7 +273,6 @@ export const HospitalBag: React.FC<HospitalBagProps> = ({
                         </div>
                     </div>
                 </div>
-                </div >
             )}
         </>
     );
