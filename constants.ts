@@ -1,9 +1,9 @@
 
 import { Task, Achievement, UserStats, ConsumableItem } from './types';
 
-// Default consumable items (teas only - vitamins are added by user)
+// Default consumable items (vitamins are added by user)
 export const DEFAULT_CONSUMABLES: Omit<ConsumableItem, 'quantity' | 'lastUpdated'>[] = [
-  { id: 'g51', name: 'Čaj pro těhotné ženy', isCustom: false }
+  // Empty - user adds their own vitamins
 ];
 
 // Baby size comparison using tools

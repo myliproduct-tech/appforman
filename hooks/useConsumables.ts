@@ -43,14 +43,9 @@ export const useConsumables = (
                 );
             }
 
-            // Auto-uncheck items with low stock
+
+            // Auto-uncheck items with low stock (only vitamins now)
             let newGearChecklist = stats.gearChecklist;
-            const lowStockTeas = lowStockItems.filter(c => c.id === 'g51' || c.id === 'g23');
-            lowStockTeas.forEach(item => {
-                if (newGearChecklist.includes(item.id)) {
-                    newGearChecklist = newGearChecklist.filter(id => id !== item.id);
-                }
-            });
 
             const lowStockVitamins = lowStockItems.filter(c => c.isCustom);
             if (lowStockVitamins.length > 0 && newGearChecklist.includes('g54')) {
@@ -93,10 +88,6 @@ export const useConsumables = (
             // Auto-check in gearChecklist if quantity > 0
             let newGearChecklist = prev.gearChecklist;
             if (quantity > 0) {
-                // If it's one of the standard teas (g51, g23)
-                if ((id === 'g51' || id === 'g23') && !newGearChecklist.includes(id)) {
-                    newGearChecklist = [...newGearChecklist, id];
-                }
                 // If it's a custom vitamin (isCustom: true), auto-check g54
                 const item = updated.find(c => c.id === id);
                 if (item?.isCustom && !newGearChecklist.includes('g54')) {
@@ -190,10 +181,6 @@ export const useConsumables = (
             const updatedItem = updatedConsumables.find(c => c.id === id);
 
             if (updatedItem && updatedItem.quantity < 5) {
-                // Uncheck teas if low stock
-                if (id === 'g51' || id === 'g23') {
-                    newGearChecklist = newGearChecklist.filter(gid => gid !== id);
-                }
                 // Uncheck g54 if any custom vitamin is low stock
                 if (updatedItem.isCustom && newGearChecklist.includes('g54')) {
                     newGearChecklist = newGearChecklist.filter(gid => gid !== 'g54');
