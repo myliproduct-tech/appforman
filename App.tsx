@@ -56,6 +56,7 @@ const App: React.FC = () => {
     const [isTabTransitioning, setIsTabTransitioning] = useState(false);
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
     const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+    const isInitialCheckPerformed = React.useRef(false); // Ref to suppress notifications during first load check
 
     // Achievement Queue Management
     const addToAchievementQueue = React.useCallback((achievement: Achievement) => {
@@ -266,8 +267,14 @@ const App: React.FC = () => {
             return;
         }
 
-        // Otherwise show immediately
-        addToAchievementQueue(achievement);
+        // Otherwise show immediately (unless it's the initial bulk check during load)
+        if (isInitialCheckPerformed.current) {
+            addToAchievementQueue(achievement);
+        } else {
+            // During boot/sync, we just update the badges list silently
+            // (The badges are added to stats in checkAchievements, we just don't want the modal)
+            console.log(`🎖️ Silently unlocked existing achievement: ${achievement.id}`);
+        }
     }, [stats.onboardingCompleted, addToAchievementQueue]);
 
     // Consumables & Missions hooks
@@ -325,14 +332,34 @@ const App: React.FC = () => {
     // Check for new achievements when stats change (but not during onboarding)
     // Centralized check - runs whenever points, history or time (week) change
     useEffect(() => {
-        if (stats.userName && stats.email) {
+        if (stats.userName && stats.email && isLoaded) {
             const { updatedStats, newUnlocks } = missions.checkAchievements(stats, currentWeekCount);
+
             if (newUnlocks.length > 0) {
+                // Determine if we should show modals
+                // If it's the very first time we check after isLoaded=true, we skip notifications
+                const shouldNotify = isInitialCheckPerformed.current;
+
                 setStats(updatedStats);
-                newUnlocks.forEach(ach => handleAchievementUnlock(ach));
+
+                if (shouldNotify) {
+                    newUnlocks.forEach(ach => handleAchievementUnlock(ach));
+                } else {
+                    console.log('🛡️ Suppressed initial achievement notifications during sync');
+                }
+            }
+
+            // Mark initial check as done AFTER the first run when data is loaded
+            if (!isInitialCheckPerformed.current) {
+                // Small tactical delay to ensure initial state settle
+                setTimeout(() => {
+                    isInitialCheckPerformed.current = true;
+                    console.log('🚀 Achievement monitoring active (silent initialization phase finished)');
+                }, 1000);
             }
         }
     }, [
+        isLoaded, // Dependency added to ensure we wait for data
         stats.points,
         stats.missionHistory.length,
         stats.badges.length,

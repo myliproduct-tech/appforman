@@ -788,7 +788,7 @@ export const PARTNER_RECON: Record<number, string> = {
   11: "TAKTIKA TÝDEN 11\n\n- Situace: Hlad. Obrovský hlad.\n- Úkol: Měj zásoby jídla. Kdekoliv.\n- Rada: Když řekne, že chce zmrzlinu ve 3 ráno, jdi pro ni.\n- Intel: Junior roste a potřebuje palivo.",
   12: "TAKTIKA TÝDEN 12\n\n- Situace: Konec 1. trimestru. Úleva.\n- Úkol: Oficiální oznámení rodině (pokud už neví).\n- Rada: Připrav se na nevyžádané rady od tchyně.\n- Intel: Energie se jí vrací. Využij to.",
   13: "TAKTIKA TÝDEN 13\n\n- Situace: Zlatý věk začíná.\n- Úkol: Sex? Možná. Buď opatrný, ale připravený.\n- Rada: Začni studovat typy kočárků. Je to věda.\n- Intel: Vypadá skvěle. Těhotenský 'glow' je skutečný.",
-  14: "TAKTIKA TÝDEN 14\n\n- Situace: Bříško už je vidět.\n- Úkol: Uvolni místo ve skříni pro těhotenské věci.\n- Rada: Neříkej 'ty jsi přibrala'. Říkej 'krásně rosteš'.\n- Intel: Začínáš si uvědomovat, že se to vážně děje.",
+  14: "TAKTIKA TÝDEN 14\n\n- Situace: Bříško už je vidět.\n- Úkol: Uvolni místo ve skříni pro těhotenské věci.\n- Rada: Neříkej 'ty jsi přibrala'. Říkej 'sluší ti to'.\n- Intel: Začínáš si uvědomovat, že se to vážně děje.",
   15: "TAKTIKA TÝDEN 15\n\n- Situace: Zapomnětlivost (Pregnancy Brain).\n- Úkol: Dělej si poznámky za ni.\n- Rada: Když ztratí klíče popáté, najdi je bez řečí.\n- Intel: Krevní oběh jí jede na 120%. Je jí pořád horko.",
   16: "TAKTIKA TÝDEN 16\n\n- Situace: Gender reveal?\n- Úkol: Tvař se nadšeně, ať je to cokoliv.\n- Rada: Pokud jsi chtěl kluka a je to holka, nebuď zklamaný.\n- Intel: Teď už můžeš vybírat jméno. Hodně štěstí.",
   17: "TAKTIKA TÝDEN 17\n\n- Situace: Rovnováha se horší.\n- Úkol: Dělej jí oporu (doslova).\n- Rada: Nainstaluj protiskluzovou podložku do vany.\n- Intel: Těžiště se posouvá. Zakopává o vlastní nohy.",
@@ -807,7 +807,7 @@ export const PARTNER_RECON: Record<number, string> = {
   30: "TAKTIKA TÝDEN 30\n\n- Situace: Kurz předporodní přípravy.\n- Úkol: Neusni tam.\n- Rada: Poslouchej hlavně část o tom, jak dýchat a jak ji masírovat.\n- Intel: Budeš tam za exota, ale děláš to pro ni.",
   31: "TAKTIKA TÝDEN 31\n\n- Situace: Pokojíček.\n- Úkol: Finální montáž postýlky.\n- Rada: Zkontroluj, jestli máš všechny šroubky. Dvakrát.\n- Intel: Až to bude hotové, dojde jí, že už je to tady.",
   32: "TAKTIKA TÝDEN 32\n\n- Situace: Taška do porodnice.\n- Úkol: Zkontroluj checklist (viz naše aplikace).\n- Rada: Sbal si i svoji tašku (svačina, powerbanka, drobné).\n- Intel: Měj to u dveří. Kdykoliv to může vypuknout.",
-  33: "TAKTIKA TÝDEN 33\n\n- Situace: Poslíčci (Braxton-Hicks).\n- Úkol: Neplašit při každém píchnutí.\n- Rada: Stáhni si aplikaci na měření kontrakcí.\n- Intel: Trénink na den D. Děloha posiluje.",
+  33: "TAKTIKA TÝDEN 33\n\n- Situace: Poslíčci (Braxton-Hicks).\n- Úkol: Neplašit při každém píchnutí.\n- Rada: Prozkoumej v sekci extra měříč kontrakcí.\n- Intel: Trénink na den D. Děloha posiluje.",
   34: "TAKTIKA TÝDEN 34\n\n- Situace: Masáž hráze.\n- Úkol: Pokud tě o to požádá... je to technická záležitost.\n- Rada: Olejíček. A studium anatomie.\n- Intel: Pomáhá to předejít nastřižení. Stojí to za to.",
   35: "TAKTIKA TÝDEN 35\n\n- Situace: Únava level 'Zombie'.\n- Úkol: Nech ji odpočívat. Pořád.\n- Rada: Vař, uklízej, nakupuj. Jsi v tom 100%.\n- Intel: Už se to blíží. Energie je na nule.",
   36: "TAKTIKA TÝDEN 36\n\n- Situace: Kontroly každý týden.\n- Úkol: Doprovod nutný.\n- Rada: Měj natankované auto. Vždycky plná nádrž.\n- Intel: Může se to stát dnes. Nebo za měsíc.",
@@ -818,5 +818,5 @@ export const PARTNER_RECON: Record<number, string> = {
 
   41: "TAKTIKA TÝDEN 41\n\n- Situace: Přesluhujeme.\n- Úkol: Udržuj ji v klidu. Žádný stres.\n- Rada: Neptej se 'ještě nic?'. Ona to ví.\n- Intel: Lékař ji bude sledovat častěji. Jdi s ní.",
 
-  42: "TAKTIKA TÝDEN 42\n\n- Situace: Indukce porodu.\n- Úkol: Sbal tašky. Jeďte do porodnice.\n- Rada: Buď připraven na dlouhou noc. Powerbanka nabitá.\n- Intel: Tohle je to. Za pár hodin budeš táta."
+  42: "TAKTIKA TÝDEN 42\n\n- Situace: Indukce porodu.\n- Úkol: Sbal tašky. Jeďte do porodnice.\n- Rada: Buď připraven na dlouhou noc. Powerbanka nabitá.\n- Intel: Tohle je to. Každým dnem budeš táta."
 };

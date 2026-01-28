@@ -80,8 +80,8 @@ export const useUserStats = (currentUser: string | null) => {
                 const serverData = await response.json();
 
                 if (serverData) {
+                    // console.log('✅ Synchronizing local stats with server data');
                     setStats({ ...initialStats, ...serverData, email: currentUser });
-                    // Sync local storage with fresh server data
                     localStorage.setItem(`partner_app_data_${currentUser}`, JSON.stringify(serverData));
                     setIsLoaded(true);
                     return;
