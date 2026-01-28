@@ -184,9 +184,9 @@ export const InventoryChecklist: React.FC<InventoryChecklistProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 z-[60] bg-[#1f2933] overflow-y-auto animate-fade-in pb-10">
-            <div className="max-w-md mx-auto min-h-full flex flex-col">
-                <div className="flex justify-between items-center sticky top-0 bg-[#1f2933] px-4 py-6 z-30 border-b border-white/5">
+        <div className="fixed inset-0 z-[60] bg-[#1f2933] flex flex-col animate-fade-in">
+            <div className="max-w-md mx-auto w-full h-full flex flex-col bg-[#1f2933]">
+                <div className="flex justify-between items-center bg-[#1f2933] px-4 py-6 z-30 border-b border-white/5 shadow-xl">
                     <div>
                         <h2 className="text-2xl font-black italic uppercase text-[#f6c453] tracking-tighter">Taktický Inventář</h2>
                         <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em]">Kompletní výbava Juniora</p>
@@ -199,7 +199,7 @@ export const InventoryChecklist: React.FC<InventoryChecklistProps> = ({
                     </button>
                 </div>
 
-                <div className="px-4 pt-4 flex-1">
+                <div className="overflow-y-auto px-4 pt-4 flex-1 pb-10 custom-scrollbar">
                     {/* Dev Mode Action */}
                     {isDevMode && (
                         <div className="flex gap-2 mb-6">
