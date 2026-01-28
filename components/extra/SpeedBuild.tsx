@@ -77,9 +77,10 @@ export const SpeedBuild: React.FC<{
 
     if (gameState === 'intro') {
         return (
-            <div className="fixed inset-0 z-[80] bg-[#1f2933] overflow-y-auto p-4 animate-fade-in">
-                <div className="max-w-2xl mx-auto min-h-full flex flex-col">
-                    <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+            <div className="fixed inset-0 z-[80] bg-[#1f2933] flex flex-col animate-fade-in overflow-hidden">
+                <div className="max-w-2xl mx-auto w-full h-full flex flex-col">
+                    {/* Header */}
+                    <div className="flex items-center justify-between bg-[#1f2933] px-6 py-8 z-30 border-b border-white/5 shadow-xl shrink-0">
                         <div className="flex items-center gap-3">
                             <div className="p-3 bg-[#f6c453]/10 rounded-xl">
                                 <Zap className="w-6 h-6 text-[#f6c453]" />
@@ -93,45 +94,48 @@ export const SpeedBuild: React.FC<{
                                 </p>
                             </div>
                         </div>
-                        <button onClick={onClose} className="p-3 rounded-xl bg-white/5 border border-white/10">
+                        <button onClick={onClose} className="p-3 rounded-xl bg-white/5 border border-white/10 active:scale-95">
                             <X className="w-6 h-6 text-[#f6c453]" />
                         </button>
                     </div>
 
-                    <div className="space-y-4">
-                        {TASKS.map(task => (
-                            <button
-                                key={task.id}
-                                onClick={() => startTask(task)}
-                                className="w-full glass-card p-6 rounded-3xl border border-white/5 hover:border-[#f6c453]/30 transition-all text-left flex items-center gap-6 group"
-                            >
-                                <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-[#f6c453]/10 transition-all">
-                                    <task.Icon className="w-8 h-8 text-[#f6c453] group-hover:scale-110 transition-transform" />
-                                </div>
-                                <div className="flex-1">
-                                    <div className="flex items-center justify-between mb-1">
-                                        <h3 className="text-lg font-black uppercase tracking-tight">{task.title}</h3>
-                                        {bestScores[task.id] && (
-                                            <div className="text-xs font-black text-[#f6c453]">
-                                                🏆 {bestScores[task.id].toFixed(1)}s
-                                            </div>
-                                        )}
+                    {/* Scrollable Content */}
+                    <div className="flex-1 overflow-y-auto px-4 pt-6 pb-24 custom-scrollbar">
+                        <div className="space-y-4">
+                            {TASKS.map(task => (
+                                <button
+                                    key={task.id}
+                                    onClick={() => startTask(task)}
+                                    className="w-full glass-card p-6 rounded-3xl border border-white/5 hover:border-[#f6c453]/30 transition-all text-left flex items-center gap-6 group"
+                                >
+                                    <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-[#f6c453]/10 transition-all">
+                                        <task.Icon className="w-8 h-8 text-[#f6c453] group-hover:scale-110 transition-transform" />
                                     </div>
-                                    <p className="text-xs text-white/50">{task.description}</p>
-                                    <div className="flex items-center gap-2 mt-3 text-[10px] font-black uppercase tracking-widest">
-                                        <span className="text-white/30">CÍLOVÝ ČAS: {task.parTime}S</span>
+                                    <div className="flex-1">
+                                        <div className="flex items-center justify-between mb-1">
+                                            <h3 className="text-lg font-black uppercase tracking-tight">{task.title}</h3>
+                                            {bestScores[task.id] && (
+                                                <div className="text-xs font-black text-[#f6c453]">
+                                                    🏆 {bestScores[task.id].toFixed(1)}s
+                                                </div>
+                                            )}
+                                        </div>
+                                        <p className="text-xs text-white/50">{task.description}</p>
+                                        <div className="flex items-center gap-2 mt-3 text-[10px] font-black uppercase tracking-widest">
+                                            <span className="text-white/30">CÍLOVÝ ČAS: {task.parTime}S</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <ChevronRight className="w-5 h-5 opacity-20 group-hover:opacity-100 transition-all text-[#f6c453]" />
-                            </button>
-                        ))}
-                    </div>
+                                    <ChevronRight className="w-5 h-5 opacity-20 group-hover:opacity-100 transition-all text-[#f6c453]" />
+                                </button>
+                            ))}
+                        </div>
 
-                    <div className="mt-auto pt-8">
-                        <div className="bg-[#f6c453]/5 border border-[#f6c453]/20 rounded-2xl p-4 text-center">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#f6c453]/70">
-                                💡 Trénink dělá mistra. Buď připraven na cokoliv.
-                            </p>
+                        <div className="mt-8">
+                            <div className="bg-[#f6c453]/5 border border-[#f6c453]/20 rounded-2xl p-4 text-center">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-[#f6c453]/70">
+                                    💡 Trénink dělá mistra. Buď připraven na cokoliv.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

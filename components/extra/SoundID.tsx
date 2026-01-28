@@ -226,80 +226,78 @@ export const SoundID: React.FC<{
         }
     };
 
-    // Intro screen
     if (gameState === 'intro') {
         return (
-            <div className="fixed inset-0 z-[80] bg-[#1f2933] overflow-y-auto animate-fade-in p-4">
-                <div className="max-w-2xl mx-auto min-h-full flex flex-col justify-center">
-                    {/* Enhanced Header - Simplified to Yellow/Slate */}
-                    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#f6c453]/10 via-slate-500/5 to-slate-500/10 border border-[#f6c453]/20 p-6 shadow-lg shadow-[#f6c453]/5 mb-8">
-                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y2YzQ1MyIgc3Ryb2tlLXdpZHRoPSIwLjUiIG9wYWNpdHk9IjAuMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30"></div>
+            <div className="fixed inset-0 z-[80] bg-[#1f2933] flex flex-col animate-fade-in overflow-hidden">
+                <div className="max-w-2xl mx-auto w-full h-full flex flex-col">
+                    {/* Enhanced Header */}
+                    <div className="flex items-center justify-between bg-[#1f2933] px-6 py-8 z-30 border-b border-white/10 shadow-xl shrink-0">
+                        <div className="flex items-center gap-3">
+                            <div className="p-3 bg-[#f6c453]/10 rounded-xl">
+                                <Volume2 className="w-6 h-6 text-[#f6c453]" />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-black italic uppercase accent-text tracking-tight">
+                                    Akustický Radar
+                                </h2>
+                                <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">
+                                    Sound Analysis
+                                </p>
+                            </div>
+                        </div>
 
-                        <div className="relative flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="p-3 bg-[#f6c453]/10 rounded-xl backdrop-blur-sm">
-                                    <Volume2 className="w-6 h-6 text-[#f6c453]" />
-                                </div>
-                                <div>
-                                    <h2 className="text-2xl font-black italic uppercase accent-text tracking-tight inline-block pr-3">
-                                        Akustický Radar
-                                    </h2>
-                                    <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">
-                                        Sound Analysis
-                                    </p>
-                                </div>
+                        <button onClick={onClose} className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/10 active:scale-95">
+                            <X className="w-6 h-6 text-[#f6c453]" />
+                        </button>
+                    </div>
+
+                    {/* Scrollable Content */}
+                    <div className="flex-1 overflow-y-auto px-4 pt-6 pb-24 custom-scrollbar">
+                        <div className="bg-white/5 border-2 border-[#f6c453]/30 rounded-3xl p-8 text-center">
+                            <div className="text-6xl mb-6">👂🔊</div>
+                            <p className="text-lg text-white/80 mb-8">
+                                Nauč se rozpoznávat různé typy pláče podle Dunstan Baby Language
+                            </p>
+
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-8 text-left">
+                                {CRY_PATTERNS.map(pattern => (
+                                    <div key={pattern.id} className="bg-white/5 border border-white/10 rounded-xl p-3">
+                                        <div className="text-xl font-black text-[#f6c453] mb-1">{pattern.id}</div>
+                                        <div className="text-sm font-bold text-white/90">{pattern.name}</div>
+                                        <div className="text-xs text-white/60 mt-1">{pattern.soundDescription}</div>
+                                    </div>
+                                ))}
                             </div>
 
-                            <button onClick={onClose} className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/10">
-                                <X className="w-6 h-6 text-[#f6c453]" />
+                            {stats.totalAttempts > 0 && (
+                                <div className="bg-white/5 rounded-xl p-4 mb-6">
+                                    <div className="grid grid-cols-3 gap-4 text-center">
+                                        <div>
+                                            <div className="text-2xl font-black text-[#f6c453]">{stats.correctAnswers}/{stats.totalAttempts}</div>
+                                            <div className="text-xs text-white/60 uppercase font-black text-[8px]">Úspěšnost</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-2xl font-black text-[#f6c453]">{stats.streakValue}</div>
+                                            <div className="text-xs text-white/60 uppercase font-black text-[8px]">Série</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-2xl font-black text-[#f6c453]">{stats.bestStreakValue}</div>
+                                            <div className="text-xs text-white/60 uppercase font-black text-[8px]">Rekord</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            <button
+                                onClick={startNewRound}
+                                className="w-full bg-[#f6c453] text-black py-4 rounded-xl font-black uppercase text-lg hover:bg-[#ffcf60] transition-all shadow-lg active:scale-95"
+                            >
+                                Začít Trénink
                             </button>
                         </div>
                     </div>
-
-                    <div className="bg-white/5 border-2 border-[#f6c453]/30 rounded-3xl p-8 text-center">
-                        <div className="text-6xl mb-6">👂🔊</div>
-                        <p className="text-lg text-white/80 mb-8">
-                            Nauč se rozpoznávat různé typy pláče podle Dunstan Baby Language
-                        </p>
-
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
-                            {CRY_PATTERNS.map(pattern => (
-                                <div key={pattern.id} className="bg-white/5 border border-white/10 rounded-xl p-3">
-                                    <div className="text-xl font-black text-[#f6c453] mb-1">{pattern.id}</div>
-                                    <div className="text-sm font-bold text-white/90">{pattern.name}</div>
-                                    <div className="text-xs text-white/60 mt-1">{pattern.soundDescription}</div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {stats.totalAttempts > 0 && (
-                            <div className="bg-white/5 rounded-xl p-4 mb-6">
-                                <div className="grid grid-cols-3 gap-4 text-center">
-                                    <div>
-                                        <div className="text-2xl font-black text-[#f6c453]">{stats.correctAnswers}/{stats.totalAttempts}</div>
-                                        <div className="text-xs text-white/60">Úspěšnost</div>
-                                    </div>
-                                    <div>
-                                        <div className="text-2xl font-black text-[#f6c453]">{stats.streakValue}</div>
-                                        <div className="text-xs text-white/60">Série</div>
-                                    </div>
-                                    <div>
-                                        <div className="text-2xl font-black text-[#f6c453]">{stats.bestStreakValue}</div>
-                                        <div className="text-xs text-white/60">Rekord</div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        <button
-                            onClick={startNewRound}
-                            className="w-full bg-[#f6c453] text-black py-4 rounded-xl font-black uppercase text-lg hover:bg-[#ffcf60] transition-all shadow-lg"
-                        >
-                            Začít Trénink
-                        </button>
-                    </div>
                 </div>
-            </div >
+            </div>
         );
     }
 

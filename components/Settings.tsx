@@ -49,36 +49,34 @@ export const Settings: React.FC<SettingsProps> = ({
 
     return (
         <>
-            <div className="fixed inset-0 z-[100] bg-[#1f2933]/98 backdrop-blur-xl overflow-y-auto animate-fade-in custom-scrollbar">
-                <div className="min-h-full p-4 pb-24 flex items-center justify-center">
-                    <div className="w-full max-w-md bg-slate-900/50 rounded-[2.5rem] border-2 border-white/10 p-6 shadow-2xl relative overflow-hidden">
-                        {/* Background Decor */}
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#f6c453]/5 rounded-full blur-3xl pointer-events-none" />
-                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#f6c453]/5 rounded-full blur-3xl pointer-events-none" />
-                        {/* Header */}
-                        <div className="flex justify-between items-center mb-8 pb-4 border-b border-white/10">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2.5 bg-[#f6c453]/10 rounded-xl">
-                                    <SettingsIcon className="w-5 h-5 text-[#f6c453]" />
-                                </div>
-                                <div>
-                                    <h2 className="text-xl font-black italic uppercase accent-text tracking-tighter leading-none">
-                                        Nastavení
-                                    </h2>
-                                    <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-1">
-                                        System Config
-                                    </p>
-                                </div>
+            <div className="fixed inset-0 z-[100] bg-[#1f2933]/98 backdrop-blur-xl flex flex-col animate-fade-in overflow-hidden">
+                <div className="max-w-md mx-auto w-full h-full flex flex-col">
+                    {/* Header */}
+                    <div className="flex justify-between items-center bg-[#1f2933] px-6 py-8 z-30 border-b border-white/10 shadow-xl shrink-0">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2.5 bg-[#f6c453]/10 rounded-xl">
+                                <SettingsIcon className="w-5 h-5 text-[#f6c453]" />
                             </div>
-                            <button
-                                onClick={onClose}
-                                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/10 active:scale-95 group"
-                                aria-label="Zavřít nastavení"
-                            >
-                                <X className="w-5 h-5 text-[#f6c453] group-hover:rotate-90 transition-transform" />
-                            </button>
+                            <div>
+                                <h2 className="text-xl font-black italic uppercase accent-text tracking-tighter leading-none">
+                                    Nastavení
+                                </h2>
+                                <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-1">
+                                    System Config
+                                </p>
+                            </div>
                         </div>
+                        <button
+                            onClick={onClose}
+                            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/10 active:scale-95 group"
+                            aria-label="Zavřít nastavení"
+                        >
+                            <X className="w-5 h-5 text-[#f6c453] group-hover:rotate-90 transition-transform" />
+                        </button>
+                    </div>
 
+                    {/* Scrollable Content */}
+                    <div className="flex-1 overflow-y-auto px-4 pt-6 pb-32 custom-scrollbar">
                         <div className="space-y-3 relative z-10">
                             {/* Sound Toggle */}
                             <div className="bg-white/5 rounded-2xl border border-white/10 p-4 transition-all hover:bg-white/10 group border-l-4 border-l-[#f6c453]/20">
@@ -352,15 +350,15 @@ export const Settings: React.FC<SettingsProps> = ({
                                     </button>
                                 )}
                             </div>
-                        </div>
 
-                        {/* Info Footer */}
-                        <div className="mt-8 bg-black/20 border border-white/5 rounded-2xl p-4 flex items-center justify-center gap-2">
-                            <div className="w-1 h-1 rounded-full bg-[#f6c453] animate-pulse" />
-                            <p className="text-[9px] text-white/30 text-center leading-relaxed font-black uppercase tracking-[0.2em]">
-                                Auto-Save: Active • Secure Link
-                            </p>
-                            <div className="w-1 h-1 rounded-full bg-[#f6c453] animate-pulse" />
+                            {/* Info Footer */}
+                            <div className="mt-8 bg-black/20 border border-white/5 rounded-2xl p-4 flex items-center justify-center gap-2">
+                                <div className="w-1 h-1 rounded-full bg-[#f6c453] animate-pulse" />
+                                <p className="text-[9px] text-white/30 text-center leading-relaxed font-black uppercase tracking-[0.2em]">
+                                    Auto-Save: Active • Secure Link
+                                </p>
+                                <div className="w-1 h-1 rounded-full bg-[#f6c453] animate-pulse" />
+                            </div>
                         </div>
                     </div>
                 </div>

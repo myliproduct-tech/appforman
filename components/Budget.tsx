@@ -152,42 +152,56 @@ export const Budget: React.FC<BudgetProps> = ({
                 <span>Operační Příprava</span>
             </button>
 
-            {/* CALCULATOR MODAL */}
             {showCalculator && (
-                <div className="fixed inset-0 z-[70] bg-[#1f2933] overflow-y-auto animate-fade-in p-4 flex flex-col">
-                    <div className="flex justify-between items-start mb-6 text-[#f5f7fa]">
-                        <div>
-                            <h2 className="text-xl font-black italic uppercase accent-text tracking-tighter">Finanční Centrum</h2>
-                            <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em]">Správa kreditů</p>
+                <div className="fixed inset-0 z-[70] bg-[#1f2933] flex flex-col animate-fade-in overflow-hidden">
+                    <div className="max-w-md mx-auto w-full h-full flex flex-col">
+                        {/* Header */}
+                        <div className="flex justify-between items-center bg-[#1f2933] px-6 py-8 z-30 border-b border-white/10 shadow-xl shrink-0">
+                            <div>
+                                <h2 className="text-xl font-black italic uppercase accent-text tracking-tighter leading-none">
+                                    Finanční Centrum
+                                </h2>
+                                <p className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-1">
+                                    Správa kreditů
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setShowCalculator(false)}
+                                className="p-3 bg-white/5 rounded-2xl border border-white/10 active:scale-95 transition-all group"
+                            >
+                                <X className="w-6 h-6 group-hover:rotate-90 transition-transform" />
+                            </button>
                         </div>
-                        <button onClick={() => setShowCalculator(false)} className="p-3 bg-white/5 rounded-2xl border-2 border-white/20 active:scale-95">
-                            <X className="w-6 h-6" />
-                        </button>
-                    </div>
 
-                    <div className="flex bg-[#2d3748] p-1 rounded-2xl mb-6">
-                        <button
-                            onClick={() => setCalcTab('budget')}
-                            className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${calcTab === 'budget' ? 'bg-[#f6c453] text-[#1f2933] shadow-lg' : 'text-white/40'}`}
-                        >
-                            Rozpočet Mise
-                        </button>
-                        <button
-                            onClick={() => setCalcTab('unit')}
-                            className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${calcTab === 'unit' ? 'bg-[#f6c453] text-[#1f2933] shadow-lg' : 'text-white/40'}`}
-                        >
-                            Cena za kus
-                        </button>
-                    </div>
+                        {/* Tabs - Also fixed at top of content area */}
+                        <div className="bg-[#1f2933] px-4 py-4 z-20 border-b border-white/5 shrink-0">
+                            <div className="flex bg-[#2d3748] p-1 rounded-2xl">
+                                <button
+                                    onClick={() => setCalcTab('budget')}
+                                    className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${calcTab === 'budget' ? 'bg-[#f6c453] text-[#1f2933] shadow-lg' : 'text-white/40'}`}
+                                >
+                                    Rozpočet Mise
+                                </button>
+                                <button
+                                    onClick={() => setCalcTab('unit')}
+                                    className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${calcTab === 'unit' ? 'bg-[#f6c453] text-[#1f2933] shadow-lg' : 'text-white/40'}`}
+                                >
+                                    Cena za kus
+                                </button>
+                            </div>
+                        </div>
 
-                    {calcTab === 'budget' ? (
-                        <BudgetCalculator budgetPlan={budgetPlan} onSaveBudget={(plan) => { if (onSaveBudget) onSaveBudget(plan); setShowCalculator(false); }} />
-                    ) : (
-                        <UnitPriceCalculator />
-                    )}
+                        {/* Scrollable Content */}
+                        <div className="flex-1 overflow-y-auto px-4 py-6 pb-24 custom-scrollbar">
+                            {calcTab === 'budget' ? (
+                                <BudgetCalculator budgetPlan={budgetPlan} onSaveBudget={(plan) => { if (onSaveBudget) onSaveBudget(plan); setShowCalculator(false); }} />
+                            ) : (
+                                <UnitPriceCalculator />
+                            )}
+                        </div>
+                    </div>
                 </div>
-            )
-            }
+            )}
 
             {/* STROLLER CONFIG MODAL */}
             {
