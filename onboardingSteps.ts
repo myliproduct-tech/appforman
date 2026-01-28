@@ -69,7 +69,7 @@ Splň mise pro získání XP a postupu v hodnosti!
     {
         target: '[data-tour="menu-button"]',
         title: '🍔 HLAVNÍ MENU',
-        content: `Tady najdeš nastavení, hlášení chyb a další možnosti.
+        content: `Tady najdeš nastavení, zpětnou vazbu a další možnosti.
 
 Z menu můžeš také **kdykoliv manuálně spustit krizový režim Výsadek**, pokud jej potřebuješ dříve nebo se tlačítko nezobrazilo automaticky.`,
         placement: 'top',

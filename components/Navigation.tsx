@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Tab } from '../types';
-import { Home, Target, Radar, Award, Wallet, Menu, XIcon, LogOut, Settings, Rocket, Bug, Info, Sparkles } from 'lucide-react';
+import { Home, Target, Radar, Award, Wallet, Menu, XIcon, LogOut, Settings, Rocket, Bug, Info, Sparkles, MessageSquare } from 'lucide-react';
 import { Settings as SettingsComponent } from './Settings';
 
 interface NavigationProps {
@@ -63,8 +63,8 @@ export const Navigation: React.FC<NavigationProps> = ({
     const [showSettings, setShowSettings] = useState(false);
     const [showAppInfo, setShowAppInfo] = useState(false);
 
-    const handleBugReport = () => {
-        window.open('mailto:support@example.com?subject=Bug Report - Operace Výsadek', '_blank');
+    const handleFeedback = () => {
+        window.open('mailto:myli.product@gmail.com?subject=Zpětná vazba - Operace Výsadek', '_blank');
     };
 
     return (
@@ -187,20 +187,20 @@ export const Navigation: React.FC<NavigationProps> = ({
                                 </button>
                             )}
 
-                            {/* Bug Report */}
+                            {/* Feedback */}
                             <button
                                 onClick={() => {
                                     setShowMenu(false);
-                                    handleBugReport();
+                                    handleFeedback();
                                 }}
                                 className="w-full p-5 rounded-2xl border border-[#f6c453]/30 bg-[#f6c453]/10 hover:bg-[#f6c453]/20 transition-all flex items-center gap-4 text-left active:scale-[0.98] group"
                             >
-                                <div className="p-3 bg-[#f6c453]/20 rounded-xl group-hover:rotate-12 transition-transform">
-                                    <Bug className="w-6 h-6 text-[#f6c453]" />
+                                <div className="p-3 bg-[#f6c453]/20 rounded-xl group-hover:scale-110 transition-transform">
+                                    <MessageSquare className="w-6 h-6 text-[#f6c453]" />
                                 </div>
                                 <div className="flex-1">
-                                    <h3 className="text-sm font-black uppercase text-[#f6c453] tracking-tight">Hlášení Chyb</h3>
-                                    <p className="text-[10px] text-white/40 mt-1">Nahlásit problém nebo bug</p>
+                                    <h3 className="text-sm font-black uppercase text-[#f6c453] tracking-tight">Zpětná Vazba</h3>
+                                    <p className="text-[10px] text-white/40 mt-1">Napsat názor nebo nahlásit chybu</p>
                                 </div>
                             </button>
 
