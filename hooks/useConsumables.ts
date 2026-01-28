@@ -13,6 +13,32 @@ export const useConsumables = (
     setStats: React.Dispatch<React.SetStateAction<UserStats>>,
     effectiveDate: string
 ) => {
+    // Migration: Remove teas (g51, g23) from existing user data (one-time cleanup)
+    useEffect(() => {
+        if (stats.budgetPlan?.consumables && stats.budgetPlan.consumables.length > 0) {
+            const hasTeaItems = stats.budgetPlan.consumables.some(c => c.id === 'g51' || c.id === 'g23');
+
+            if (hasTeaItems) {
+                setStats(prev => {
+                    const updatedConsumables = prev.budgetPlan?.consumables?.filter(c =>
+                        c.id !== 'g51' && c.id !== 'g23'
+                    ) || [];
+
+                    // Also remove tea items from gearChecklist
+                    const updatedGearChecklist = prev.gearChecklist.filter(id =>
+                        id !== 'g51' && id !== 'g23'
+                    );
+
+                    return {
+                        ...prev,
+                        budgetPlan: { ...prev.budgetPlan!, consumables: updatedConsumables },
+                        gearChecklist: updatedGearChecklist
+                    };
+                });
+            }
+        }
+    }, [stats.email]); // Run only when user changes
+
     // Daily notification reminder for consumables (no auto-deduction)
     useEffect(() => {
         if (stats.budgetPlan?.consumables && stats.budgetPlan.consumables.length > 0 && stats.email) {
